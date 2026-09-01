@@ -492,7 +492,7 @@
   // DEPLOY THIS HTML ON GITHUB PAGES
   // PASTE YOUR GOOGLE SCRIPT WEB APP URL HERE:
   // ==========================================
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyVqkEuDx63cRsKOrMAA57gbUWI4T-oCYqYwLmAJtctiASbvoNAoQGN7PAfAsQ-kGnJMg/exec";
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzdfi419mRYcJuX7fMzPw-E4DgvjzwYbZWwx6YOHlIdAVWbq5OIXBKMnOH0qWm2HwXNFw/exec";
 
   function apiCall(actionName, parameters = {}) {
       return fetch(WEB_APP_URL, {
@@ -635,7 +635,7 @@
   let loggedInUser = "";
   let currentRawProblems = null; 
   let currentRawStates = null; 
-  let qUserPasswords = {}; // For Quality Portal
+  let qUserPasswords = {};
 
   function safeB64(str) { return btoa(unescape(encodeURIComponent(str || ''))); }
   function safeDec(b64) { return decodeURIComponent(escape(atob(b64 || ''))); }
