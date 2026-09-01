@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root { --main-bg: #eef2f5; --main-color: #ff0073; --bot-bubble: #ffffff; --user-bubble: #ff0073; --font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: var(--main-bg); font-family: var(--font); margin: 0; padding: 20px; display: flex; justify-content: center; align-items: center; height: 100vh; box-sizing: border-box; }
+    .chat-container { width: 100%; max-width: 450px; height: 100%; max-height: 800px; background: #fff; display: flex; flex-direction: column; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 16px; overflow: hidden; position: relative; border: 1px solid #e1e8ed;}
+    .header { background: linear-gradient(135deg, var(--main-color), #c00053); color: white; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 10;}
+    .header-title { font-size: 1.2rem; display: flex; align-items: center; gap: 8px;}
+    .top-actions { display: flex; align-items: center; gap: 8px;}
+    .lang-toggle { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4); border-radius: 20px; padding: 6px 12px; font-size: 12px; outline: none; cursor: pointer; transition: 0.3s;}
+    .lang-toggle:hover, .btn-small:hover { background: rgba(255,255,255,0.4); }
+    .lang-toggle option { color: #333; }
+    .btn-small { background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; transition: 0.3s; font-weight: bold;}
+   
+    .chat-box { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; background: #f8f9fa; scroll-behavior: smooth; }
+    .msg { display: flex; flex-direction: column; max-width: 85%; animation: fadeIn 0.3s ease-in-out; }
+    .bot { align-self: flex-start; } .user { align-self: flex-end; }
+    .bubble { padding: 12px 16px; font-size: 14px; line-height: 1.5; box-shadow: 0 2px 5px rgba(0,0,0,0.04); position: relative; word-wrap: break-word;}
+    .bot .bubble { background-color: var(--bot-bubble); color: #333; border-radius: 18px 18px 18px 4px; border: 1px solid #e1e8ed;}
+    .user .bubble { background-color: var(--user-bubble); color: white; border-radius: 18px 18px 4px 18px; }
+    .bubble a { color: inherit; text-decoration: underline; font-weight: bold;}
+    .msg-time { font-size: 10px; color: #999; margin-top: 4px; padding: 0 6px; } .user .msg-time { text-align: right; }
+   
+    .action-area { padding: 15px 20px; background: #fff; border-top: 1px solid #eee; display: none; animation: slideUp 0.3s ease-out; box-shadow: 0 -5px 15px rgba(0,0,0,0.03); z-index: 5;}
+    .options-grid { display: flex; flex-direction: column; gap: 10px; }
+    .opt-btn { background: #fff; border: 1.5px solid var(--main-color); color: var(--main-color); padding: 12px 18px; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.2s ease; text-align: left; display: flex; justify-content: space-between; align-items: center;}
+    .opt-btn:hover { background: var(--main-color); color: #fff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,0,113,0.2); }
+   
+    /* Premium Action Buttons */
+    .btn-download { border:none; background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; font-size: 15px; box-shadow: 0 4px 15px rgba(108, 92, 231, 0.3); justify-content: center; gap:10px; }
+    .btn-download:hover { background: linear-gradient(135deg, #5b4bc4, #8c83e6); box-shadow: 0 6px 18px rgba(108, 92, 231, 0.4); transform: translateY(-2px); color:white;}
+    .btn-blue { border-color: #0984e3; color: #0984e3; justify-content: center; gap:10px;} .btn-blue:hover { background: #0984e3; color: #fff; box-shadow: 0 4px 12px rgba(9, 132, 227, 0.2); }
+   
+    .model-dropdown { width: 100%; padding: 14px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; font-size: 14px; outline:none; background: #fafafa;}
+   
+    .pro-input-group { position: relative; margin-bottom: 15px; } .pro-input-group i { position: absolute; left: 14px; top: 16px; color: #aaa; font-size: 14px; }
+    .pro-input-group input { width: 100%; padding: 14px 14px 14px 40px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 14px; background: #fafafa; transition: border 0.3s;}
+    .pro-input-group input:focus { border-color: var(--main-color); background: #fff; outline:none;}
+    .submit-btn { width: 100%; padding: 14px; background: #27ae60; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(39, 174, 96, 0.2);} .submit-btn:hover { background: #219653; }
+   
+    .live-chat-area { display: none; padding: 12px 15px; background: white; border-top: 1px solid #eee; align-items: center; gap: 10px; }
+    .live-chat-area input { flex: 1; padding: 12px 18px; border: 1px solid #ddd; border-radius: 25px; outline: none; font-size: 14px; background: #f8f9fa;} .live-chat-area input:focus { border-color: #ccc; background: #fff;}
+    .icon-btn { background: var(--main-color); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-size: 16px; display: flex; justify-content: center; align-items: center; transition: 0.2s; flex-shrink:0;} .icon-btn:hover { transform: scale(1.05); } .btn-attach { background: #34495e; } .btn-attach:hover { background: #2c3e50; }
+   
+    .rating-area { display: none; padding: 25px 20px; background: white; border-top: 1px solid #eee; text-align: center;} .stars { font-size: 32px; color: #ddd; cursor: pointer; display: flex; justify-content: center; gap: 12px; margin-top: 15px;} .stars i:hover, .stars i.active { color: #f1c40f; transition: 0.2s;}
+    .in-chat-form { background: white; border: 1px solid #e1e8ed; padding: 15px; border-radius: 12px; margin-top: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); width: 85%; }
+    .in-chat-form label { display: block; font-size: 12px; font-weight: bold; color: #555; margin-bottom: 6px; }
+    .in-chat-form input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; font-size: 13px; box-sizing: border-box; background:#fafafa;}
+    .typing { display: flex; gap: 5px; padding: 12px 16px; align-items: center; background: #fff; width: fit-content; border-radius: 18px 18px 18px 4px; border: 1px solid #e1e8ed; display: none; }
+    .dot { width: 6px; height: 6px; background: #888; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
+    .dot:nth-child(1) { animation-delay: -0.32s; } .dot:nth-child(2) { animation-delay: -0.16s; } .hidden { display: none; }
+    @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } } @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } @keyframes slideUp { from { transform: translateY(20px); opacity: 0;} to { transform: translateY(0); opacity: 1;} }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="header">
+      <div class="header-title"><i class="fa-solid fa-headset"></i> <span id="ui-title">WeP Support</span></div>
+      <div class="top-actions">
+        <button class="btn-small" onclick="trackTaskModal()" title="Track Ticket"><i class="fa-solid fa-search"></i></button>
+        <select id="langSelect" class="lang-toggle" onchange="changeLanguage()"><option value="en">EN</option><option value="hi">HI</option></select>
+        <button id="endChatBtn" class="btn-small" style="background:#e74c3c; display:none;" onclick="endLiveChatCustomer()">End</button>
+      </div>
+    </div>
+   
+    <div class="chat-box" id="chatBox">
+      <div class="msg bot" id="botGreetingObj"><div class="bubble" id="botGreeting">Loading bot...</div></div>
+      <div class="typing" id="typingIndicator"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
+    </div>
+   
+    <div class="action-area" id="modelSelectArea" style="display:none;">
+      <div style="font-size:13px; margin-bottom:10px; font-weight:bold; color:#333;" id="modelSelectLabel">Please select your Printer Model:</div>
+      <select id="printerModelDropdown" class="model-dropdown"><option value="" id="drpDefault">-- Select Printer Model --</option></select>
+      <button class="submit-btn" style="background:#0984e3;" onclick="confirmModel()" id="btnNextStep">Start Troubleshooting <i class="fa-solid fa-arrow-right"></i></button>
+    </div>
+    <div class="action-area" id="optionsContainer">
+      <div class="options-grid" id="optionsGrid"><small style="color: #999;">Loading...</small></div>
+      <button class="opt-btn" id="backBtn" style="color:#7f8fa6; border-color:#dcdde1; margin-top:10px; display:none; justify-content:center;" onclick="goBackStep()"><i class="fa-solid fa-arrow-left"></i> &nbsp; Go Back</button>
+    </div>
+    <div class="action-area" id="videoOrAgentArea">
+      <div class="options-grid">
+         <button id="downloadBtn" class="opt-btn btn-download" style="display:none;" onclick="downloadDriver()"><i class="fa-solid fa-cloud-arrow-down"></i> <span id="lblDownload">Download Driver / Files</span></button>
+         <button id="videoBtn" class="opt-btn btn-blue" style="display:none;" onclick="openFixVideo()"><i class="fa-brands fa-youtube"></i> <span id="lblWatchVideo">Watch Tutorial Video</span></button>
+         
+         <div style="text-align:center; font-size:12px; color:#888; margin:5px 0;" id="lblOr">-- OR --</div>
+         
+         <button class="opt-btn" style="border-color:#27ae60; color:#27ae60; justify-content: center; gap:10px;" onclick="handleAction('RESOLVED')"><i class="fa-solid fa-check-circle"></i> <span id="lblResolved">My Issue is Resolved</span></button>
+         <button class="opt-btn" style="justify-content: center; gap:10px;" onclick="showLeadForm()"><i class="fa-solid fa-headset"></i> <span id="lblNeedExec">Connect to Executive</span></button>
+      </div>
+    </div>
+   
+    <div id="leadForm" class="action-area">
+      <div style="font-size: 15px; color: #333; margin-bottom: 15px; font-weight:bold; text-align:center;" id="formLabel">Live Agent Contact Form</div>
+      <div class="pro-input-group"><i class="fa-regular fa-user"></i><input type="text" id="custName" placeholder="Your Full Name"></div>
+      <div class="pro-input-group"><i class="fa-solid fa-phone"></i><input type="tel" id="custPhone" placeholder="10-digit Mobile Number" pattern="[0-9]{10}" maxlength="10"></div>
+      <button class="submit-btn" onclick="startLiveChat()" id="startChatBtn">Start Live Chat</button>
+    </div>
+    <div id="liveChatInput" class="live-chat-area">
+      <button class="icon-btn btn-attach" title="Share Photo" onclick="document.getElementById('hiddenFileInput').click()"><i class="fa-solid fa-paperclip"></i></button>
+      <input type="text" id="custReplyText" placeholder="Type a message..." onkeypress="if(event.key==='Enter') sendCustReply()">
+      <button class="icon-btn" onclick="sendCustReply()"><i class="fa-solid fa-paper-plane"></i></button>
+      <input type="file" id="hiddenFileInput" class="hidden" accept="image/*" onchange="handlePhotoUpload(this)">
+    </div>
+    <div id="ratingArea" class="rating-area">
+      <div style="font-size:15px; font-weight:bold; color:#333;" id="ratingTitle">Chat Closed! Please rate your experience:</div>
+      <div class="stars" id="starContainer"><i class="fa-solid fa-star" onclick="submitRating(1)" onmouseover="hoverStar(1)"></i><i class="fa-solid fa-star" onclick="submitRating(2)" onmouseover="hoverStar(2)"></i><i class="fa-solid fa-star" onclick="submitRating(3)" onmouseover="hoverStar(3)"></i><i class="fa-solid fa-star" onclick="submitRating(4)" onmouseover="hoverStar(4)"></i><i class="fa-solid fa-star" onclick="submitRating(5)" onmouseover="hoverStar(5)"></i></div>
+    </div>
+  </div>
+  <script>
+    // ==========================================
+    // DEPLOY THIS HTML ON GITHUB PAGES
+    // PASTE YOUR GOOGLE SCRIPT WEB APP URL HERE:
+    // ==========================================
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzpX9jBWLj2wiQYgjADbaoqn9QTVE0QOYSFAL1XDGUQewz-zhZUU3z1t7UaglwVD9211g/exec";
+    
+    function apiCall(actionName, parameters = {}) {
+        return fetch(WEB_APP_URL, {
+            method: "POST",
+            headers: {
+                "Content-Type": "text/plain;charset=utf-8",
+            },
+            body: JSON.stringify({ action: actionName, params: parameters })
+        })
+        .then(response => response.json())
+        .catch(error => {
+            console.error("API Error:", error);
+            Swal.fire('Connection Error', 'Failed to connect to server.', 'error');
+            return {status: 'error', message: error.message};
+        });
+    }
+
+    const uiText = {
+      en: { title: "WeP Support", greeting: "Hello! I am the WeP Service Bot. Please select your Printer Model to get started.", loading: "Loading...", selectNext: "Please select an option below:", selectModel: "Please select your Printer Model:", drpDefault: "-- Select Printer Model --", nextStep: "Start Troubleshooting", modelWait: "Model selection is required.", watchVideo: "Watch Tutorial Video", downloadFile: "Download Driver / Files", needExecutive: "Connect to Executive", resolved: "My Issue is Resolved", or: "-- OR --", formTitle: "Live Agent Contact Form", namePlaceholder: "Your Full Name", phonePlaceholder: "10-digit Mobile Number", startChatBtn: "Start Live Chat", chatInputPlaceholder: "Type a message...", endBtn: "End Chat", rateExperience: "Chat Closed! Please rate your experience:", agentConnected: "✅ Live Chat Support Connected. An agent will be with you shortly.", formError: "Please enter your Name and a valid 10-digit Mobile Number.", userEnded: "You ended the chat. Please rate your experience.", ratedMsg: "✅ You rated this chat {count} stars!", formCity: "Enter City", formState: "Enter State", formSerial: "Serial Number (Opt)", formNext: "Submit", trackTitle: "Track Your Task / Chat", invalidPhone: "Mobile number must be exactly 10 digits." },
+      hi: { title: "WeP सपोर्ट", greeting: "नमस्ते! मैं WeP सर्विस बॉट हूँ। कृपया शुरू करने के लिए अपना प्रिंटर मॉडल चुनें।", loading: "लोड हो रहा है...", selectNext: "कृपया नीचे से एक विकल्प चुनें:", selectModel: "कृपया अपना प्रिंटर मॉडल चुनें:", drpDefault: "-- प्रिंटर मॉडल चुनें --", nextStep: "समस्या का समाधान शुरू करें", modelWait: "मॉडल चुनना आवश्यक है।", watchVideo: "समाधान वीडियो देखें", downloadFile: "सॉफ्टवेयर / ड्राइवर डाउनलोड करें", needExecutive: "एक्जीक्यूटिव से बात करें", resolved: "मेरी समस्या हल हो गई", or: "-- या --", formTitle: "लाइव एजेंट संपर्क फ़ॉर्म", namePlaceholder: "आपका पूरा नाम", phonePlaceholder: "10-अंकों का मोबाइल नंबर", startChatBtn: "लाइव चैट शुरू करें", chatInputPlaceholder: "मैसेज टाइप करें...", endBtn: "चैट बंद करें", rateExperience: "चैट बंद हो गई! कृपया अपना अनुभव रेट करें:", agentConnected: "✅ लाइव चैट सपोर्ट कनेक्ट हो गया है। एक एजेंट जल्द ही आपसे जुड़ेगा।", formError: "कृपया अपना नाम और सही 10-अंकों का मोबाइल नंबर दर्ज करें।", userEnded: "आपने चैट समाप्त कर दी है। कृपया अपना अनुभव रेट करें।", ratedMsg: "✅ आपने इस चैट को {count} स्टार दिए हैं!", formCity: "शहर (City)", formState: "राज्य (State)", formSerial: "सीरियल नंबर (Opt)", formNext: "जमा करें", trackTitle: "अपना टिकट/चैट ट्रैक करें", invalidPhone: "मोबाइल नंबर ठीक 10 अंकों का होना चाहिए।" }
+    };
+    let currentLang='en', treeNodes=[], modelsData=[], selectedModelText="", currentPath=[], myChatId=null, lastChatId=null, myName="", myPhone="", myMsgCount=0, formTriggeredIds={}, callFormActive=false;
+    let finalSelectedNode = null;
+    
+    window.onload = () => {
+        apiCall('getChatbotInitialData').then(res => {
+            if(res.status === 'success') {
+                let data = res.data;
+                treeNodes = data.nodes; modelsData = data.models;
+                const drp = document.getElementById('printerModelDropdown');
+                modelsData.forEach(m => { let opt = document.createElement('option'); opt.value = m; opt.innerText = m; drp.appendChild(opt); });
+                applyLanguage();
+            } else {
+                document.getElementById('botGreeting').innerText="Error: "+res.message;
+            }
+        });
+    };
+    function changeLanguage() { currentLang = document.getElementById('langSelect').value; applyLanguage(); }
+    function applyLanguage() {
+        const t = uiText[currentLang];
+        document.getElementById('ui-title').innerText = t.title;
+        document.getElementById('modelSelectLabel').innerText = t.selectModel;
+        document.getElementById('drpDefault').innerText = t.drpDefault;
+        document.getElementById('btnNextStep').innerHTML = t.nextStep + ' <i class="fa-solid fa-arrow-right"></i>';
+        document.getElementById('lblWatchVideo').innerText = t.watchVideo;
+        document.getElementById('lblDownload').innerText = t.downloadFile;
+        document.getElementById('lblNeedExec').innerText = t.needExecutive;
+        document.getElementById('formLabel').innerText = t.formTitle;
+        document.getElementById('custName').placeholder = t.namePlaceholder;
+        document.getElementById('custPhone').placeholder = t.phonePlaceholder;
+        document.getElementById('startChatBtn').innerText = t.startChatBtn;
+        document.getElementById('custReplyText').placeholder = t.chatInputPlaceholder;
+        document.getElementById('endChatBtn').innerText = t.endBtn;
+        document.getElementById('ratingTitle').innerText = t.rateExperience;
+        document.getElementById('lblResolved').innerText = t.resolved;
+        document.getElementById('lblOr').innerText = t.or;
+       
+        if(!selectedModelText) {
+            document.getElementById('botGreeting').innerText = t.greeting;
+            renderModels();
+        }
+    }
+    async function trackTaskModal() {
+      const { value: taskId } = await Swal.fire({ title: uiText[currentLang].trackTitle, input: 'text', inputPlaceholder: 'e.g. CT-0001', showCancelButton: true, confirmButtonColor: '#ff0073' });
+      if (taskId) { 
+          Swal.fire({title: 'Searching...', allowOutsideClick: false, didOpen: () => Swal.showLoading()}); 
+          
+          apiCall('trackCustomerTask', {taskId: taskId}).then(res => {
+              if(res.status === 'success') {
+                  let d = res.data;
+                  if(d.status === "Not Found") { 
+                      Swal.fire("Not Found", "No ticket found with this ID", "error"); 
+                  } else { 
+                      let html = `<div style='text-align:left; font-size:13px;'><b>Status:</b> <span style="color:#e74c3c">${d.status}</span><br><br><b>Details:</b><br> ${d.details}<br><br><b>Chat History:</b><br><div style='max-height:200px; overflow-y:auto; background:#f4f4f4; padding:10px; border-radius:5px; margin-top:5px;'>`; 
+                      if(d.history && d.history.length > 0) { 
+                          d.history.forEach(m => { 
+                              let dMsg = m.message; 
+                              if(dMsg.indexOf("📎 Shared a photo: ") !== -1) { dMsg = `📎 <a href="${dMsg.split("Shared a photo: ")[1]}" target="_blank">View Photo</a>`; } 
+                              html += `<b>${m.sender}:</b> ${dMsg} <br><small style='color:#888'>${m.time}</small><hr style='margin:4px 0; border:0; border-top:1px solid #ddd;'>`; 
+                          }); 
+                      } else { 
+                          html += `<i>No chat history.</i>`; 
+                      } 
+                      html += `</div></div>`; 
+                      Swal.fire({ title: "Ticket: " + taskId, html: html, confirmButtonColor: '#3498db' }); 
+                  } 
+              } else {
+                  Swal.fire('Error', res.message, 'error');
+              }
+          });
+      }
+    }
+    function addMsg(text, type, time="") {
+        const box = document.getElementById('chatBox'); const typing = document.getElementById('typingIndicator');
+        const timeHtml = time ? `<div class="msg-time">${time}</div>` : `<div class="msg-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>`;
+        const msgDiv = document.createElement('div'); msgDiv.className = `msg ${type}`; let messageHtml = text;
+        if (text.indexOf("📎 Shared a photo: ") !== -1) { let link = text.split("Shared a photo: ")[1]; messageHtml = `📎 Shared a photo: <br><a href="${link}" target="_blank" style="color:inherit; text-decoration:underline;">Click to View</a>`; }
+        msgDiv.innerHTML = `<div class="bubble">${messageHtml}</div>${timeHtml}`;
+        if(typing) box.insertBefore(msgDiv, typing); else box.appendChild(msgDiv);
+        scrollToBottom();
+    }
+    function scrollToBottom() { const box = document.getElementById('chatBox'); box.scrollTop = box.scrollHeight; }
+   
+    // ----------- DYNAMIC DECISION TREE LOGIC -----------
+    function renderModels() {
+        document.getElementById('optionsContainer').style.display = 'none';
+        document.getElementById('modelSelectArea').style.display = 'block';
+        document.getElementById('videoOrAgentArea').style.display = 'none';
+        currentPath = [];
+    }
+    function confirmModel() {
+        const drp = document.getElementById('printerModelDropdown');
+        if(drp.value === "") { Swal.fire('Wait', uiText[currentLang].modelWait, 'warning'); return; }
+        selectedModelText = drp.value;
+        document.getElementById('modelSelectArea').style.display = 'none';
+        addMsg("Model: " + selectedModelText, 'user');
+       
+        document.getElementById('typingIndicator').style.display = 'flex';
+        scrollToBottom();
+       
+        setTimeout(() => {
+            document.getElementById('typingIndicator').style.display = 'none';
+            renderNextStep();
+        }, 600);
+    }
+    function renderNextStep() {
+        document.getElementById('videoOrAgentArea').style.display = 'none';
+        document.getElementById('optionsContainer').style.display = 'none';
+       
+        let availableNodes = treeNodes.filter(n => n.model === selectedModelText || n.model === "All Models" || !n.model);
+        let matchingNodes = availableNodes.filter(n => {
+            if (n.path.length < currentPath.length) return false;
+            for(let i = 0; i < currentPath.length; i++) {
+                if(n.path[i] !== currentPath[i]) return false;
+            }
+            return true;
+        });
+        let exactMatch = matchingNodes.find(n => n.path.length === currentPath.length);
+       
+        if (exactMatch && matchingNodes.length === 1) {
+            showSolution(exactMatch);
+            return;
+        }
+        let nextLevelIndex = currentPath.length;
+        let nextOptions = [...new Set(matchingNodes.map(n => n.path[nextLevelIndex]).filter(x => x))];
+        if (nextOptions.length === 0 && matchingNodes.length > 0) {
+            showSolution(matchingNodes[0]);
+            return;
+        }
+        addMsg(uiText[currentLang].selectNext, 'bot');
+        const grid = document.getElementById('optionsGrid');
+        grid.innerHTML = "";
+        document.getElementById('backBtn').style.display = currentPath.length > 0 ? 'flex' : 'none';
+       
+        nextOptions.forEach(opt => {
+            let btn = document.createElement('button');
+            btn.className = 'opt-btn';
+            btn.innerHTML = `<span><i class="fa-solid fa-angle-right"></i> ${opt}</span> <i class="fa-solid fa-chevron-right" style="color:#ddd"></i>`;
+            btn.onclick = () => {
+                currentPath.push(opt);
+                document.getElementById('optionsContainer').style.display = 'none';
+                addMsg(opt, 'user');
+                document.getElementById('typingIndicator').style.display = 'flex';
+                scrollToBottom();
+                setTimeout(() => {
+                    document.getElementById('typingIndicator').style.display = 'none';
+                    renderNextStep();
+                }, 500);
+            };
+            grid.appendChild(btn);
+        });
+       
+        document.getElementById('optionsContainer').style.display = 'block';
+        scrollToBottom();
+    }
+    function showSolution(node) {
+        finalSelectedNode = node;
+        document.getElementById('langSelect').style.display = 'none';
+        document.getElementById('optionsContainer').style.display = 'none';
+       
+        addMsg(node.response || "Solution details loaded.", 'bot');
+       
+        const vidUrl = node.videoUrl;
+        const dlUrl = node.downloadUrl;
+        document.getElementById('videoBtn').style.display = vidUrl ? 'flex' : 'none';
+        document.getElementById('downloadBtn').style.display = dlUrl ? 'flex' : 'none';
+        document.getElementById('videoOrAgentArea').style.display = 'flex';
+        scrollToBottom();
+    }
+    function goBackStep() {
+        if (currentPath.length === 0) {
+            renderModels();
+        } else {
+            currentPath.pop();
+            document.getElementById('optionsContainer').style.display = 'none';
+            document.getElementById('videoOrAgentArea').style.display = 'none';
+            renderNextStep();
+        }
+    }
+    function openFixVideo() { if(finalSelectedNode && finalSelectedNode.videoUrl) window.open(finalSelectedNode.videoUrl, '_blank'); }
+    function downloadDriver() { if(finalSelectedNode && finalSelectedNode.downloadUrl) window.open(finalSelectedNode.downloadUrl, '_blank'); }
+    // ----------- REMAINING LOGIC -----------
+    function handleAction(act) { if(act === 'RESOLVED') { document.getElementById('videoOrAgentArea').style.display = 'none'; addMsg(uiText[currentLang].resolved, 'user'); setTimeout(() => { addMsg("Great! Thank you for contacting WeP Support. Have a nice day!", 'bot'); resetChatbot(); }, 1000); } }
+    function showLeadForm() { document.getElementById('videoOrAgentArea').style.display = 'none'; addMsg(uiText[currentLang].needExecutive, 'user'); document.getElementById('typingIndicator').style.display = 'flex'; scrollToBottom(); setTimeout(() => { document.getElementById('typingIndicator').style.display = 'none'; document.getElementById('leadForm').style.display = 'block'; scrollToBottom(); }, 600); }
+   
+    function startLiveChat() { 
+        myName = document.getElementById('custName').value.trim(); 
+        myPhone = document.getElementById('custPhone').value.trim(); 
+        if(!myName || !myPhone || myPhone.length !== 10 || isNaN(myPhone)) return Swal.fire('Error', uiText[currentLang].invalidPhone, 'error'); 
+        Swal.fire({title: 'Connecting...', allowOutsideClick: false, didOpen: () => Swal.showLoading()}); 
+        
+        apiCall('startLiveChatSession', { data: { name: myName, phone: myPhone, contextPath: currentPath.join(" > "), model: selectedModelText } }).then(res => {
+            if(res.status === 'success') {
+                Swal.close(); myChatId = res.data; 
+                document.getElementById('leadForm').style.display = 'none'; document.getElementById('liveChatInput').style.display = 'flex'; document.getElementById('endChatBtn').style.display = 'block'; 
+                document.getElementById('chatBox').innerHTML = `<div class="msg bot"><div class="bubble" style="background:#27ae60; color:#fff;">${uiText[currentLang].agentConnected}</div></div>`; 
+                myMsgCount = 0; setInterval(fetchMyMessages, 4000); 
+            } else {
+                Swal.fire('Error', res.message, 'error');
+            }
+        });
+    }
+    
+    function sendCustReply() { 
+        const input = document.getElementById('custReplyText'); const msg = input.value.trim(); if(!msg || !myChatId) return; 
+        input.value = ''; 
+        document.getElementById('chatBox').innerHTML += `<div class="msg user temp-msg"><div class="bubble">${msg}</div><div class="msg-time">Sending...</div></div>`; 
+        scrollToBottom(); 
+        apiCall('sendChatMessage', {chatId: myChatId, name: myName, phone: myPhone, sender: "Customer", message: msg}); 
+    }
+    
+    function handlePhotoUpload(input) {
+      if (!myChatId || !input.files[0]) return;
+      const file = input.files[0];
+      Swal.fire({ title: 'Processing Image...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas'); const MAX_WIDTH = 800; const scaleSize = MAX_WIDTH / img.width; canvas.width = MAX_WIDTH; canvas.height = img.height * scaleSize;
+          const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const base64Data = canvas.toDataURL('image/jpeg', 0.7).split(',')[1];
+          Swal.fire({ title: 'Uploading...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
+          
+          apiCall('uploadPhotoFromChat', {chatId: myChatId, name: myName, phone: myPhone, sender: "Customer", base64Data: base64Data, contentType: "image/jpeg", fileName: "upload.jpg"}).then(res => {
+              Swal.close();
+              if(res.status==='success' && res.data.success) {
+                  fetchMyMessages();
+              } else {
+                  Swal.fire('Error', 'Upload Failed: ' + (res.data ? res.data.error : res.message), 'error');
+              }
+              input.value = '';
+          });
+        }
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    }
+    function renderInChatCallForm() { if(callFormActive) return; callFormActive = true; const t = uiText[currentLang]; document.getElementById('liveChatInput').style.display = 'none'; const box = document.getElementById('chatBox'); const formHtml = `<div class="msg bot in-chat-form" id="activeCallForm"><h4 style="margin:0 0 10px 0; color:#ff0073;"><i class="fa-solid fa-clipboard-list"></i> Complaint Registration Form</h4><label>${t.formCity} *</label><input type="text" id="regCity" placeholder="City"><label>${t.formState} *</label><input type="text" id="regState" placeholder="State"><label>${t.formSerial}</label><input type="text" id="regSerial" placeholder="Serial No."><button class="submit-btn" onclick="submitInChatCallForm()">${t.formNext}</button></div>`; box.insertAdjacentHTML('beforeend', formHtml); scrollToBottom(); }
+    
+    function submitInChatCallForm() { 
+        let city = document.getElementById('regCity').value.trim(); let state = document.getElementById('regState').value.trim(); let serial = document.getElementById('regSerial').value.trim(); 
+        if(!city || !state) return Swal.fire('Error', 'City and State are mandatory', 'error'); 
+        document.getElementById('activeCallForm').style.opacity = '0.5'; 
+        Swal.fire({title: 'Registering...', allowOutsideClick: false, didOpen: () => Swal.showLoading()}); 
+        
+        apiCall('registerCallFromChat', {chatId: myChatId, details: {city: city, state: state, serial: serial || "NA"}}).then(res => {
+            Swal.close();
+            if(res.status==='success') {
+                document.getElementById('activeCallForm').remove(); document.getElementById('liveChatInput').style.display = 'flex'; callFormActive = false;
+            } else {
+                Swal.fire('Error', res.message, 'error');
+            }
+        }); 
+    }
+   
+    function fetchMyMessages() {
+      if(!myChatId) return;
+      apiCall('getChatHistory', {chatId: myChatId}).then(res => {
+        if(res.status !== 'success') return;
+        let d = res.data;
+        let history = d.messages; let status = d.status;
+        try {
+            if (history.length > myMsgCount) {
+                const box = document.getElementById('chatBox'); document.querySelectorAll('.temp-msg').forEach(el => el.remove());
+                for(let i = myMsgCount; i < history.length; i++) {
+                    let m = history[i]; let displayMsg = m.message || "";
+                    if(displayMsg === "[CMD:REQUEST_FORM]") { let msgId = m.time + m.message + i; if(!formTriggeredIds[msgId]) { formTriggeredIds[msgId] = true; renderInChatCallForm(); } continue; }
+                    let type = m.sender === "Customer" ? "user" : "bot"; addMsg(displayMsg, type, m.time);
+                }
+                myMsgCount = history.length;
+            }
+        } catch(e) { console.error(e); }
+        if(status === "Closed") {
+            lastChatId = myChatId; myChatId = null; document.getElementById('liveChatInput').style.display = 'none'; document.getElementById('endChatBtn').style.display = 'none'; document.getElementById('ratingArea').style.display = 'block';
+            let lastMessageObj = history.length > 0 ? history[history.length-1] : null; let remarkStr = uiText[currentLang].adminEnded || "Chat Closed.";
+            if(lastMessageObj && lastMessageObj.sender === "Admin" && lastMessageObj.message.indexOf("Admin Remark:") !== -1) { remarkStr = "<b style='color:#e74c3c'>Agent Note:</b> " + lastMessageObj.message.replace("Admin Remark:", "") + "<br><br>" + uiText[currentLang].rateExperience; }
+            addMsg(remarkStr, "bot"); scrollToBottom();
+        }
+      });
+    }
+    
+    function endLiveChatCustomer() { 
+        if(!myChatId) return; 
+        Swal.fire({ title: uiText[currentLang].endBtn+"?", icon: "warning", showCancelButton: true, confirmButtonText: "Yes", confirmButtonColor: '#e74c3c' }).then((res) => { 
+            if(res.isConfirmed) { 
+                apiCall('closeLiveChat', {chatId: myChatId, remark: ""}); 
+                lastChatId = myChatId; myChatId = null; 
+                document.getElementById('liveChatInput').style.display = 'none'; document.getElementById('endChatBtn').style.display = 'none'; document.getElementById('ratingArea').style.display = 'block'; 
+                addMsg(uiText[currentLang].userEnded, "bot"); 
+            } 
+        }); 
+    }
+    
+    function resetChatbot() { setTimeout(() => { location.reload(); }, 2000); }
+    function hoverStar(count) { const stars = document.getElementById('starContainer').children; for(let i=0; i<5; i++) { stars[i].style.color = i < count ? "#f1c40f" : "#ddd"; } }
+    
+    function submitRating(count) { 
+        hoverStar(count); 
+        Swal.fire({title: '...', allowOutsideClick: false, didOpen: () => Swal.showLoading()}); 
+        apiCall('submitChatRating', {chatId: lastChatId, rating: count}).then(res => {
+            Swal.close(); 
+            let msg = uiText[currentLang].ratedMsg.replace('{count}', count); 
+            document.getElementById('ratingArea').innerHTML = `<div style="color:#27ae60; font-weight:bold; margin-top:10px;">${msg}</div>`; 
+            setTimeout(resetChatbot, 3000); 
+        }); 
+    }
+  </script>
+</body>
+</html>
