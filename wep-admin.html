@@ -28,7 +28,7 @@
     .btn { background: var(--brand); color: #fff; border: none; padding: 12px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; text-transform: uppercase; margin-top: 10px; } .btn-ct { background: var(--brand2); } .btn-wcr { background: var(--brand3); } .btn-dark { background: #2d3436; } .btn-outline { background: transparent; color: var(--brand); border: 2px solid var(--brand); font-weight: bold; }
     .item-box { border: 1px solid #e1b12c; padding: 15px; border-radius: 6px; margin-bottom: 15px; background: #fffdf5; position: relative; } .remove-btn { position: absolute; top: 10px; right: 10px; background: #ff7675; color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; font-weight: bold; line-height: 1; }
     .group-wrap { border: 1px solid #dcdde1; border-radius: 6px; margin-bottom: 12px; background: #fff; overflow: hidden; } .group-header { background: #dfe6e9; padding: 12px 15px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: #2d3436; font-size: 14px; } .group-body { padding: 10px; background: #fdfdfd; display: none; }
-    .card { border-left: 4px solid #e1b12c; padding: 12px; margin-bottom: 8px; background: #fff; border: 1px solid #eee; cursor: pointer; position: relative; border-radius: 4px; } .card-pay { border-left-color: #44bd32; } .card-wcr { border-left-color: var(--brand3); } .tat-badge { position: absolute; top: 10px; right: 10px; font-size: 11px; background: #f5f6fa; padding: 3px 8px; border-radius: 4px; font-weight: bold; color: #2f3640; border: 1px solid #dcdde1; } .q-tag { font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; margin-top: 5px; display: inline-block; } .q-not { background: #ffeaa7; color: #d63031; border: 1px solid #ffeaa7; } .q-gen { background: #81ecec; color: #00b894; border: 1px solid #81ecec; } .q-sent { background: #55efc4; color: #008f39; border: 1px solid #00b894; }
+    .card { border-left: 4px solid #e1b12c; padding: 12px; margin-bottom: 8px; background: #fff; border: 1px solid #eee; cursor: pointer; position: relative; border-radius: 4px; } .card-pay { border-left-color: #44bd32; } .card-wcr { border-left-color: var(--brand3); } .tat-badge { position: absolute; top: 10px; right: 10px; font-size: 11px; background: #f5f6fa; padding: 3px 8px; border-radius: 4px; font-weight: bold; color: #2f3640; border: 1px solid #dcdde1; } .q-tag { font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; margin-top: 5px; display: inline-block; } .q-not { background: #ffeaa7; color: #d63031; border: 1px solid #ffeaa7; } .q-gen { background: #81ecec; color: #00b894; border: 1px solid #81ecec; } .q-sent { background: #55efc4; color: #008f39; border: 1px solid #008f39; }
     .panel { background: #f8f9fa; padding: 15px; border: 1px solid #dcdde1; border-radius: 6px; margin-top: 15px; } table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 15px; } th, td { border: 1px solid #dcdde1; padding: 8px; text-align: left; } th { background: #f1f2f6; }
     .ct-card { background: #fff; padding: 15px; border-radius: 8px; border-left: 4px solid var(--brand2); margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.06); cursor: pointer; position: relative; transition: background 0.3s; } .ct-card:hover { background: #fff8fb; } .ct-tat { position: absolute; top: 15px; right: 15px; font-size: 11px; background: #ffe0eb; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: var(--brand2); border: 1px solid #ffb3d1;} .ct-assign { font-size: 11px; background: #f1f2f6; color: #2f3640; padding: 3px 6px; border-radius: 4px; margin-left: 8px; border: 1px solid #dcdde1; display: inline-block; vertical-align: middle;} .ct-card b { font-size: 15px; color: #2f3640; } .ct-card small { color: #7f8fa6; display: block; margin-top: 6px; line-height: 1.5; font-size: 12px;}
     .admin-chat-widget { position: fixed; bottom: 30px; right: 30px; z-index: 9999; } .chat-btn { background: #ff006e; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; box-shadow: 0 5px 15px rgba(255,0,110,0.4); border: none; position: relative; transition: transform 0.3s;} .chat-btn:hover { transform: scale(1.05); } .notification-badge { position: absolute; top: -5px; right: -5px; background: red; color: white; border-radius: 50%; font-size: 12px; font-weight: bold; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border: 2px solid white; display: none;}
@@ -115,61 +115,76 @@
 <div id="qualityContainers">
    <!-- IQC Form -->
    <div id="iqcPortal" style="display:none;" class="q-container q-portal">
-      <div class="header-nav" style="background: #3498db;"><h3 style="margin:0; color:white;">IQC Data Entry</h3><button class="back-btn" onclick="openQualityPortal('home')">⬅️ Menu</button></div>
+      <div class="header-nav" style="background: #3498db;"><h3 style="margin:0; color:white;">IQC New Entry & Clearance Decision</h3><button class="back-btn" onclick="openQualityPortal('home')">⬅️ Menu</button></div>
       <div class="content active">
         <form onsubmit="event.preventDefault(); submitQuality('IQC', this);">
             <div class="grid"><div><label>MRR/ RGP Date *</label><input type="date" name="date" required></div><div><label>MRR No. / RGP No. *</label><input type="text" name="mrr" required></div></div>
             <div class="grid"><div><label>Vendor *</label><input type="text" name="vendor" required></div><div><label>Model *</label><select name="model" class="q-model" required></select></div></div>
             <div class="grid"><div><label>Total Qty</label><input type="number" name="totQty"></div><div><label>Inspected Qty</label><input type="number" name="insQty"></div></div>
             <div class="grid"><div><label>OK Qty</label><input type="number" name="okQty"></div><div><label>Rejected Qty</label><input type="number" name="rejQty"></div></div>
-            <label>Remarks</label><input type="text" name="remarks">
+            <div class="grid">
+                <div><label>Clearance Decision *</label><select name="decision" required style="background:#e8f8f5; font-weight:bold;"><option value="OK">🟢 OK (Cleared)</option><option value="Reject">🔴 Reject</option></select></div>
+                <div><label>Remarks</label><input type="text" name="remarks" placeholder="Enter remarks or failure reason..."></div>
+            </div>
             <button class="btn" style="background:#3498db" type="submit">Submit IQC Data</button>
         </form>
       </div>
    </div>
    <!-- PPA Form -->
    <div id="ppaPortal" style="display:none;" class="q-container q-portal">
-      <div class="header-nav" style="background: #e74c3c;"><h3 style="margin:0; color:white;">PPA Data Entry</h3><button class="back-btn" onclick="openQualityPortal('home')">⬅️ Menu</button></div>
+      <div class="header-nav" style="background: #e74c3c;"><h3 style="margin:0; color:white;">PPA New Entry & Clearance Decision</h3><button class="back-btn" onclick="openQualityPortal('home')">⬅️ Menu</button></div>
       <div class="content active">
         <form onsubmit="event.preventDefault(); submitQuality('PPA', this);">
             <div class="grid"><div><label>Date *</label><input type="date" name="date" required></div><div><label>Model *</label><select name="model" class="q-model" required></select></div></div>
             <div class="grid"><div><label>Lot No *</label><input type="text" name="lot" required></div><div><label>Inspected Qty</label><input type="number" name="qty"></div></div>
             <div class="grid"><div><label>Status (Pass/Fail) *</label><select name="status" required><option value="Pass">Pass</option><option value="Fail">Fail</option></select></div><div><label>Issues Found</label><input type="text" name="issues"></div></div>
-            <label>Approved By</label><input type="text" name="approvedBy" required>
+            <div class="grid">
+                <div><label>Clearance Decision *</label><select name="decision" required style="background:#e8f8f5; font-weight:bold;"><option value="OK">🟢 OK (Cleared)</option><option value="Reject">🔴 Reject</option></select></div>
+                <div><label>Approved By *</label><input type="text" name="approvedBy" required></div>
+            </div>
+            <label>Remarks</label><input type="text" name="remarks" placeholder="Enter remarks...">
             <button class="btn" style="background:#e74c3c" type="submit">Submit PPA Data</button>
         </form>
       </div>
    </div>
    <!-- RRT Form -->
    <div id="rrtPortal" style="display:none;" class="q-container q-portal">
-      <div class="header-nav" style="background: #f1c40f;"><h3 style="margin:0; color:white;">RRT Data Entry</h3><button class="back-btn" onclick="openQualityPortal('home')">⬅️ Menu</button></div>
+      <div class="header-nav" style="background: #f1c40f;"><h3 style="margin:0; color:white;">RRT New Entry & Clearance Decision</h3><button class="back-btn" onclick="openQualityPortal('home')">⬅️ Menu</button></div>
       <div class="content active">
         <form onsubmit="event.preventDefault(); submitQuality('RRT', this);">
             <div class="grid"><div><label>Repair Date *</label><input type="date" name="date" required></div><div><label>Model *</label><select name="model" class="q-model" required></select></div></div>
             <div class="grid"><div><label>PCB Sl No. *</label><input type="text" name="serial" required></div><div><label>Problem Occurs *</label><input type="text" name="problem" required></div></div>
             <div class="grid"><div><label>Defect Cause</label><input type="text" name="cause"></div><div><label>Location / Area</label><input type="text" name="location"></div></div>
             <div class="grid"><div><label>Component Replaced</label><input type="text" name="component"></div><div><label>Rework By</label><input type="text" name="reworkBy"></div></div>
-            <label>Status *</label><select name="status" required><option value="Done">Done</option><option value="Pending">Pending</option></select>
+            <div class="grid">
+                <div><label>Status *</label><select name="status" required><option value="Done">Done</option><option value="Pending">Pending</option></select></div>
+                <div><label>Clearance Decision *</label><select name="decision" required style="background:#e8f8f5; font-weight:bold;"><option value="OK">🟢 OK (Cleared)</option><option value="Reject">🔴 Reject</option></select></div>
+            </div>
+            <label>Remarks</label><input type="text" name="remarks" placeholder="Enter remarks...">
             <button class="btn" style="background:#f39c12" type="submit">Submit RRT Data</button>
         </form>
       </div>
    </div>
    <!-- SQ Form -->
    <div id="sqPortal" style="display:none;" class="q-container q-portal">
-      <div class="header-nav" style="background: #9b59b6;"><h3 style="margin:0; color:white;">SQ Data Entry</h3><button class="back-btn" onclick="openQualityPortal('home')">⬅️ Menu</button></div>
+      <div class="header-nav" style="background: #9b59b6;"><h3 style="margin:0; color:white;">SQ New Entry & Clearance Decision</h3><button class="back-btn" onclick="openQualityPortal('home')">⬅️ Menu</button></div>
       <div class="content active">
         <form onsubmit="event.preventDefault(); submitQuality('SQ', this);">
             <div class="grid"><div><label>Date *</label><input type="date" name="date" required></div><div><label>Vendor Name *</label><input type="text" name="vendor" required></div></div>
             <div class="grid"><div><label>Part Name *</label><input type="text" name="part" required></div><div><label>Defect Found *</label><input type="text" name="defect" required></div></div>
             <div class="grid"><div><label>CAPA Required? *</label><select name="capa" required><option value="Yes">Yes</option><option value="No">No</option></select></div><div><label>Action Taken</label><input type="text" name="action"></div></div>
-            <label>Quality Engineer</label><input type="text" name="engineer" required>
+            <div class="grid">
+                <div><label>Clearance Decision *</label><select name="decision" required style="background:#e8f8f5; font-weight:bold;"><option value="OK">🟢 OK (Cleared)</option><option value="Reject">🔴 Reject</option></select></div>
+                <div><label>Quality Engineer *</label><input type="text" name="engineer" required></div>
+            </div>
+            <label>Remarks</label><input type="text" name="remarks" placeholder="Enter remarks...">
             <button class="btn" style="background:#9b59b6" type="submit">Submit SQ Data</button>
         </form>
       </div>
    </div>
    <!-- LPR Form -->
    <div id="lprPortal" style="display:none;" class="q-container q-portal">
-      <div class="header-nav" style="background: #1abc9c;"><h3 style="margin:0; color:white;">LPR Data Entry</h3><button class="back-btn" onclick="openQualityPortal('home')">⬅️ Menu</button></div>
+      <div class="header-nav" style="background: #1abc9c;"><h3 style="margin:0; color:white;">LPR New Entry & Clearance Decision</h3><button class="back-btn" onclick="openQualityPortal('home')">⬅️ Menu</button></div>
       <div class="content active">
         <form onsubmit="event.preventDefault(); submitQuality('LPR', this);">
             <div class="grid"><div><label>LPR Issue Date *</label><input type="date" name="issueDate" required></div><div><label>Receiving Date *</label><input type="date" name="recDate" required></div></div>
@@ -177,7 +192,14 @@
             <div class="grid"><div><label>Problem (from Prod) *</label><input type="text" name="problem" required></div><div><label>IQC Observation</label><input type="text" name="observation"></div></div>
             <div class="grid"><div><label>Defect Cause</label><input type="text" name="cause"></div><div><label>Location</label><input type="text" name="location"></div></div>
             <div class="grid"><div><label>Component / Process</label><input type="text" name="component"></div><div><label>Action Taken</label><input type="text" name="action"></div></div>
-            <div class="grid"><div><label>Status *</label><select name="status" required><option value="Done">Done</option><option value="Pending">Pending</option></select></div><div><label>Done By</label><input type="text" name="doneBy"></div></div>
+            <div class="grid">
+                <div><label>Status *</label><select name="status" required><option value="Done">Done</option><option value="Pending">Pending</option></select></div>
+                <div><label>Clearance Decision *</label><select name="decision" required style="background:#e8f8f5; font-weight:bold;"><option value="OK">🟢 OK (Cleared)</option><option value="Reject">🔴 Reject</option></select></div>
+            </div>
+            <div class="grid">
+                <div><label>Done By</label><input type="text" name="doneBy"></div>
+                <div><label>Remarks</label><input type="text" name="remarks" placeholder="Enter remarks..."></div>
+            </div>
             <button class="btn" style="background:#1abc9c" type="submit">Submit LPR Data</button>
         </form>
       </div>
@@ -332,8 +354,7 @@
   </div>
   <div id="wcr-repair" class="content wcr-content">
     <div id="wcrList">Loading...</div>
-    <div id="wcrUpdatePanel" class="panel" style="display:none; border-color:var(--brand3);"><h4 id="wcrTarget" style="color:var(--brand3)"></h4><form onsubmit="event.preventDefault(); wcrSaveUpdate(this);"><input type="hidden" name="row" id="wcrRow"><label>Action Taken *</label><textarea name="actionTaken" rows="2" required style="margin-bottom:10px;"></textarea><div class="grid"><div><label>Issue Found (Simple)</label><input type="text" name="issueFound" placeholder="e.g. Diode burnt"></div><div><label>Component Replaced</label><input type="text" name="componentReplaced" placeholder="e.g. 5V Zener"></div></div><label>Root Cause (Why-Why Analysis)</label><textarea name="rootCause" rows="2" placeholder="Explain simple reason for failure..."></textarea><label>Move To Decision *</label><select name="moveTo" required style="margin-bottom:10px; margin-top:5px;"><option value="">-- Select Decision --</option><option value="Good Location">Good Location (Close)</option><option value="Scrap">Scrap (Send for Approval)</option></select><button class="btn btn-wcr" type="submit">Update & Proceed</button></form></div>
-  </div>
+    <div id="wcrUpdatePanel" class="panel" style="display:none; border-color:var(--brand3);"><h4 id="wcrTarget" style="color:var(--brand3)"></h4><form onsubmit="event.preventDefault(); wcrSaveUpdate(this);"><input type="hidden" name="row" id="wcrRow"><label>Action Taken *</label><textarea name="actionTaken" rows="2" required style="margin-bottom:10px;"></textarea><div class="grid"><div><label>Issue Found (Simple)</label><input type="text" name="issueFound" placeholder="e.g. Diode burnt"></div><div><label>Component Replaced</label><input type="text" name="componentReplaced" placeholder="e.g. 5V Zener"></div></div><label>Root Cause (Why-Why Analysis)</label><textarea name="rootCause" rows="2" placeholder="Explain simple reason for failure..."></textarea><label>Move To Decision *</label><select name="moveTo" required style="margin-bottom:10px; margin-top:5px;"><option value="">-- Select Decision --</option><option value="Good Location">Good Location (Close)</option><option value="Scrap">Scrap (Send for Approval)</option></select><button class="btn btn-wcr" type="submit">Update & Proceed</button></form></div></div>
   <div id="wcr-approve" class="content wcr-content"><div id="wcrApproveList">Loading...</div><div id="wcrApprovePanel" class="panel" style="display:none; background:#fffdf5; border-color:#e74c3c;"><h4 id="wcrAppTarget" style="color:#e74c3c;"></h4><input type="hidden" id="wcrAppRow"><div class="grid"><div><label>Admin Password *</label><input type="password" id="wcrPwd" placeholder="Enter Password" required></div><div><label>Decision *</label><select id="wcrDecision"><option value="Approve">Approve Scrap</option><option value="Reject">Reject (Return to Repair)</option></select></div></div><button class="btn" style="background:#e74c3c;" onclick="wcrProcessApprove()">Process Approval</button></div></div>
   
   <div id="wcr-inv" class="content wcr-content">
@@ -374,7 +395,7 @@
   // DEPLOY THIS HTML ON GITHUB PAGES
   // PASTE YOUR GOOGLE SCRIPT WEB APP URL HERE:
   // ==========================================
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyoE5EzxHKrF59-a7P49qYL0hSZg3fjgbI8O9e1DyrVV1yxI1yRZ-zLiwucBt8w73gB5A/exec";
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw_3nyi8wVGlEIgxkIzu7ma1Foyij3AfzPYwe3NFp1EJzWMmUk1IHsq4ASrM_ftKFZIZQ/exec";
 
   function apiCall(actionName, parameters = {}) {
       return fetch(WEB_APP_URL, {
@@ -399,7 +420,7 @@
   }
 
   function submitQuality(module, form) {
-       Swal.fire({title:'Saving...',didOpen:()=>Swal.showLoading()});
+       Swal.fire({title:'Saving Entry & Clearance...',didOpen:()=>Swal.showLoading()});
        let data = serializeForm(form);
        apiCall('q_submitForm', {module: module, data: data}).then(res => {
            if(res.status !== 'success') return Swal.fire('Error', res.message, 'error');
