@@ -11,7 +11,11 @@
     :root { --brand: #0984e3; --brand2: #ff006e; --brand3: #e67e22; --bg: #f5f6fa; } 
     body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 10px; }
     
-    input[required], select[required], textarea[required] { background-color: #f0fdf4 !important; border: 1px solid #2ecc71 !important; }
+    /* Highlight for Mandatory Fields */
+    input[required], select[required], textarea[required] {
+        background-color: #f0fdf4 !important;
+        border: 1px solid #2ecc71 !important;
+    }
 
     #mainSelectionScreen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 90vh; }
     #loginScreen, #qualityLoginScreen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 90vh; }
@@ -326,7 +330,7 @@
   // DEPLOY THIS HTML ON GITHUB PAGES
   // PASTE YOUR GOOGLE SCRIPT WEB APP URL HERE:
   // ==========================================
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwCWMgW0F2H3N5oSyhXxeMNJOdxmhsXCJtYQAiyy7Hz_ClE9G0MnZIoji53OCMdY06BPw/exec";
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw29gKeo8yAyL4O2_JgOBIkNOqyE_ZeWSos5npvbv53UCRE38ATs31i-d-XuPK6mKccYQ/exec";
 
   function apiCall(actionName, parameters = {}) {
       return fetch(WEB_APP_URL, {
@@ -1061,6 +1065,7 @@
               h += `</table>`;
           }
 
+          // NEW: Added Serial Number display logic
           if(d.issuedList && d.issuedList.length > 0) {
               h += `<h4 style="margin-top:20px; margin-bottom:5px; color:#0984e3;">Inventory Issue Log (Consumed Parts)</h4>`;
               h += `<table><tr><th>Issue Date</th><th>Model & Part Type</th><th>Issued From</th><th>Qty</th><th>Issued To Task No.</th></tr>`;
