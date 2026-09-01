@@ -130,7 +130,7 @@
        </form>
    </div>
 
-   <!-- IQC Form -->
+   <!-- IQC Module -->
    <div id="IQCPortal" style="display:none;" class="q-container q-portal">
       <div class="header-nav" style="background: #3498db;"><h3 style="margin:0; color:white;">IQC Portal</h3><button class="back-btn" onclick="openQualityPortal('home')">⬅️ Menu</button></div>
       <div class="tabs">
@@ -163,7 +163,7 @@
       </div>
    </div>
 
-   <!-- PPA Form -->
+   <!-- PPA Module -->
    <div id="PPAPortal" style="display:none;" class="q-container q-portal">
       <div class="header-nav" style="background: #e74c3c;"><h3 style="margin:0; color:white;">PPA Portal</h3><button class="back-btn" onclick="openQualityPortal('home')">⬅️ Menu</button></div>
       <div class="tabs">
@@ -196,7 +196,7 @@
       </div>
    </div>
 
-   <!-- RRT Form -->
+   <!-- RRT Module -->
    <div id="RRTPortal" style="display:none;" class="q-container q-portal">
       <div class="header-nav" style="background: #f1c40f;"><h3 style="margin:0; color:white;">RRT Portal</h3><button class="back-btn" onclick="openQualityPortal('home')">⬅️ Menu</button></div>
       <div class="tabs">
@@ -230,7 +230,7 @@
       </div>
    </div>
 
-   <!-- SQ Form -->
+   <!-- SQ Module -->
    <div id="SQPortal" style="display:none;" class="q-container q-portal">
       <div class="header-nav" style="background: #9b59b6;"><h3 style="margin:0; color:white;">SQ Portal</h3><button class="back-btn" onclick="openQualityPortal('home')">⬅️ Menu</button></div>
       <div class="tabs">
@@ -263,7 +263,7 @@
       </div>
    </div>
 
-   <!-- LPR Form -->
+   <!-- LPR Module -->
    <div id="LPRPortal" style="display:none;" class="q-container q-portal">
       <div class="header-nav" style="background: #1abc9c;"><h3 style="margin:0; color:white;">LPR Portal</h3><button class="back-btn" onclick="openQualityPortal('home')">⬅️ Menu</button></div>
       <div class="tabs">
@@ -280,8 +280,8 @@
             <div class="grid"><div><label>Defect Cause</label><input type="text" name="cause"></div><div><label>Location</label><input type="text" name="location"></div></div>
             <div class="grid"><div><label>Component / Process</label><input type="text" name="component"></div><div><label>Action Taken</label><input type="text" name="action"></div></div>
             <div class="grid">
+                <div><label>Status *</label><select name="status" required><option value="Done">Done</option><option value="Pending">Pending</option></select></div>
                 <div><label>Clearance Decision *</label><select name="decision" required style="background:#e8f8f5; font-weight:bold;"><option value="Pending" selected>🟡 Pending (Decide Later)</option><option value="OK">🟢 OK (Cleared)</option><option value="Reject">🔴 Reject</option><option value="Hold">🟠 Hold</option></select></div>
-                <div><label>Status</label><select name="status"><option value="Done">Done</option><option value="Pending">Pending</option></select></div>
             </div>
             <div class="grid">
                 <div><label>Done By</label><input type="text" name="doneBy"></div>
@@ -302,7 +302,7 @@
    </div>
 </div>
 
-<!-- SUPPORT CONTAINERS -->
+<!-- SUPPORT CONTAINERS (UNCHANGED) -->
 <div id="dashPortal" style="display:none;" class="container container-dash">
   <div class="header-nav" style="background: #2c3e50;"><h3 style="margin:0; color:white;">📊 Global Dashboard</h3><button class="back-btn" onclick="openPortal('home')">⬅️ Main Menu</button></div>
   <div class="content active" style="background: #f4f7f6;">
@@ -492,7 +492,7 @@
   // DEPLOY THIS HTML ON GITHUB PAGES
   // PASTE YOUR GOOGLE SCRIPT WEB APP URL HERE:
   // ==========================================
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw_3nyi8wVGlEIgxkIzu7ma1Foyij3AfzPYwe3NFp1EJzWMmUk1IHsq4ASrM_ftKFZIZQ/exec";
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx1oPCtvr2918Z2hFBEnkMc0_EyYdfdwy9donQhfixaqqDYklsLQbUX8Gp7eE2PleVINw/exec";
 
   function apiCall(actionName, parameters = {}) {
       return fetch(WEB_APP_URL, {
@@ -517,7 +517,7 @@
   }
 
   function submitQuality(module, form) {
-       Swal.fire({title:'Saving Entry...',didOpen:()=>Swal.showLoading()});
+       Swal.fire({title:'Saving Entry & Clearance...',didOpen:()=>Swal.showLoading()});
        let data = serializeForm(form);
        apiCall('q_submitForm', {module: module, data: data}).then(res => {
            if(res.status !== 'success') return Swal.fire('Error', res.message, 'error');
@@ -1355,4 +1355,9 @@
   function closeActiveChat() { currentActiveChatId = null; document.getElementById('activeChatView').style.display = 'none'; document.getElementById('chatListView').style.display = 'block'; fetchAdminChats(); }
   function refreshChatMessages() { if(!currentActiveChatId) return; apiCall('getChatHistory', {chatId: currentActiveChatId}).then(res => { if(res.status!=='success')return; let history = res.data.messages; if (history.length > adminMsgCount) { const box = document.getElementById('chatMessages'); document.querySelectorAll('.temp-msg').forEach(el => el.remove()); for (let i = adminMsgCount; i < history.length; i++) { let m = history[i]; let type = m.sender === "Admin" ? "msg-admin" : "msg-cust"; let displayMsg = m.message; if(displayMsg === "[CMD:REQUEST_FORM]") displayMsg = "<i>📋 Sent Call Registration Form</i>"; else if(displayMsg.indexOf("📎 Shared a photo:") !== -1) { let link = displayMsg.split("Shared a photo: ")[1]; displayMsg = `📎 <a href="${link}" target="_blank" style="color:white; text-decoration:underline;">View Photo</a>`; } box.innerHTML += `<div class="msg-box ${type}">${displayMsg}<span class="msg-time">${m.time}</span></div>`; } box.scrollTop = box.scrollHeight; adminMsgCount = history.length; } if (res.data.status === "Closed") { document.querySelector('.chat-input-area').style.display = 'none'; document.querySelector('.end-chat-btn').style.display = 'none'; if(!document.getElementById('chat-closed-msg')) { document.getElementById('chatMessages').innerHTML += `<div id="chat-closed-msg" style="text-align:center; color:#888; font-size:12px; margin-top:10px;">This chat is closed.</div>`; document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; } } }); }
   function handleEnter(e) { if(e.key === 'Enter') sendAdminReply(); }
-  function sendAdminReply() { const input = document.getElementById('adminReplyText'); const msg = input.value.trim(); if(!msg || !currentActiveChatId) return; input.value = ''; document.getElementById('chatMessages').innerHTML += `<div class="msg-box msg-admin temp-msg">${msg}<span class="msgMujhe is vishay mein madad karne ke liye program nahin kiya gaya hai.
+  function sendAdminReply() { const input = document.getElementById('adminReplyText'); const msg = input.value.trim(); if(!msg || !currentActiveChatId) return; input.value = ''; document.getElementById('chatMessages').innerHTML += `<div class="msg-box msg-admin temp-msg">${msg}<span class="msg-time">Sending...</span></div>`; document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; apiCall('sendChatMessage', {chatId: currentActiveChatId, name: "Admin", phone: "", sender: "Admin", message: msg}); }
+  function sendCallFormRequest() { if(!currentActiveChatId) return; document.getElementById('chatMessages').innerHTML += `<div class="msg-box msg-admin temp-msg"><i>📋 Sending Form...</i></div>`; document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; apiCall('sendChatMessage', {chatId: currentActiveChatId, name: "Admin", phone: "", sender: "Admin", message: "[CMD:REQUEST_FORM]"}); }
+  function endLiveChatAdmin() { if(!currentActiveChatId) return; Swal.fire({ title: "End Chat", input: 'text', inputLabel: 'Enter closing remark for customer:', inputPlaceholder: 'e.g., Issue resolved. Thank you.', showCancelButton: true, confirmButtonText: "Close Chat" }).then((result) => { if (result.isConfirmed) { let remark = result.value || "Chat closed by Agent."; Swal.fire({title:'Closing...', didOpen:()=>Swal.showLoading()}); apiCall('closeLiveChat', {chatId: currentActiveChatId, remark: remark}).then(() => { Swal.close(); closeActiveChat(); }); } }); }
+</script>
+</body>
+</html>
