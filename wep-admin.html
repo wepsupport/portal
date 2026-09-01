@@ -106,29 +106,15 @@
 <div id="qualityLandingScreen" style="display:none;">
     <button class="btn btn-dark" style="width:auto; position:absolute; top:20px; left:20px;" onclick="goBackToMain()"><i class="fa-solid fa-arrow-left"></i> Switch Portal</button>
     <div class="wepsol-logo" style="color:#27ae60;">QUALITY</div><div class="wepsol-sub">MANAGEMENT PORTAL</div>
-    <div class="landing-card" style="border-top-color: #3498db;" onclick="openQualityPortal('IQC')"><h3 style="margin: 0; color:#3498db;">1. IQC (Incoming Quality Control)</h3></div>
-    <div class="landing-card" style="border-top-color: #e74c3c;" onclick="openQualityPortal('PPA')"><h3 style="margin: 0; color:#e74c3c;">2. PPA (Pre-Production Approval)</h3></div>
-    <div class="landing-card" style="border-top-color: #f1c40f;" onclick="openQualityPortal('RRT')"><h3 style="margin: 0; color:#f39c12;">3. RRT (Repair & Rework Tracking)</h3></div>
-    <div class="landing-card" style="border-top-color: #9b59b6;" onclick="openQualityPortal('SQ')"><h3 style="margin: 0; color:#9b59b6;">4. SQ (Supplier Quality)</h3></div>
-    <div class="landing-card" style="border-top-color: #1abc9c;" onclick="openQualityPortal('LPR')"><h3 style="margin: 0; color:#1abc9c;">5. LPR (Line Problem Report)</h3></div>
+    <div class="landing-card" style="border-top-color: #3498db;" onclick="openQualityPortal('IQC')"><h3 style="margin: 0; color:#3498db;">1. IQC</h3></div>
+    <div class="landing-card" style="border-top-color: #e74c3c;" onclick="openQualityPortal('PPA')"><h3 style="margin: 0; color:#e74c3c;">2. PPA</h3></div>
+    <div class="landing-card" style="border-top-color: #f1c40f;" onclick="openQualityPortal('RRT')"><h3 style="margin: 0; color:#f39c12;">3. RRT</h3></div>
+    <div class="landing-card" style="border-top-color: #9b59b6;" onclick="openQualityPortal('SQ')"><h3 style="margin: 0; color:#9b59b6;">4. SQ</h3></div>
+    <div class="landing-card" style="border-top-color: #1abc9c;" onclick="openQualityPortal('LPR')"><h3 style="margin: 0; color:#1abc9c;">5. LPR</h3></div>
 </div>
 
 <!-- QUALITY CONTAINERS -->
 <div id="qualityContainers">
-    
-   <!-- GENERIC UPDATE CLEARANCE PANEL (Used by all Quality Modules) -->
-   <div id="qUpdatePanel" class="panel q-container" style="display:none; border-color:#27ae60; background:#fff; margin-bottom:15px; width:90%; margin:auto;">
-       <h4 id="qUpdTitle" style="color:#27ae60; margin-top:0;"></h4>
-       <form onsubmit="event.preventDefault(); qSubmitUpdate(this);">
-          <input type="hidden" name="module" id="qUpdMod">
-          <input type="hidden" name="row" id="qUpdRow">
-          <div class="grid">
-              <div><label>Clearance Decision *</label><select name="decision" required><option value="OK">🟢 OK (Cleared)</option><option value="Reject">🔴 Reject</option><option value="Hold">🟠 Hold</option></select></div>
-              <div><label>Remarks</label><input type="text" name="remarks" placeholder="Enter remarks or failure reason..."></div>
-          </div>
-          <button class="btn" style="background:#27ae60" type="submit">Save & Update Clearance</button>
-       </form>
-   </div>
 
    <!-- IQC Module -->
    <div id="IQCPortal" style="display:none;" class="q-container q-portal">
@@ -143,11 +129,10 @@
         <form onsubmit="event.preventDefault(); submitQuality('IQC', this);">
             <div class="grid"><div><label>MRR/ RGP Date *</label><input type="date" name="date" required></div><div><label>MRR No. / RGP No. *</label><input type="text" name="mrr" required></div></div>
             <div class="grid"><div><label>Vendor *</label><input type="text" name="vendor" required></div><div><label>Model *</label><select name="model" class="q-model" required></select></div></div>
-            <div class="grid"><div><label>Total Qty</label><input type="number" name="totQty"></div><div><label>Inspected Qty</label><input type="number" name="insQty"></div></div>
-            <div class="grid"><div><label>OK Qty</label><input type="number" name="okQty"></div><div><label>Rejected Qty</label><input type="number" name="rejQty"></div></div>
+            <div class="grid"><div><label>Part Code / Name *</label><select name="partCode" class="q-part" required></select></div><div><label>Total Qty</label><input type="number" name="totQty"></div></div>
+            <div class="grid"><div><label>Inspected Qty</label><input type="number" name="insQty"></div><div><label>Remarks</label><input type="text" name="remarks" placeholder="Enter remarks..."></div></div>
             <div class="grid">
-                <div><label>Clearance Decision *</label><select name="decision" required style="background:#e8f8f5; font-weight:bold;"><option value="Pending" selected>🟡 Pending (Decide Later)</option><option value="OK">🟢 OK (Cleared)</option><option value="Reject">🔴 Reject</option><option value="Hold">🟠 Hold</option></select></div>
-                <div><label>Remarks</label><input type="text" name="remarks" placeholder="Enter remarks or failure reason..."></div>
+                <div><label>Decision *</label><select name="decision" required style="background:#e8f8f5; font-weight:bold;"><option value="Pending" selected>🟡 Pending (Clear Later)</option><option value="OK">🟢 OK (Cleared)</option><option value="Reject">🔴 Reject</option><option value="Hold">🟠 Hold</option></select></div>
             </div>
             <button class="btn" style="background:#3498db" type="submit">Submit IQC Data</button>
         </form>
@@ -159,7 +144,19 @@
           <div id="IQC-reportRes" style="overflow-x:auto;"></div>
       </div>
       <div id="IQC-dash" class="content IQC-content" style="background:#f9f9f9;">
-          <div class="dash-row"><div class="stat-card" style="border-top: 4px solid #3498db;"><h3 id="IQC-dtot">0</h3><p>Total Items</p></div><div class="stat-card" style="border-top: 4px solid #f1c40f;"><h3 id="IQC-dpen">0</h3><p>Pending / Hold</p></div><div class="stat-card" style="border-top: 4px solid #2ecc71;"><h3 id="IQC-dok">0</h3><p>Cleared (OK)</p></div><div class="stat-card" style="border-top: 4px solid #e74c3c;"><h3 id="IQC-drej">0</h3><p>Rejected</p></div></div>
+          <div class="dash-row">
+            <div class="stat-card" style="border-top: 4px solid #3498db;"><h3 id="IQC-dtot">0</h3><p>Total Items</p></div>
+            <div class="stat-card" style="border-top: 4px solid #f1c40f;"><h3 id="IQC-dpen">0</h3><p>Pending / Hold</p></div>
+            <div class="stat-card" style="border-top: 4px solid #2ecc71;"><h3 id="IQC-dok">0</h3><p>Cleared (OK)</p></div>
+            <div class="stat-card" style="border-top: 4px solid #e74c3c;"><h3 id="IQC-drej">0</h3><p>Rejected</p></div>
+          </div>
+          <div class="dash-row">
+            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="IQC-chart-v"></canvas></div>
+            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="IQC-chart-m"></canvas></div>
+          </div>
+          <div class="dash-row">
+            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="IQC-chart-p"></canvas></div>
+          </div>
       </div>
    </div>
 
@@ -175,13 +172,13 @@
       <div id="PPA-entry" class="content PPA-content active">
         <form onsubmit="event.preventDefault(); submitQuality('PPA', this);">
             <div class="grid"><div><label>Date *</label><input type="date" name="date" required></div><div><label>Model *</label><select name="model" class="q-model" required></select></div></div>
-            <div class="grid"><div><label>Lot No *</label><input type="text" name="lot" required></div><div><label>Inspected Qty</label><input type="number" name="qty"></div></div>
-            <div class="grid"><div><label>Status (Pass/Fail) *</label><select name="status" required><option value="Pass">Pass</option><option value="Fail">Fail</option></select></div><div><label>Issues Found</label><input type="text" name="issues"></div></div>
+            <div class="grid"><div><label>Part Code *</label><select name="partCode" class="q-part" required></select></div><div><label>Lot No *</label><input type="text" name="lot" required></div></div>
+            <div class="grid"><div><label>Inspected Qty</label><input type="number" name="qty"></div><div><label>Status (Pass/Fail) *</label><select name="status" required><option value="Pass">Pass</option><option value="Fail">Fail</option></select></div></div>
+            <div class="grid"><div><label>Issues Found</label><input type="text" name="issues"></div><div><label>Approved By *</label><input type="text" name="approvedBy" required></div></div>
             <div class="grid">
-                <div><label>Clearance Decision *</label><select name="decision" required style="background:#e8f8f5; font-weight:bold;"><option value="Pending" selected>🟡 Pending (Decide Later)</option><option value="OK">🟢 OK (Cleared)</option><option value="Reject">🔴 Reject</option><option value="Hold">🟠 Hold</option></select></div>
-                <div><label>Approved By *</label><input type="text" name="approvedBy" required></div>
+                <div><label>Decision *</label><select name="decision" required style="background:#e8f8f5; font-weight:bold;"><option value="Pending" selected>🟡 Pending (Clear Later)</option><option value="OK">🟢 OK (Cleared)</option><option value="Reject">🔴 Reject</option><option value="Hold">🟠 Hold</option></select></div>
+                <div><label>Remarks</label><input type="text" name="remarks" placeholder="Enter remarks..."></div>
             </div>
-            <label>Remarks</label><input type="text" name="remarks" placeholder="Enter remarks...">
             <button class="btn" style="background:#e74c3c" type="submit">Submit PPA Data</button>
         </form>
       </div>
@@ -192,7 +189,19 @@
           <div id="PPA-reportRes" style="overflow-x:auto;"></div>
       </div>
       <div id="PPA-dash" class="content PPA-content" style="background:#f9f9f9;">
-          <div class="dash-row"><div class="stat-card" style="border-top: 4px solid #3498db;"><h3 id="PPA-dtot">0</h3><p>Total Items</p></div><div class="stat-card" style="border-top: 4px solid #f1c40f;"><h3 id="PPA-dpen">0</h3><p>Pending / Hold</p></div><div class="stat-card" style="border-top: 4px solid #2ecc71;"><h3 id="PPA-dok">0</h3><p>Cleared (OK)</p></div><div class="stat-card" style="border-top: 4px solid #e74c3c;"><h3 id="PPA-drej">0</h3><p>Rejected</p></div></div>
+          <div class="dash-row">
+            <div class="stat-card" style="border-top: 4px solid #3498db;"><h3 id="PPA-dtot">0</h3><p>Total Items</p></div>
+            <div class="stat-card" style="border-top: 4px solid #f1c40f;"><h3 id="PPA-dpen">0</h3><p>Pending / Hold</p></div>
+            <div class="stat-card" style="border-top: 4px solid #2ecc71;"><h3 id="PPA-dok">0</h3><p>Cleared (OK)</p></div>
+            <div class="stat-card" style="border-top: 4px solid #e74c3c;"><h3 id="PPA-drej">0</h3><p>Rejected</p></div>
+          </div>
+          <div class="dash-row">
+            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="PPA-chart-v"></canvas></div>
+            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="PPA-chart-m"></canvas></div>
+          </div>
+          <div class="dash-row">
+            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="PPA-chart-p"></canvas></div>
+          </div>
       </div>
    </div>
 
@@ -208,14 +217,13 @@
       <div id="RRT-entry" class="content RRT-content active">
         <form onsubmit="event.preventDefault(); submitQuality('RRT', this);">
             <div class="grid"><div><label>Repair Date *</label><input type="date" name="date" required></div><div><label>Model *</label><select name="model" class="q-model" required></select></div></div>
-            <div class="grid"><div><label>PCB Sl No. *</label><input type="text" name="serial" required></div><div><label>Problem Occurs *</label><input type="text" name="problem" required></div></div>
-            <div class="grid"><div><label>Defect Cause</label><input type="text" name="cause"></div><div><label>Location / Area</label><input type="text" name="location"></div></div>
-            <div class="grid"><div><label>Component Replaced</label><input type="text" name="component"></div><div><label>Rework By</label><input type="text" name="reworkBy"></div></div>
+            <div class="grid"><div><label>Part Code *</label><select name="partCode" class="q-part" required></select></div><div><label>PCB Sl No. *</label><input type="text" name="serial" required></div></div>
+            <div class="grid"><div><label>Problem Occurs *</label><input type="text" name="problem" required></div><div><label>Defect Cause</label><input type="text" name="cause"></div></div>
+            <div class="grid"><div><label>Location / Area</label><input type="text" name="location"></div><div><label>Component Replaced</label><input type="text" name="component"></div></div>
+            <div class="grid"><div><label>Rework By</label><input type="text" name="reworkBy"></div><div><label>Remarks</label><input type="text" name="remarks"></div></div>
             <div class="grid">
-                <div><label>Clearance Decision *</label><select name="decision" required style="background:#e8f8f5; font-weight:bold;"><option value="Pending" selected>🟡 Pending (Decide Later)</option><option value="OK">🟢 OK (Cleared)</option><option value="Reject">🔴 Reject</option><option value="Hold">🟠 Hold</option></select></div>
-                <div><label>Status</label><select name="status"><option value="Done">Done</option><option value="Pending">Pending</option></select></div>
+                <div><label>Decision *</label><select name="decision" required style="background:#e8f8f5; font-weight:bold;"><option value="Pending" selected>🟡 Pending (Clear Later)</option><option value="OK">🟢 OK (Cleared)</option><option value="Reject">🔴 Reject</option><option value="Hold">🟠 Hold</option></select></div>
             </div>
-            <label>Remarks</label><input type="text" name="remarks" placeholder="Enter remarks...">
             <button class="btn" style="background:#f39c12" type="submit">Submit RRT Data</button>
         </form>
       </div>
@@ -227,6 +235,11 @@
       </div>
       <div id="RRT-dash" class="content RRT-content" style="background:#f9f9f9;">
           <div class="dash-row"><div class="stat-card" style="border-top: 4px solid #3498db;"><h3 id="RRT-dtot">0</h3><p>Total Items</p></div><div class="stat-card" style="border-top: 4px solid #f1c40f;"><h3 id="RRT-dpen">0</h3><p>Pending / Hold</p></div><div class="stat-card" style="border-top: 4px solid #2ecc71;"><h3 id="RRT-dok">0</h3><p>Cleared (OK)</p></div><div class="stat-card" style="border-top: 4px solid #e74c3c;"><h3 id="RRT-drej">0</h3><p>Rejected</p></div></div>
+          <div class="dash-row">
+            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="RRT-chart-v"></canvas></div>
+            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="RRT-chart-m"></canvas></div>
+          </div>
+          <div class="dash-row"><div class="chart-container" style="flex:1; height: 260px;"><canvas id="RRT-chart-p"></canvas></div></div>
       </div>
    </div>
 
@@ -242,13 +255,12 @@
       <div id="SQ-entry" class="content SQ-content active">
         <form onsubmit="event.preventDefault(); submitQuality('SQ', this);">
             <div class="grid"><div><label>Date *</label><input type="date" name="date" required></div><div><label>Vendor Name *</label><input type="text" name="vendor" required></div></div>
-            <div class="grid"><div><label>Part Name *</label><input type="text" name="part" required></div><div><label>Defect Found *</label><input type="text" name="defect" required></div></div>
+            <div class="grid"><div><label>Part Code *</label><select name="partCode" class="q-part" required></select></div><div><label>Defect Found *</label><input type="text" name="defect" required></div></div>
             <div class="grid"><div><label>CAPA Required? *</label><select name="capa" required><option value="Yes">Yes</option><option value="No">No</option></select></div><div><label>Action Taken</label><input type="text" name="action"></div></div>
+            <div class="grid"><div><label>Quality Engineer *</label><input type="text" name="engineer" required></div><div><label>Remarks</label><input type="text" name="remarks"></div></div>
             <div class="grid">
-                <div><label>Clearance Decision *</label><select name="decision" required style="background:#e8f8f5; font-weight:bold;"><option value="Pending" selected>🟡 Pending (Decide Later)</option><option value="OK">🟢 OK (Cleared)</option><option value="Reject">🔴 Reject</option><option value="Hold">🟠 Hold</option></select></div>
-                <div><label>Quality Engineer *</label><input type="text" name="engineer" required></div>
+                <div><label>Decision *</label><select name="decision" required style="background:#e8f8f5; font-weight:bold;"><option value="Pending" selected>🟡 Pending (Clear Later)</option><option value="OK">🟢 OK (Cleared)</option><option value="Reject">🔴 Reject</option><option value="Hold">🟠 Hold</option></select></div>
             </div>
-            <label>Remarks</label><input type="text" name="remarks" placeholder="Enter remarks...">
             <button class="btn" style="background:#9b59b6" type="submit">Submit SQ Data</button>
         </form>
       </div>
@@ -260,6 +272,11 @@
       </div>
       <div id="SQ-dash" class="content SQ-content" style="background:#f9f9f9;">
           <div class="dash-row"><div class="stat-card" style="border-top: 4px solid #3498db;"><h3 id="SQ-dtot">0</h3><p>Total Items</p></div><div class="stat-card" style="border-top: 4px solid #f1c40f;"><h3 id="SQ-dpen">0</h3><p>Pending / Hold</p></div><div class="stat-card" style="border-top: 4px solid #2ecc71;"><h3 id="SQ-dok">0</h3><p>Cleared (OK)</p></div><div class="stat-card" style="border-top: 4px solid #e74c3c;"><h3 id="SQ-drej">0</h3><p>Rejected</p></div></div>
+          <div class="dash-row">
+            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="SQ-chart-v"></canvas></div>
+            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="SQ-chart-m"></canvas></div>
+          </div>
+          <div class="dash-row"><div class="chart-container" style="flex:1; height: 260px;"><canvas id="SQ-chart-p"></canvas></div></div>
       </div>
    </div>
 
@@ -275,16 +292,13 @@
       <div id="LPR-entry" class="content LPR-content active">
         <form onsubmit="event.preventDefault(); submitQuality('LPR', this);">
             <div class="grid"><div><label>LPR Issue Date *</label><input type="date" name="issueDate" required></div><div><label>Receiving Date *</label><input type="date" name="recDate" required></div></div>
-            <div class="grid"><div><label>Model *</label><select name="model" class="q-model" required></select></div><div><label>Serial No.</label><input type="text" name="serial"></div></div>
-            <div class="grid"><div><label>Problem (from Prod) *</label><input type="text" name="problem" required></div><div><label>IQC Observation</label><input type="text" name="observation"></div></div>
-            <div class="grid"><div><label>Defect Cause</label><input type="text" name="cause"></div><div><label>Location</label><input type="text" name="location"></div></div>
-            <div class="grid"><div><label>Component / Process</label><input type="text" name="component"></div><div><label>Action Taken</label><input type="text" name="action"></div></div>
+            <div class="grid"><div><label>Model *</label><select name="model" class="q-model" required></select></div><div><label>Part Code *</label><select name="partCode" class="q-part" required></select></div></div>
+            <div class="grid"><div><label>Serial No.</label><input type="text" name="serial"></div><div><label>Problem (from Prod) *</label><input type="text" name="problem" required></div></div>
+            <div class="grid"><div><label>IQC Observation</label><input type="text" name="observation"></div><div><label>Defect Cause</label><input type="text" name="cause"></div></div>
+            <div class="grid"><div><label>Location</label><input type="text" name="location"></div><div><label>Component / Process</label><input type="text" name="component"></div></div>
+            <div class="grid"><div><label>Action Taken</label><input type="text" name="action"></div><div><label>Done By</label><input type="text" name="doneBy"></div></div>
             <div class="grid">
-                <div><label>Status *</label><select name="status" required><option value="Done">Done</option><option value="Pending">Pending</option></select></div>
-                <div><label>Clearance Decision *</label><select name="decision" required style="background:#e8f8f5; font-weight:bold;"><option value="Pending" selected>🟡 Pending (Decide Later)</option><option value="OK">🟢 OK (Cleared)</option><option value="Reject">🔴 Reject</option><option value="Hold">🟠 Hold</option></select></div>
-            </div>
-            <div class="grid">
-                <div><label>Done By</label><input type="text" name="doneBy"></div>
+                <div><label>Decision *</label><select name="decision" required style="background:#e8f8f5; font-weight:bold;"><option value="Pending" selected>🟡 Pending (Clear Later)</option><option value="OK">🟢 OK (Cleared)</option><option value="Reject">🔴 Reject</option><option value="Hold">🟠 Hold</option></select></div>
                 <div><label>Remarks</label><input type="text" name="remarks" placeholder="Enter remarks..."></div>
             </div>
             <button class="btn" style="background:#1abc9c" type="submit">Submit LPR Data</button>
@@ -298,6 +312,11 @@
       </div>
       <div id="LPR-dash" class="content LPR-content" style="background:#f9f9f9;">
           <div class="dash-row"><div class="stat-card" style="border-top: 4px solid #3498db;"><h3 id="LPR-dtot">0</h3><p>Total Items</p></div><div class="stat-card" style="border-top: 4px solid #f1c40f;"><h3 id="LPR-dpen">0</h3><p>Pending / Hold</p></div><div class="stat-card" style="border-top: 4px solid #2ecc71;"><h3 id="LPR-dok">0</h3><p>Cleared (OK)</p></div><div class="stat-card" style="border-top: 4px solid #e74c3c;"><h3 id="LPR-drej">0</h3><p>Rejected</p></div></div>
+          <div class="dash-row">
+            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="LPR-chart-v"></canvas></div>
+            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="LPR-chart-m"></canvas></div>
+          </div>
+          <div class="dash-row"><div class="chart-container" style="flex:1; height: 260px;"><canvas id="LPR-chart-p"></canvas></div></div>
       </div>
    </div>
 </div>
@@ -492,7 +511,7 @@
   // DEPLOY THIS HTML ON GITHUB PAGES
   // PASTE YOUR GOOGLE SCRIPT WEB APP URL HERE:
   // ==========================================
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzdfi419mRYcJuX7fMzPw-E4DgvjzwYbZWwx6YOHlIdAVWbq5OIXBKMnOH0qWm2HwXNFw/exec";
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbx5wb0l1AmEhZuRq6zBcoUbeZ2eWA4zXBhKmcD0ewniX48zouSDIrZgWUhZ2dST38dtwA/exec";
 
   function apiCall(actionName, parameters = {}) {
       return fetch(WEB_APP_URL, {
@@ -517,7 +536,7 @@
   }
 
   function submitQuality(module, form) {
-       Swal.fire({title:'Saving Entry & Clearance...',didOpen:()=>Swal.showLoading()});
+       Swal.fire({title:'Saving Entry...',didOpen:()=>Swal.showLoading()});
        let data = serializeForm(form);
        apiCall('q_submitForm', {module: module, data: data}).then(res => {
            if(res.status !== 'success') return Swal.fire('Error', res.message, 'error');
@@ -531,7 +550,6 @@
       document.querySelectorAll('.' + prefix + '-tab').forEach(t=>t.classList.remove('active'));
       document.getElementById(id).classList.add('active');
       event.currentTarget.classList.add('active');
-      document.getElementById('qUpdatePanel').style.display = 'none';
   }
 
   function qLoadPending(module) {
@@ -539,38 +557,67 @@
       apiCall('q_getPending', {module: module}).then(res => {
           if(res.status !== 'success') return;
           let d = res.data;
-          if(!d.length){ document.getElementById(module + '-pendingList').innerHTML="No pending clearance."; return; } 
+          if(!d.length){ document.getElementById(module + '-pendingList').innerHTML="No pending items."; return; } 
           let h=""; 
           d.forEach(x => { 
               let c = x.status === "Hold" ? "orange" : "red";
-              h += `<div class="card" onclick="qOpenUpdate('${module}', ${x.row}, '${safeB64(x.title)}')"><div class="tat-badge" style="color:${c}; border:1px solid ${c};">${x.status}</div><b>${x.title}</b><br><small>Entry Date: ${x.date}</small><br><small style="color:#555;">Remarks: ${x.remarks || 'None'}</small></div>`; 
+              h += `<div class="card" onclick="qOpenSweetUpdate('${module}', ${x.row}, '${safeB64(x.title)}', '${x.okQty}', '${x.rejQty}')">
+                      <div class="tat-badge" style="color:${c}; border:1px solid ${c};">${x.status}</div>
+                      <b>${x.title}</b><br><small>Entry Date: ${x.date}</small><br><small style="color:#555;">Remarks: ${x.remarks || 'None'}</small>
+                    </div>`; 
           }); 
           document.getElementById(module + '-pendingList').innerHTML = h; 
       });
   }
 
-  function qOpenUpdate(module, row, titleBase64) {
+  function qOpenSweetUpdate(module, row, titleBase64, defOk, defRej) {
       let title = safeDec(titleBase64);
-      let panel = document.getElementById('qUpdatePanel');
-      document.getElementById(module + '-pendingList').parentNode.insertBefore(panel, document.getElementById(module + '-pendingList'));
-      panel.style.display = 'block';
-      document.getElementById('qUpdTitle').innerText = "Update: " + title;
-      document.getElementById('qUpdMod').value = module;
-      document.getElementById('qUpdRow').value = row;
+      let qtyHtml = '';
+      if (module === 'IQC' || module === 'PPA') {
+          qtyHtml = `
+          <div style="display:flex; gap:10px; margin-bottom:15px;">
+              <div style="flex:1; text-align:left;"><label style="font-size:12px; color:#555; font-weight:bold;">OK Qty</label><input type="number" id="swal-ok" class="swal2-input" style="margin:0; width:100%; height:40px; font-size:14px; background:#f0fdf4;" value="${defOk}"></div>
+              <div style="flex:1; text-align:left;"><label style="font-size:12px; color:#555; font-weight:bold;">Reject Qty</label><input type="number" id="swal-rej" class="swal2-input" style="margin:0; width:100%; height:40px; font-size:14px; background:#fff0f0;" value="${defRej}"></div>
+          </div>`;
+      }
+      
+      Swal.fire({
+          title: '<span style="font-size:16px; color:#27ae60;">' + title + '</span>',
+          html: `
+          <div style="text-align:left;">
+              ${qtyHtml}
+              <label style="font-size:12px; color:#555; font-weight:bold;">Decision *</label>
+              <select id="swal-dec" class="swal2-input" style="margin:0 0 15px 0; width:100%; height:40px; font-size:14px;">
+                  <option value="OK">🟢 OK</option>
+                  <option value="Reject">🔴 Reject</option>
+                  <option value="Hold">🟠 Hold</option>
+              </select>
+              <label style="font-size:12px; color:#555; font-weight:bold;">Remarks</label>
+              <textarea id="swal-rem" class="swal2-textarea" style="margin:0; width:100%; height:60px; font-size:14px;" placeholder="Enter remarks..."></textarea>
+          </div>
+          `,
+          showCancelButton: true,
+          confirmButtonText: 'Save Decision',
+          confirmButtonColor: '#27ae60',
+          preConfirm: () => {
+              let dec = document.getElementById('swal-dec').value;
+              let rem = document.getElementById('swal-rem').value;
+              let okQ = document.getElementById('swal-ok') ? document.getElementById('swal-ok').value : null;
+              let rejQ = document.getElementById('swal-rej') ? document.getElementById('swal-rej').value : null;
+              return { dec: dec, rem: rem, okQ: okQ, rejQ: rejQ };
+          }
+      }).then((result) => {
+          if(result.isConfirmed) {
+              qSubmitUpdate(module, row, result.value.dec, result.value.rem, result.value.okQ, result.value.rejQ);
+          }
+      });
   }
 
-  function qSubmitUpdate(form) {
-      let mod = document.getElementById('qUpdMod').value;
-      let row = document.getElementById('qUpdRow').value;
-      let dec = form.decision.value;
-      let rem = form.remarks.value;
-      
-      Swal.fire({title:'Updating Clearance...',didOpen:()=>Swal.showLoading()});
-      apiCall('q_updateDecision', {module: mod, row: row, decision: dec, remarks: rem}).then(res => {
+  function qSubmitUpdate(mod, row, dec, rem, okQ, rejQ) {
+      Swal.fire({title:'Updating...',didOpen:()=>Swal.showLoading()});
+      apiCall('q_updateDecision', {module: mod, row: row, decision: dec, remarks: rem, okQty: okQ, rejQty: rejQ}).then(res => {
           if(res.status !== 'success') return Swal.fire('Error', res.message, 'error');
           Swal.fire('Updated!', res.data, 'success');
-          document.getElementById('qUpdatePanel').style.display = 'none';
-          form.reset();
           qLoadPending(mod);
       });
   }
@@ -608,6 +655,7 @@
       });
   }
 
+  let qCharts = {};
   function qLoadDashboard(module) {
       document.getElementById(module + '-dtot').innerText = "...";
       apiCall('q_getDashboardStats', {module: module}).then(res => {
@@ -617,7 +665,71 @@
           document.getElementById(module + '-dpen').innerText = stats.pending + stats.hold;
           document.getElementById(module + '-dok').innerText = stats.ok;
           document.getElementById(module + '-drej').innerText = stats.reject;
+          
+          renderQualityCharts(module, stats);
       });
+  }
+
+  function renderQualityCharts(module, stats) {
+      if(qCharts[module+'_v']) qCharts[module+'_v'].destroy();
+      if(qCharts[module+'_m']) qCharts[module+'_m'].destroy();
+      if(qCharts[module+'_p']) qCharts[module+'_p'].destroy();
+
+      let ctxV = document.getElementById(module+'-chart-v');
+      let ctxM = document.getElementById(module+'-chart-m');
+      let ctxP = document.getElementById(module+'-chart-p');
+
+      if(ctxV) {
+          let vLabels = Object.keys(stats.vendors);
+          let vData = vLabels.map(v => stats.vendors[v].details.length);
+          let bgColors = ['#3498db','#e74c3c','#f1c40f','#2ecc71','#9b59b6','#1abc9c','#34495e'];
+          qCharts[module+'_v'] = new Chart(ctxV.getContext('2d'), {
+              type: 'doughnut',
+              data: { labels: vLabels, datasets: [{ data: vData, backgroundColor: bgColors }] },
+              options: { maintainAspectRatio: false, plugins: { title: {display:true, text:'Vendor Wise (Click for details)'}}, onClick: (e, els) => handleQChartClick('Vendor', stats.vendors, els, qCharts[module+'_v']) }
+          });
+      }
+      if(ctxM) {
+          let mLabels = Object.keys(stats.models);
+          let mData = mLabels.map(m => stats.models[m].details.length);
+          qCharts[module+'_m'] = new Chart(ctxM.getContext('2d'), {
+              type: 'bar',
+              data: { labels: mLabels, datasets: [{ label: 'Total Items', data: mData, backgroundColor: '#0984e3' }] },
+              options: { maintainAspectRatio: false, plugins: { title: {display:true, text:'Model Wise (Click for details)'}}, onClick: (e, els) => handleQChartClick('Model', stats.models, els, qCharts[module+'_m']) }
+          });
+      }
+      if(ctxP) {
+          let pLabels = Object.keys(stats.parts);
+          let pData = pLabels.map(p => stats.parts[p].details.length);
+          qCharts[module+'_p'] = new Chart(ctxP.getContext('2d'), {
+              type: 'bar',
+              data: { labels: pLabels, datasets: [{ label: 'Total Items', data: pData, backgroundColor: '#27ae60' }] },
+              options: { maintainAspectRatio: false, plugins: { title: {display:true, text:'Part Wise (Click for details)'}}, onClick: (e, els) => handleQChartClick('Part', stats.parts, els, qCharts[module+'_p']) }
+          });
+      }
+  }
+
+  function handleQChartClick(category, dataObj, elements, chartInst) {
+      if(!elements.length) return;
+      let label = chartInst.data.labels[elements[0].index];
+      let details = dataObj[label].details;
+      let h = `<table style="width:100%; text-align:left; font-size:12px; border-collapse:collapse;">
+               <tr><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Date</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Status</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">OK Qty</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Rej Qty</th></tr>`;
+      details.forEach(r => {
+          let clr = "black";
+          if(r.dec === "OK") clr = "green";
+          else if(r.dec === "REJECT") clr = "red";
+          else if(r.dec === "HOLD") clr = "orange";
+          
+          h += `<tr>
+                  <td style="border-bottom:1px solid #eee; padding:5px;">${r.date}</td>
+                  <td style="border-bottom:1px solid #eee; padding:5px; color:${clr}; font-weight:bold;">${r.dec}</td>
+                  <td style="border-bottom:1px solid #eee; padding:5px;">${r.okQ}</td>
+                  <td style="border-bottom:1px solid #eee; padding:5px;">${r.rejQ}</td>
+                </tr>`;
+      });
+      h += '</table>';
+      Swal.fire({title: `${category}: ${label}`, html: `<div style="max-height:300px; overflow-y:auto;">${h}</div>`, width: '80%', showCloseButton: true, showConfirmButton: false});
   }
 
   google.charts.load('current', {'packages':['geochart']});
@@ -636,55 +748,6 @@
   let currentRawProblems = null; 
   let currentRawStates = null; 
   let qUserPasswords = {};
-
-  function safeB64(str) { return btoa(unescape(encodeURIComponent(str || ''))); }
-  function safeDec(b64) { return decodeURIComponent(escape(atob(b64 || ''))); }
-  function numToWords(num) {
-    if(num == 0 || isNaN(num)) return "Zero";
-    let a = ['','One ','Two ','Three ','Four ', 'Five ','Six ','Seven ','Eight ','Nine ','Ten ','Eleven ','Twelve ','Thirteen ','Fourteen ','Fifteen ','Sixteen ','Seventeen ','Eighteen ','Nineteen '];
-    let b = ['', '', 'Twenty','Thirty','Forty','Fifty', 'Sixty','Seventy','Eighty','Ninety'];
-    let n = Math.floor(Math.abs(num));
-    if ((n = n.toString()).length > 9) return 'Overflow';
-    let nArray = ('000000000' + n).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
-    if (!nArray) return; 
-    let str = '';
-    str += (nArray[1] != 0) ? (a[Number(nArray[1])] || b[nArray[1][0]] + ' ' + a[nArray[1][1]]) + 'Crore ' : '';
-    str += (nArray[2] != 0) ? (a[Number(nArray[2])] || b[nArray[2][0]] + ' ' + a[nArray[2][1]]) + 'Lakh ' : '';
-    str += (nArray[3] != 0) ? (a[Number(nArray[3])] || b[nArray[3][0]] + ' ' + a[nArray[3][1]]) + 'Thousand ' : '';
-    str += (nArray[4] != 0) ? (a[Number(nArray[4])] || b[nArray[4][0]] + ' ' + a[nArray[4][1]]) + 'Hundred ' : '';
-    str += (nArray[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(nArray[5])] || b[nArray[5][0]] + ' ' + a[nArray[5][1]]) : '';
-    return str.trim();
-  }
-  function filterTable(containerId, val) {
-      let table = document.querySelector('#' + containerId + ' table');
-      if(!table) return;
-      let rows = table.getElementsByTagName('tr');
-      let q = val.toLowerCase();
-      for(let i = 1; i < rows.length; i++) {
-          let text = rows[i].innerText.toLowerCase();
-          rows[i].style.display = text.includes(q) ? '' : 'none';
-      }
-  }
-  function filterPwTable() {
-      let type = document.getElementById('pwSearchType').value;
-      let val = document.getElementById('pwSearchInput').value.toLowerCase();
-      let table = document.querySelector('#pwReportRes table');
-      if(!table) return;
-      let rows = table.getElementsByTagName('tr');
-      for(let i = 1; i < rows.length; i++) {
-          let show = false;
-          if(type === "all") {
-              show = rows[i].innerText.toLowerCase().includes(val);
-          } else {
-              let colIdx = parseInt(type);
-              let cells = rows[i].getElementsByTagName('td');
-              if(cells.length > colIdx && cells[colIdx].innerText.toLowerCase().includes(val)) {
-                  show = true;
-              }
-          }
-          rows[i].style.display = show ? '' : 'none';
-      }
-  }
 
   function goBackToMain() {
       ['mainSelectionScreen','loginScreen','qualityLoginScreen','landingScreen','qualityLandingScreen','dashPortal','pwPortal','ctPortal','wcrPortal'].forEach(id => {
