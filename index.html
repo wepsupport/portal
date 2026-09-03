@@ -213,14 +213,15 @@
     let globalModels = [];
     let treeNodes=[], selectedModelText="", currentPath=[], myChatId=null, lastChatId=null, myName="", myPhone="", myMsgCount=0, formTriggeredIds={}, callFormActive=false;
     let finalSelectedNode = null;
+    let globalTickets = []; // Used for multi-tracking
     
     window.onload = () => {
+        // Fetch Chatbot & Model Data in Background
         apiCall('getChatbotInitialData').then(res => {
             document.getElementById('globalLoader').style.display = 'none';
             if(res.status === 'success') {
-                let data = res.data;
-                treeNodes = data.nodes; 
-                globalModels = data.models;
+                treeNodes = res.data.nodes; 
+                globalModels = res.data.models;
                 const drp = document.getElementById('printerModelDropdown');
                 globalModels.forEach(m => { let opt = document.createElement('option'); opt.value = m; opt.innerText = m; drp.appendChild(opt); });
                 document.getElementById('landingPage').style.display = 'flex';
@@ -340,7 +341,7 @@
           input: 'text', 
           inputPlaceholder: 'e.g. CT-0001 or 10-digit Mobile', 
           showCancelButton: true, 
-          confirmButtonText: 'Track Status',
+          confirmButtonText: 'Search',
           confirmButtonColor: '#ff0073' 
       });
       if (taskId) { 
@@ -348,28 +349,58 @@
           
           apiCall('trackCustomerTask', {taskId: taskId}).then(res => {
               if(res.status === 'success') {
-                  let d = res.data;
-                  if(d.status === "Not Found") { 
-                      Swal.fire("Not Found", "No ticket found with this details.", "error"); 
-                  } else { 
-                      let html = `<div style='text-align:left; font-size:13px;'><b>Status:</b> <span style="color:#e74c3c">${d.status}</span><br><br><b>Details:</b><br> ${d.details}<br><br><b>Chat History:</b><br><div style='max-height:200px; overflow-y:auto; background:#f4f4f4; padding:10px; border-radius:5px; margin-top:5px;'>`; 
-                      if(d.history && d.history.length > 0) { 
-                          d.history.forEach(m => { 
-                              let dMsg = m.message; 
-                              if(dMsg.indexOf("📎 Shared a photo: ") !== -1) { dMsg = `📎 <a href="${dMsg.split("Shared a photo: ")[1]}" target="_blank">View Photo</a>`; } 
-                              html += `<b>${m.sender}:</b> ${dMsg} <br><small style='color:#888'>${m.time}</small><hr style='margin:4px 0; border:0; border-top:1px solid #ddd;'>`; 
-                          }); 
-                      } else { 
-                          html += `<i>No chat history.</i>`; 
-                      } 
-                      html += `</div></div>`; 
-                      Swal.fire({ title: "Result Found", html: html, confirmButtonColor: '#3498db' }); 
-                  } 
+                  let tickets = res.data;
+                  if(!tickets || tickets.length === 0) { 
+                      Swal.fire("Not Found", "No tickets found for this detail.", "error"); 
+                  } else if(tickets.length === 1) {
+                      showSingleTicket(tickets[0]);
+                  } else {
+                      let h = `<div style="text-align:left; max-height:300px; overflow-y:auto;">`;
+                      tickets.forEach((t, idx) => {
+                          let clr = t.status.toLowerCase() === 'closed' ? 'green' : '#e74c3c';
+                          h += `<div style="padding:10px; border:1px solid #ddd; margin-bottom:10px; border-radius:8px; cursor:pointer; background:#f9f9f9;" onclick="openTicketIdx(${idx})">
+                                  <b>${t.taskId}</b> - ${t.date}<br>
+                                  <small>${t.model}</small><br>
+                                  <span style="color:${clr}; font-weight:bold; font-size:12px;">${t.status}</span>
+                                </div>`;
+                      });
+                      h += `</div>`;
+                      globalTickets = tickets;
+                      Swal.fire({title: "Select Ticket", html: h, showConfirmButton: false, showCloseButton: true});
+                  }
               } else {
                   Swal.fire('Error', res.message, 'error');
               }
           });
       }
+    }
+
+    function openTicketIdx(idx) {
+        if(globalTickets && globalTickets[idx]) {
+            showSingleTicket(globalTickets[idx]);
+        }
+    }
+
+    function showSingleTicket(d) {
+        let html = `<div style='text-align:left; font-size:13px;'>
+                      <b>Task ID:</b> ${d.taskId}<br>
+                      <b>Status:</b> <span style="color:#e74c3c; font-weight:bold;">${d.status}</span><br>
+                      <b>Model:</b> ${d.model}<br>
+                      <b>Issue:</b> ${d.issue}<br><br>
+                      <b>Chat History:</b><br>
+                      <div style='max-height:200px; overflow-y:auto; background:#f4f4f4; padding:10px; border-radius:5px; margin-top:5px;'>`; 
+        
+        if(d.history && d.history.length > 0) { 
+            d.history.forEach(m => { 
+                let dMsg = m.message; 
+                if(dMsg.indexOf("📎 Shared a photo: ") !== -1) { dMsg = `📎 <a href="${dMsg.split("Shared a photo: ")[1]}" target="_blank">View Photo</a>`; } 
+                html += `<b>${m.sender}:</b> ${dMsg} <br><small style='color:#888'>${m.time}</small><hr style='margin:4px 0; border:0; border-top:1px solid #ddd;'>`; 
+            }); 
+        } else { 
+            html += `<i>No chat history.</i>`; 
+        } 
+        html += `</div></div>`; 
+        Swal.fire({ title: "Ticket Details", html: html, confirmButtonColor: '#3498db' });
     }
     
     // ----------- EXISTING CHATBOT LOGIC -----------
