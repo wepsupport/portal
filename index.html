@@ -23,6 +23,8 @@
     .action-card i { font-size: 40px; color: var(--main-color); margin-bottom: 15px; }
     .action-card h3 { margin: 0; color: #2c3e50; font-size: 18px; }
     .action-card p { margin: 10px 0 0 0; color: #7f8fa6; font-size: 13px; line-height: 1.4; }
+    .track-btn-main { background: #34495e; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; margin-top: 20px; transition: 0.3s; }
+    .track-btn-main:hover { background: #2c3e50; }
     
     /* Form Styles */
     .form-container { background: #fff; padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); width: 100%; max-width: 500px; }
@@ -110,6 +112,9 @@
               <p>Get instant troubleshooting or chat live with an agent.</p>
           </div>
       </div>
+      
+      <!-- General Track Button on Landing Page -->
+      <button class="track-btn-main" onclick="trackTaskModal()"><i class="fa-solid fa-magnifying-glass"></i> Track Ticket Status</button>
   </div>
 
   <!-- 2. DYNAMIC FORM PAGE -->
@@ -187,15 +192,18 @@
     // ==========================================
     // PASTE YOUR GOOGLE SCRIPT WEB APP URL HERE:
     // ==========================================
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxegxGN8YlxDNZ5zcIxOQrgsSghHwo_EYEFYe9w_zOlIAxwA4iADiSQoG1rdzWSjCTWaw/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwquvlCz7yGQfN2qzcpkMRUockuSrUNBGQpHuzy2kEHE_n9ii9VxI9bvo28-4pKlE-PeQ/exec";
     
     function apiCall(actionName, parameters = {}) {
         return fetch(WEB_APP_URL, {
             method: "POST",
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            headers: {
+                "Content-Type": "text/plain;charset=utf-8",
+            },
             body: JSON.stringify({ action: actionName, params: parameters })
-        }).then(response => response.json())
-          .catch(error => {
+        })
+        .then(response => response.json())
+        .catch(error => {
             console.error("API Error:", error);
             Swal.fire('Connection Error', 'Failed to connect to server.', 'error');
             return {status: 'error', message: error.message};
@@ -207,12 +215,12 @@
     let finalSelectedNode = null;
     
     window.onload = () => {
-        // Fetch Chatbot & Model Data in Background
         apiCall('getChatbotInitialData').then(res => {
             document.getElementById('globalLoader').style.display = 'none';
             if(res.status === 'success') {
-                treeNodes = res.data.nodes; 
-                globalModels = res.data.models;
+                let data = res.data;
+                treeNodes = data.nodes; 
+                globalModels = data.models;
                 const drp = document.getElementById('printerModelDropdown');
                 globalModels.forEach(m => { let opt = document.createElement('option'); opt.value = m; opt.innerText = m; drp.appendChild(opt); });
                 document.getElementById('landingPage').style.display = 'flex';
@@ -327,14 +335,22 @@
     }
 
     async function trackTaskModal() {
-      const { value: taskId } = await Swal.fire({ title: "Track Ticket/Chat", input: 'text', inputPlaceholder: 'e.g. CT-0001', showCancelButton: true, confirmButtonColor: '#ff0073' });
+      const { value: taskId } = await Swal.fire({ 
+          title: "Track Ticket/Chat Status", 
+          input: 'text', 
+          inputPlaceholder: 'e.g. CT-0001 or 10-digit Mobile', 
+          showCancelButton: true, 
+          confirmButtonText: 'Track Status',
+          confirmButtonColor: '#ff0073' 
+      });
       if (taskId) { 
           Swal.fire({title: 'Searching...', allowOutsideClick: false, didOpen: () => Swal.showLoading()}); 
+          
           apiCall('trackCustomerTask', {taskId: taskId}).then(res => {
               if(res.status === 'success') {
                   let d = res.data;
                   if(d.status === "Not Found") { 
-                      Swal.fire("Not Found", "No ticket found with this ID", "error"); 
+                      Swal.fire("Not Found", "No ticket found with this details.", "error"); 
                   } else { 
                       let html = `<div style='text-align:left; font-size:13px;'><b>Status:</b> <span style="color:#e74c3c">${d.status}</span><br><br><b>Details:</b><br> ${d.details}<br><br><b>Chat History:</b><br><div style='max-height:200px; overflow-y:auto; background:#f4f4f4; padding:10px; border-radius:5px; margin-top:5px;'>`; 
                       if(d.history && d.history.length > 0) { 
@@ -343,11 +359,15 @@
                               if(dMsg.indexOf("📎 Shared a photo: ") !== -1) { dMsg = `📎 <a href="${dMsg.split("Shared a photo: ")[1]}" target="_blank">View Photo</a>`; } 
                               html += `<b>${m.sender}:</b> ${dMsg} <br><small style='color:#888'>${m.time}</small><hr style='margin:4px 0; border:0; border-top:1px solid #ddd;'>`; 
                           }); 
-                      } else { html += `<i>No chat history.</i>`; } 
+                      } else { 
+                          html += `<i>No chat history.</i>`; 
+                      } 
                       html += `</div></div>`; 
-                      Swal.fire({ title: "Ticket: " + taskId, html: html, confirmButtonColor: '#3498db' }); 
+                      Swal.fire({ title: "Result Found", html: html, confirmButtonColor: '#3498db' }); 
                   } 
-              } else { Swal.fire('Error', res.message, 'error'); }
+              } else {
+                  Swal.fire('Error', res.message, 'error');
+              }
           });
       }
     }
