@@ -5,32 +5,32 @@
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Added Google Charts for the Map -->
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <style>
     :root { --brand: #0984e3; --brand2: #ff006e; --brand3: #e67e22; --bg: #f5f6fa; } 
     body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 10px; }
     
-    input[required], select[required], textarea[required] { background-color: #f0fdf4 !important; border: 1px solid #2ecc71 !important; }
+    /* Highlight for Mandatory Fields */
+    input[required], select[required], textarea[required] {
+        background-color: #f0fdf4 !important;
+        border: 1px solid #2ecc71 !important;
+    }
 
-    #mainSelectionScreen, #loginScreen, #qualityLoginScreen, #landingScreen, #qualityLandingScreen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 90vh; position:relative; }
-    
+    #loginScreen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 90vh; }
+    #landingScreen { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 90vh; }
     .wepsol-logo { font-size: 3rem; color: #ff006e; font-weight: 900; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 5px; text-shadow: 2px 2px 4px rgba(0,0,0,0.1); }
     .wepsol-sub { font-size: 14px; color: #2c3e50; font-weight: 600; margin-bottom: 40px; letter-spacing: 1px; }
     .landing-card { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); text-align: center; width: 100%; max-width: 400px; margin-bottom: 12px; cursor: pointer; transition: transform 0.2s; border-top: 8px solid #ccc; }
     .landing-card:hover { transform: translateY(-5px); } .card-pw { border-top-color: var(--brand); } .card-ct { border-top-color: var(--brand2); } .card-wcr { border-top-color: var(--brand3); } .card-dash { border-top-color: #2c3e50; }
     .container { max-width: 900px; background: #fff; margin: auto; border-radius: 8px; border-top: 5px solid var(--brand); box-shadow: 0 4px 15px rgba(0,0,0,0.1); } .container-ct { border-top-color: var(--brand2); } .container-wcr { border-top-color: var(--brand3); } .container-dash { border-top-color: #2c3e50; }
-    
-    .q-container { max-width: 900px; background: #fff; margin: auto; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 5px solid #27ae60; }
-    
     .header-nav { padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-radius: 8px 8px 0 0; } .back-btn { background: #333; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
-    .tabs { display: flex; background: #f1f2f6; border-bottom: 1px solid #dcdde1; overflow-x: auto; } .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: 700; font-size: 12px; text-transform: uppercase; color: #7f8fa6; min-width: 120px; border-bottom: 3px solid transparent;} .pw-tab.active { background: #fff; color: var(--brand); border-bottom: 3px solid var(--brand); } .ct-tab.active { background: #fff; color: var(--brand2); border-bottom: 3px solid var(--brand2); } .wcr-tab.active { background: #fff; color: var(--brand3); border-bottom: 3px solid var(--brand3); }
-    .q-tab.active { background: #fff; color: #27ae60; border-bottom: 3px solid #27ae60; }
-    
+    .tabs { display: flex; background: #f1f2f6; border-bottom: 1px solid #dcdde1; overflow-x: auto; } .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: 700; font-size: 12px; text-transform: uppercase; color: #7f8fa6; min-width: 120px; } .pw-tab.active { background: #fff; color: var(--brand); border-bottom: 3px solid var(--brand); } .ct-tab.active { background: #fff; color: var(--brand2); border-bottom: 3px solid var(--brand2); } .wcr-tab.active { background: #fff; color: var(--brand3); border-bottom: 3px solid var(--brand3); }
     .content { padding: 20px; display: none; } .content.active { display: block; } .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; } label { font-size: 12px; font-weight: 700; color: #2f3640; display: block; margin-bottom: 4px; } input, select, textarea { width: 100%; padding: 8px; border: 1px solid #dcdde1; border-radius: 4px; font-size: 13px; background: #fbfbfb; box-sizing: border-box; }
     .btn { background: var(--brand); color: #fff; border: none; padding: 12px; border-radius: 4px; cursor: pointer; width: 100%; font-weight: bold; text-transform: uppercase; margin-top: 10px; } .btn-ct { background: var(--brand2); } .btn-wcr { background: var(--brand3); } .btn-dark { background: #2d3436; } .btn-outline { background: transparent; color: var(--brand); border: 2px solid var(--brand); font-weight: bold; }
     .item-box { border: 1px solid #e1b12c; padding: 15px; border-radius: 6px; margin-bottom: 15px; background: #fffdf5; position: relative; } .remove-btn { position: absolute; top: 10px; right: 10px; background: #ff7675; color: white; border: none; border-radius: 50%; width: 25px; height: 25px; cursor: pointer; font-weight: bold; line-height: 1; }
     .group-wrap { border: 1px solid #dcdde1; border-radius: 6px; margin-bottom: 12px; background: #fff; overflow: hidden; } .group-header { background: #dfe6e9; padding: 12px 15px; font-weight: bold; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: #2d3436; font-size: 14px; } .group-body { padding: 10px; background: #fdfdfd; display: none; }
-    .card { border-left: 4px solid #e1b12c; padding: 12px; margin-bottom: 8px; background: #fff; border: 1px solid #eee; cursor: pointer; position: relative; border-radius: 4px; } .card-pay { border-left-color: #44bd32; } .card-wcr { border-left-color: var(--brand3); } .tat-badge { position: absolute; top: 10px; right: 10px; font-size: 11px; background: #f5f6fa; padding: 3px 8px; border-radius: 4px; font-weight: bold; color: #2f3640; border: 1px solid #dcdde1; } .q-tag { font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; margin-top: 5px; display: inline-block; } .q-not { background: #ffeaa7; color: #d63031; border: 1px solid #ffeaa7; } .q-gen { background: #81ecec; color: #00b894; border: 1px solid #81ecec; } .q-sent { background: #55efc4; color: #008f39; border: 1px solid #008f39; }
+    .card { border-left: 4px solid #e1b12c; padding: 12px; margin-bottom: 8px; background: #fff; border: 1px solid #eee; cursor: pointer; position: relative; border-radius: 4px; } .card-pay { border-left-color: #44bd32; } .card-wcr { border-left-color: var(--brand3); } .tat-badge { position: absolute; top: 10px; right: 10px; font-size: 11px; background: #f5f6fa; padding: 3px 8px; border-radius: 4px; font-weight: bold; color: #2f3640; border: 1px solid #dcdde1; } .q-tag { font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; margin-top: 5px; display: inline-block; } .q-not { background: #ffeaa7; color: #d63031; border: 1px solid #ffeaa7; } .q-gen { background: #81ecec; color: #00b894; border: 1px solid #81ecec; } .q-sent { background: #55efc4; color: #008f39; border: 1px solid #00b894; }
     .panel { background: #f8f9fa; padding: 15px; border: 1px solid #dcdde1; border-radius: 6px; margin-top: 15px; } table { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 15px; } th, td { border: 1px solid #dcdde1; padding: 8px; text-align: left; } th { background: #f1f2f6; }
     .ct-card { background: #fff; padding: 15px; border-radius: 8px; border-left: 4px solid var(--brand2); margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.06); cursor: pointer; position: relative; transition: background 0.3s; } .ct-card:hover { background: #fff8fb; } .ct-tat { position: absolute; top: 15px; right: 15px; font-size: 11px; background: #ffe0eb; padding: 4px 8px; border-radius: 4px; font-weight: bold; color: var(--brand2); border: 1px solid #ffb3d1;} .ct-assign { font-size: 11px; background: #f1f2f6; color: #2f3640; padding: 3px 6px; border-radius: 4px; margin-left: 8px; border: 1px solid #dcdde1; display: inline-block; vertical-align: middle;} .ct-card b { font-size: 15px; color: #2f3640; } .ct-card small { color: #7f8fa6; display: block; margin-top: 6px; line-height: 1.5; font-size: 12px;}
     .admin-chat-widget { position: fixed; bottom: 30px; right: 30px; z-index: 9999; } .chat-btn { background: #ff006e; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; box-shadow: 0 5px 15px rgba(255,0,110,0.4); border: none; position: relative; transition: transform 0.3s;} .chat-btn:hover { transform: scale(1.05); } .notification-badge { position: absolute; top: -5px; right: -5px; background: red; color: white; border-radius: 50%; font-size: 12px; font-weight: bold; width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; border: 2px solid white; display: none;}
@@ -42,29 +42,9 @@
 </head>
 <body onload="initApp()">
 
-<!-- Global Datalist for Parts -->
-<datalist id="qPartList"></datalist>
-
-<!-- MAIN SELECTION SCREEN -->
-<div id="mainSelectionScreen" style="display: none;">
-    <div class="wepsol-logo">WEPSOL</div>
-    <div class="wepsol-sub">ENTERPRISE PORTAL</div>
-    <div style="display: flex; gap: 20px; margin-top: 20px;">
-        <div class="landing-card" style="border-top: 8px solid #0984e3; width: 200px;" onclick="choosePortal('support')">
-            <i class="fa-solid fa-headset" style="font-size: 40px; color: #0984e3; margin-bottom:15px;"></i>
-            <h3 style="margin: 0; color: #2c3e50;">SUPPORT</h3>
-        </div>
-        <div class="landing-card" style="border-top: 8px solid #27ae60; width: 200px;" onclick="choosePortal('quality')">
-            <i class="fa-solid fa-check-to-slot" style="font-size: 40px; color: #27ae60; margin-bottom:15px;"></i>
-            <h3 style="margin: 0; color: #2c3e50;">QUALITY</h3>
-        </div>
-    </div>
-</div>
-
-<!-- SUPPORT LOGIN -->
-<div id="loginScreen" style="display:none;">
+<div id="loginScreen">
   <div class="landing-card card-dash" style="cursor:default; transform:none; max-width:350px;">
-    <div class="wepsol-logo">SUPPORT</div><div class="wepsol-sub">PORTAL LOGIN</div>
+    <div class="wepsol-logo">WEPSOL</div><div class="wepsol-sub">PORTAL LOGIN</div>
     <div style="text-align:left; margin-bottom:12px; margin-top:15px;">
         <label>Select User</label>
         <select id="loginUserSelect" style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc;"></select>
@@ -73,249 +53,17 @@
         <label>Password</label>
         <input type="password" id="loginPassword" placeholder="Enter Password" style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc;">
     </div>
-    <button class="btn btn-dark" onclick="processLogin()">LOGIN TO SUPPORT</button>
-    <button class="btn btn-outline" style="margin-top:10px; color:#2d3436; border-color:#2d3436;" onclick="goBackToMain()">⬅️ Back</button>
+    <button class="btn btn-dark" onclick="processLogin()">LOGIN TO SECURE PORTAL</button>
   </div>
 </div>
 
-<!-- QUALITY LOGIN -->
-<div id="qualityLoginScreen" style="display:none;">
-    <div class="landing-card card-dash" style="cursor:default; transform:none; max-width:350px; border-top-color: #27ae60;">
-        <div class="wepsol-logo" style="color: #27ae60;">QUALITY</div><div class="wepsol-sub">PORTAL LOGIN</div>
-        <div style="text-align:left; margin-bottom:12px; margin-top:15px;">
-            <label>Select User</label>
-            <select id="qLoginUserSelect" style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc;"></select>
-        </div>
-        <div style="text-align:left; margin-bottom:25px;">
-            <label>Password</label>
-            <input type="password" id="qLoginPassword" placeholder="Enter Password" style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc;">
-        </div>
-        <button class="btn" style="background:#27ae60;" onclick="processQualityLogin()">LOGIN TO QUALITY</button>
-        <button class="btn btn-outline" style="margin-top:10px; color:#2d3436; border-color:#2d3436;" onclick="goBackToMain()">⬅️ Back</button>
-    </div>
-</div>
-
-<!-- SUPPORT LANDING SCREEN -->
 <div id="landingScreen" style="display:none;">
-  <button class="btn btn-dark" style="width:auto; position:absolute; top:20px; left:20px;" onclick="goBackToMain()"><i class="fa-solid fa-arrow-left"></i> Switch Portal</button>
   <div class="wepsol-logo">WEPSOL</div><div class="wepsol-sub">SERVICE MANAGEMENT PORTAL</div>
   <div class="landing-card card-dash" onclick="openPortal('dash'); loadDashboard();"><h3 style="color: #2c3e50; margin: 0;">📊 Main Dashboard</h3></div>
   <div class="landing-card card-pw" onclick="openPortal('pw')"><h3 style="color: var(--brand); margin: 0;">🔧 1. Post Warranty</h3></div>
   <div class="landing-card card-ct" onclick="openPortal('ct')"><h3 style="color: var(--brand2); margin: 0;">📞 2. Call Tracking</h3></div>
   <div class="landing-card card-wcr" onclick="openPortal('wcr')"><h3 style="color: var(--brand3); margin: 0;">♻️ 3. WCR Defective</h3></div>
 </div>
-
-<!-- QUALITY LANDING SCREEN -->
-<div id="qualityLandingScreen" style="display:none;">
-    <button class="btn btn-dark" style="width:auto; position:absolute; top:20px; left:20px;" onclick="goBackToMain()"><i class="fa-solid fa-arrow-left"></i> Switch Portal</button>
-    <div class="wepsol-logo" style="color:#27ae60;">QUALITY</div><div class="wepsol-sub">MANAGEMENT PORTAL</div>
-    <div class="landing-card" style="border-top-color: #3498db;" onclick="openQualityPortal('IQC')"><h3 style="margin: 0; color:#3498db;">1. IQC</h3></div>
-    <div class="landing-card" style="border-top-color: #e74c3c;" onclick="openQualityPortal('PPA')"><h3 style="margin: 0; color:#e74c3c;">2. PPA</h3></div>
-    <div class="landing-card" style="border-top-color: #f1c40f;" onclick="openQualityPortal('RRT')"><h3 style="margin: 0; color:#f39c12;">3. RRT (Reliability Test)</h3></div>
-    <div class="landing-card" style="border-top-color: #9b59b6;" onclick="openQualityPortal('SQ')"><h3 style="margin: 0; color:#9b59b6;">4. SQ (Supplier Prod Tracking)</h3></div>
-    <div class="landing-card" style="border-top-color: #1abc9c;" onclick="openQualityPortal('LPR')"><h3 style="margin: 0; color:#1abc9c;">5. LPR</h3></div>
-</div>
-
-<!-- QUALITY CONTAINERS -->
-<div id="qualityContainers">
-    
-   <!-- IQC Module -->
-   <div id="IQCPortal" style="display:none;" class="q-container q-portal">
-      <div class="header-nav" style="background: #3498db;"><h3 style="margin:0; color:white;">IQC Portal</h3><button class="back-btn" onclick="openQualityPortal('home')">⬅️ Menu</button></div>
-      <div class="tabs">
-        <div class="tab q-tab IQC-tab active" onclick="showQTab('IQC-entry', 'IQC')">New Entry</div>
-        <div class="tab q-tab IQC-tab" onclick="showQTab('IQC-pending', 'IQC'); qLoadPending('IQC');">Clearance</div>
-        <div class="tab q-tab IQC-tab" onclick="showQTab('IQC-reports', 'IQC')">Reports</div>
-        <div class="tab q-tab IQC-tab" onclick="showQTab('IQC-dash', 'IQC'); qLoadDashboard('IQC');">Dashboard</div>
-      </div>
-      <div id="IQC-entry" class="content IQC-content active">
-        <form onsubmit="event.preventDefault(); submitQuality('IQC', this);">
-            <div class="grid"><div><label>MRR/ RGP Date *</label><input type="date" name="date" required></div><div><label>MRR No. / RGP No. *</label><input type="text" name="mrr" required></div></div>
-            <div class="grid"><div><label>Vendor *</label><input type="text" name="vendor" required></div><div><label>Model *</label><select name="model" class="q-model" required></select></div></div>
-            <div class="grid"><div><label>Part Code / Name *</label><input type="text" name="partCode" list="qPartList" placeholder="Select or Type Part Code" required autocomplete="off"></div><div><label>Total Qty</label><input type="number" name="totQty"></div></div>
-            <div class="grid"><div><label>Inspected Qty</label><input type="number" name="insQty"></div><div><label>Remarks</label><input type="text" name="remarks" placeholder="Enter remarks..."></div></div>
-            <div class="grid">
-                <div><label>Decision *</label><select name="decision" required style="background:#e8f8f5; font-weight:bold;"><option value="Pending" selected>🟡 Pending (Clear Later)</option><option value="OK">🟢 OK (Cleared)</option><option value="Reject">🔴 Reject</option><option value="Hold">🟠 Hold</option></select></div>
-            </div>
-            <button class="btn" style="background:#3498db" type="submit">Submit IQC Data</button>
-        </form>
-      </div>
-      <div id="IQC-pending" class="content IQC-content"><div id="IQC-pendingList">Loading...</div></div>
-      <div id="IQC-reports" class="content IQC-content">
-          <div class="grid" style="background: #f1f2f6; padding: 10px; border-radius: 5px;"><div><label>From Date</label><input type="date" id="IQC-rFrom"></div><div><label>To Date</label><input type="date" id="IQC-rTo"></div></div>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin: 10px 0;"><button class="btn btn-dark" onclick="qFetchReports('IQC')" style="width:auto; margin:0;">Generate Report</button><input type="text" placeholder="Live Search..." onkeyup="filterTable('IQC-reportRes', this.value)" style="width:250px; padding:8px; border:1px solid #dcdde1; border-radius:4px;"></div>
-          <div id="IQC-reportRes" style="overflow-x:auto;"></div>
-      </div>
-      <div id="IQC-dash" class="content IQC-content" style="background:#f9f9f9;">
-          <div class="dash-row">
-            <div class="stat-card" style="border-top: 4px solid #3498db;"><h3 id="IQC-dtot">0</h3><p>Total Items</p></div>
-            <div class="stat-card" style="border-top: 4px solid #f1c40f;"><h3 id="IQC-dpen">0</h3><p>Pending / Hold</p></div>
-            <div class="stat-card" style="border-top: 4px solid #2ecc71;"><h3 id="IQC-dok">0</h3><p>Cleared (OK)</p></div>
-            <div class="stat-card" style="border-top: 4px solid #e74c3c;"><h3 id="IQC-drej">0</h3><p>Rejected</p></div>
-          </div>
-          <div class="dash-row">
-            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="IQC-chart-v"></canvas></div>
-            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="IQC-chart-m"></canvas></div>
-          </div>
-          <div class="dash-row">
-            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="IQC-chart-p"></canvas></div>
-          </div>
-      </div>
-   </div>
-
-   <!-- PPA Module -->
-   <div id="PPAPortal" style="display:none;" class="q-container q-portal">
-      <div class="header-nav" style="background: #e74c3c;"><h3 style="margin:0; color:white;">PPA Portal</h3><button class="back-btn" onclick="openQualityPortal('home')">⬅️ Menu</button></div>
-      <div class="tabs">
-        <div class="tab q-tab PPA-tab active" onclick="showQTab('PPA-entry', 'PPA')">New Entry</div>
-        <div class="tab q-tab PPA-tab" onclick="showQTab('PPA-pending', 'PPA'); qLoadPending('PPA');">Clearance</div>
-        <div class="tab q-tab PPA-tab" onclick="showQTab('PPA-reports', 'PPA')">Reports</div>
-        <div class="tab q-tab PPA-tab" onclick="showQTab('PPA-dash', 'PPA'); qLoadDashboard('PPA');">Dashboard</div>
-      </div>
-      <div id="PPA-entry" class="content PPA-content active">
-        <form onsubmit="event.preventDefault(); submitQuality('PPA', this);">
-            <div class="grid"><div><label>Date *</label><input type="date" name="date" required></div><div><label>Model *</label><select name="model" class="q-model" required></select></div></div>
-            <div class="grid"><div><label>Part Code / Name *</label><input type="text" name="partCode" list="qPartList" placeholder="Select or Type Part Code" required autocomplete="off"></div><div><label>Lot No *</label><input type="text" name="lot" required></div></div>
-            <div class="grid"><div><label>Inspected Qty</label><input type="number" name="qty"></div><div><label>Status (Pass/Fail) *</label><select name="status" required><option value="Pass">Pass</option><option value="Fail">Fail</option></select></div></div>
-            <div class="grid"><div><label>Issues Found</label><input type="text" name="issues"></div><div><label>Approved By *</label><input type="text" name="approvedBy" required></div></div>
-            <div class="grid">
-                <div><label>Decision *</label><select name="decision" required style="background:#e8f8f5; font-weight:bold;"><option value="Pending" selected>🟡 Pending (Clear Later)</option><option value="OK">🟢 OK (Cleared)</option><option value="Reject">🔴 Reject</option><option value="Hold">🟠 Hold</option></select></div>
-                <div><label>Remarks</label><input type="text" name="remarks" placeholder="Enter remarks..."></div>
-            </div>
-            <button class="btn" style="background:#e74c3c" type="submit">Submit PPA Data</button>
-        </form>
-      </div>
-      <div id="PPA-pending" class="content PPA-content"><div id="PPA-pendingList">Loading...</div></div>
-      <div id="PPA-reports" class="content PPA-content">
-          <div class="grid" style="background: #f1f2f6; padding: 10px; border-radius: 5px;"><div><label>From Date</label><input type="date" id="PPA-rFrom"></div><div><label>To Date</label><input type="date" id="PPA-rTo"></div></div>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin: 10px 0;"><button class="btn btn-dark" onclick="qFetchReports('PPA')" style="width:auto; margin:0;">Generate Report</button><input type="text" placeholder="Live Search..." onkeyup="filterTable('PPA-reportRes', this.value)" style="width:250px; padding:8px; border:1px solid #dcdde1; border-radius:4px;"></div>
-          <div id="PPA-reportRes" style="overflow-x:auto;"></div>
-      </div>
-      <div id="PPA-dash" class="content PPA-content" style="background:#f9f9f9;">
-          <div class="dash-row">
-            <div class="stat-card" style="border-top: 4px solid #3498db;"><h3 id="PPA-dtot">0</h3><p>Total Items</p></div>
-            <div class="stat-card" style="border-top: 4px solid #f1c40f;"><h3 id="PPA-dpen">0</h3><p>Pending / Hold</p></div>
-            <div class="stat-card" style="border-top: 4px solid #2ecc71;"><h3 id="PPA-dok">0</h3><p>Cleared (OK)</p></div>
-            <div class="stat-card" style="border-top: 4px solid #e74c3c;"><h3 id="PPA-drej">0</h3><p>Rejected</p></div>
-          </div>
-          <div class="dash-row">
-            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="PPA-chart-v"></canvas></div>
-            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="PPA-chart-m"></canvas></div>
-          </div>
-          <div class="dash-row">
-            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="PPA-chart-p"></canvas></div>
-          </div>
-      </div>
-   </div>
-
-   <!-- RRT Module (Reliability Test) -->
-   <div id="RRTPortal" style="display:none;" class="q-container q-portal">
-      <div class="header-nav" style="background: #f1c40f;"><h3 style="margin:0; color:white;">RRT Portal (Reliability Test)</h3><button class="back-btn" onclick="openQualityPortal('home')">⬅️ Menu</button></div>
-      <div class="tabs">
-        <div class="tab q-tab RRT-tab active" onclick="showQTab('RRT-entry', 'RRT')">New Test Entry</div>
-        <div class="tab q-tab RRT-tab" onclick="showQTab('RRT-pending', 'RRT'); qLoadPending('RRT');">Ongoing Tests</div>
-        <div class="tab q-tab RRT-tab" onclick="showQTab('RRT-reports', 'RRT')">Reports</div>
-        <div class="tab q-tab RRT-tab" onclick="showQTab('RRT-dash', 'RRT'); qLoadDashboard('RRT');">Dashboard</div>
-      </div>
-      <div id="RRT-entry" class="content RRT-content active">
-        <form onsubmit="event.preventDefault(); submitQuality('RRT', this);">
-            <div class="grid"><div><label>Start Date *</label><input type="date" name="date" required></div><div><label>Model *</label><select name="model" class="q-model" required></select></div></div>
-            <div class="grid"><div><label>Part Code / Name *</label><input type="text" name="partCode" list="qPartList" placeholder="Select or Type Part Code" required autocomplete="off"></div><div><label>Test Name *</label><input type="text" name="testName" required placeholder="e.g. High Temp Test"></div></div>
-            <div class="grid"><div><label>Target Days *</label><input type="number" name="targetDays" required></div><div><label>Assigned To</label><input type="text" name="assignedTo"></div></div>
-            <button class="btn" style="background:#f39c12" type="submit">Start Reliability Test</button>
-        </form>
-      </div>
-      <div id="RRT-pending" class="content RRT-content"><div id="RRT-pendingList">Loading...</div></div>
-      <div id="RRT-reports" class="content RRT-content">
-          <div class="grid" style="background: #f1f2f6; padding: 10px; border-radius: 5px;"><div><label>From Date</label><input type="date" id="RRT-rFrom"></div><div><label>To Date</label><input type="date" id="RRT-rTo"></div></div>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin: 10px 0;"><button class="btn btn-dark" onclick="qFetchReports('RRT')" style="width:auto; margin:0;">Generate Report</button><input type="text" placeholder="Live Search..." onkeyup="filterTable('RRT-reportRes', this.value)" style="width:250px; padding:8px; border:1px solid #dcdde1; border-radius:4px;"></div>
-          <div id="RRT-reportRes" style="overflow-x:auto;"></div>
-      </div>
-      <div id="RRT-dash" class="content RRT-content" style="background:#f9f9f9;">
-          <div class="dash-row"><div class="stat-card" style="border-top: 4px solid #3498db;"><h3 id="RRT-dtot">0</h3><p>Total Items</p></div><div class="stat-card" style="border-top: 4px solid #f1c40f;"><h3 id="RRT-dpen">0</h3><p>Pending / Hold</p></div><div class="stat-card" style="border-top: 4px solid #2ecc71;"><h3 id="RRT-dok">0</h3><p>Cleared (OK)</p></div><div class="stat-card" style="border-top: 4px solid #e74c3c;"><h3 id="RRT-drej">0</h3><p>Rejected</p></div></div>
-          <div class="dash-row">
-            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="RRT-chart-v"></canvas></div>
-            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="RRT-chart-m"></canvas></div>
-          </div>
-          <div class="dash-row"><div class="chart-container" style="flex:1; height: 260px;"><canvas id="RRT-chart-p"></canvas></div></div>
-      </div>
-   </div>
-
-   <!-- SQ Module (Supplier Production Tracking) -->
-   <div id="SQPortal" style="display:none;" class="q-container q-portal">
-      <div class="header-nav" style="background: #9b59b6;"><h3 style="margin:0; color:white;">SQ Portal (Vendor Production)</h3><button class="back-btn" onclick="openQualityPortal('home')">⬅️ Menu</button></div>
-      <div class="tabs">
-        <div class="tab q-tab SQ-tab active" onclick="showQTab('SQ-entry', 'SQ')">New Vendor Lot</div>
-        <div class="tab q-tab SQ-tab" onclick="showQTab('SQ-pending', 'SQ'); qLoadPending('SQ');">Active Production</div>
-        <div class="tab q-tab SQ-tab" onclick="showQTab('SQ-reports', 'SQ')">Reports</div>
-        <div class="tab q-tab SQ-tab" onclick="showQTab('SQ-dash', 'SQ'); qLoadDashboard('SQ');">Dashboard</div>
-      </div>
-      <div id="SQ-entry" class="content SQ-content active">
-        <form onsubmit="event.preventDefault(); submitQuality('SQ', this);">
-            <div class="grid"><div><label>Start Date *</label><input type="date" name="date" required></div><div><label>Vendor Name *</label><input type="text" name="vendor" required></div></div>
-            <div class="grid"><div><label>Model *</label><select name="model" class="q-model" required></select></div><div><label>Part Code / Name *</label><input type="text" name="partCode" list="qPartList" placeholder="Select or Type Part Code" required autocomplete="off"></div></div>
-            <div class="grid"><div><label>Total Lot Qty *</label><input type="number" name="lotQty" required></div><div><label>Target Completion Date</label><input type="date" name="targetDate"></div></div>
-            <button class="btn" style="background:#9b59b6" type="submit">Start Production Tracking</button>
-        </form>
-      </div>
-      <div id="SQ-pending" class="content SQ-content"><div id="SQ-pendingList">Loading...</div></div>
-      <div id="SQ-reports" class="content SQ-content">
-          <div class="grid" style="background: #f1f2f6; padding: 10px; border-radius: 5px;"><div><label>From Date</label><input type="date" id="SQ-rFrom"></div><div><label>To Date</label><input type="date" id="SQ-rTo"></div></div>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin: 10px 0;"><button class="btn btn-dark" onclick="qFetchReports('SQ')" style="width:auto; margin:0;">Generate Report</button><input type="text" placeholder="Live Search..." onkeyup="filterTable('SQ-reportRes', this.value)" style="width:250px; padding:8px; border:1px solid #dcdde1; border-radius:4px;"></div>
-          <div id="SQ-reportRes" style="overflow-x:auto;"></div>
-      </div>
-      <div id="SQ-dash" class="content SQ-content" style="background:#f9f9f9;">
-          <div class="dash-row"><div class="stat-card" style="border-top: 4px solid #3498db;"><h3 id="SQ-dtot">0</h3><p>Total Items</p></div><div class="stat-card" style="border-top: 4px solid #f1c40f;"><h3 id="SQ-dpen">0</h3><p>Pending / Hold</p></div><div class="stat-card" style="border-top: 4px solid #2ecc71;"><h3 id="SQ-dok">0</h3><p>Cleared (OK)</p></div><div class="stat-card" style="border-top: 4px solid #e74c3c;"><h3 id="SQ-drej">0</h3><p>Rejected</p></div></div>
-          <div class="dash-row">
-            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="SQ-chart-v"></canvas></div>
-            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="SQ-chart-m"></canvas></div>
-          </div>
-          <div class="dash-row"><div class="chart-container" style="flex:1; height: 260px;"><canvas id="SQ-chart-p"></canvas></div></div>
-      </div>
-   </div>
-
-   <!-- LPR Module -->
-   <div id="LPRPortal" style="display:none;" class="q-container q-portal">
-      <div class="header-nav" style="background: #1abc9c;"><h3 style="margin:0; color:white;">LPR Portal</h3><button class="back-btn" onclick="openQualityPortal('home')">⬅️ Menu</button></div>
-      <div class="tabs">
-        <div class="tab q-tab LPR-tab active" onclick="showQTab('LPR-entry', 'LPR')">New Entry</div>
-        <div class="tab q-tab LPR-tab" onclick="showQTab('LPR-pending', 'LPR'); qLoadPending('LPR');">Clearance</div>
-        <div class="tab q-tab LPR-tab" onclick="showQTab('LPR-reports', 'LPR')">Reports</div>
-        <div class="tab q-tab LPR-tab" onclick="showQTab('LPR-dash', 'LPR'); qLoadDashboard('LPR');">Dashboard</div>
-      </div>
-      <div id="LPR-entry" class="content LPR-content active">
-        <form onsubmit="event.preventDefault(); submitQuality('LPR', this);">
-            <div class="grid"><div><label>LPR Issue Date *</label><input type="date" name="issueDate" required></div><div><label>Receiving Date *</label><input type="date" name="recDate" required></div></div>
-            <div class="grid"><div><label>Model *</label><select name="model" class="q-model" required></select></div><div><label>Part Code / Name *</label><input type="text" name="partCode" list="qPartList" placeholder="Select or Type Part Code" required autocomplete="off"></div></div>
-            <div class="grid"><div><label>Serial No.</label><input type="text" name="serial"></div><div><label>Problem (from Prod) *</label><input type="text" name="problem" required></div></div>
-            <div class="grid"><div><label>IQC Observation</label><input type="text" name="observation"></div><div><label>Defect Cause</label><input type="text" name="cause"></div></div>
-            <div class="grid"><div><label>Location</label><input type="text" name="location"></div><div><label>Component / Process</label><input type="text" name="component"></div></div>
-            <div class="grid"><div><label>Action Taken</label><input type="text" name="action"></div><div><label>Done By</label><input type="text" name="doneBy"></div></div>
-            <div class="grid">
-                <div><label>Decision *</label><select name="decision" required style="background:#e8f8f5; font-weight:bold;"><option value="Pending" selected>🟡 Pending (Clear Later)</option><option value="OK">🟢 OK (Cleared)</option><option value="Reject">🔴 Reject</option><option value="Hold">🟠 Hold</option></select></div>
-                <div><label>Remarks</label><input type="text" name="remarks" placeholder="Enter remarks..."></div>
-            </div>
-            <button class="btn" style="background:#1abc9c" type="submit">Submit LPR Data</button>
-        </form>
-      </div>
-      <div id="LPR-pending" class="content LPR-content"><div id="LPR-pendingList">Loading...</div></div>
-      <div id="LPR-reports" class="content LPR-content">
-          <div class="grid" style="background: #f1f2f6; padding: 10px; border-radius: 5px;"><div><label>From Date</label><input type="date" id="LPR-rFrom"></div><div><label>To Date</label><input type="date" id="LPR-rTo"></div></div>
-          <div style="display:flex; justify-content:space-between; align-items:center; margin: 10px 0;"><button class="btn btn-dark" onclick="qFetchReports('LPR')" style="width:auto; margin:0;">Generate Report</button><input type="text" placeholder="Live Search..." onkeyup="filterTable('LPR-reportRes', this.value)" style="width:250px; padding:8px; border:1px solid #dcdde1; border-radius:4px;"></div>
-          <div id="LPR-reportRes" style="overflow-x:auto;"></div>
-      </div>
-      <div id="LPR-dash" class="content LPR-content" style="background:#f9f9f9;">
-          <div class="dash-row"><div class="stat-card" style="border-top: 4px solid #3498db;"><h3 id="LPR-dtot">0</h3><p>Total Items</p></div><div class="stat-card" style="border-top: 4px solid #f1c40f;"><h3 id="LPR-dpen">0</h3><p>Pending / Hold</p></div><div class="stat-card" style="border-top: 4px solid #2ecc71;"><h3 id="LPR-dok">0</h3><p>Cleared (OK)</p></div><div class="stat-card" style="border-top: 4px solid #e74c3c;"><h3 id="LPR-drej">0</h3><p>Rejected</p></div></div>
-          <div class="dash-row">
-            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="LPR-chart-v"></canvas></div>
-            <div class="chart-container" style="flex:1; height: 260px;"><canvas id="LPR-chart-m"></canvas></div>
-          </div>
-          <div class="dash-row"><div class="chart-container" style="flex:1; height: 260px;"><canvas id="LPR-chart-p"></canvas></div></div>
-      </div>
-   </div>
-</div>
-
-<!-- SUPPORT CONTAINERS (UNCHANGED) -->
 <div id="dashPortal" style="display:none;" class="container container-dash">
   <div class="header-nav" style="background: #2c3e50;"><h3 style="margin:0; color:white;">📊 Global Dashboard</h3><button class="back-btn" onclick="openPortal('home')">⬅️ Main Menu</button></div>
   <div class="content active" style="background: #f4f7f6;">
@@ -331,7 +79,6 @@
     </div>
   </div>
 </div>
-
 <div id="pwPortal" style="display:none;" class="container">
   <div class="header-nav" style="background: #e3f2fd;"><h3 style="margin:0; color:var(--brand);">Post Warranty Portal</h3><button class="back-btn" onclick="openPortal('home')">⬅️ Main Menu</button></div>
   <div class="tabs"><div class="tab pw-tab active" onclick="showPwTab('pw-entry', this)">New Entry</div><div class="tab pw-tab" onclick="showPwTab('pw-repair', this); loadPwRepairs();">Repair Pending</div><div class="tab pw-tab" onclick="showPwTab('pw-pay', this); loadPwPayments();">Payment/Quote</div><div class="tab pw-tab" onclick="showPwTab('pw-reports', this)">Detailed Reports</div></div>
@@ -378,7 +125,7 @@
   </div>
   
   <div id="ct-new" class="content ct-content active">
-    <form onsubmit="event.preventDefault(); ctSubmitEntry(this);">
+    <form id="ctEntryForm" onsubmit="event.preventDefault(); ctSubmitEntry(this);">
       <div class="grid"><div><label>Customer Name *</label><input type="text" name="customerName" required></div><div><label>Contact Number *</label><input type="tel" name="contactNumber" required></div></div><div class="grid"><div><label>Model Name *</label><select name="model" class="i-model" required></select></div><div><label>Serial Number (Opt)</label><input type="text" name="serialNumber"></div></div><div class="grid"><div><label>City</label><input type="text" name="location"></div><div><label>State *</label><select name="state" id="ctState" required></select></div></div><div class="grid"><div><label>Call Status *</label><select name="status" required><option value="Pending">Pending</option><option value="Closed">Closed</option></select></div><div><label style="margin-top: 15px;"><input type="checkbox" name="warrantyStatus" checked> In Warranty?</label></div></div><div class="grid"><div><label>Handled By *</label><select name="callHandledBy" id="ctPerson" required></select></div><div><label>Assign To</label><input type="text" name="assignedTo"></div></div><label>Problem *</label><input type="text" name="problemDesc" required style="margin-bottom:5px;"><label>Action Taken</label><input type="text" name="actionTaken" style="margin-bottom:8px;"><button class="btn btn-ct" type="submit">LOG CALL</button>
     </form>
   </div>
@@ -399,6 +146,13 @@
   </div>
 
   <div id="ct-dash" class="content ct-content" style="background:#f9f9f9;">
+    <div class="grid" style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+      <div><label>From Date</label><input type="date" id="ctDashFrom"></div>
+      <div><label>To Date</label><input type="date" id="ctDashTo"></div>
+      <div style="display:flex; align-items:flex-end;">
+          <button class="btn btn-ct" onclick="ctLoadDashboard()" style="margin:0;"><i class="fa-solid fa-filter"></i> Filter Dashboard</button>
+      </div>
+    </div>
     <div class="dash-row">
         <div class="stat-card" style="border-top: 4px solid var(--brand2);"><h3 id="ct-dash-avg">0</h3><p>Avg Calls / Day</p></div>
         <div class="stat-card" style="border-top: 4px solid #3498db;"><h3 id="ct-dash-tot">0</h3><p>Total Calls</p></div>
@@ -415,8 +169,11 @@
         </div>
     </div>
     <div class="dash-row">
-        <div class="chart-container" style="flex:1;"><canvas id="ctChartHandled"></canvas></div>
+        <div class="chart-container" style="flex:1;"><canvas id="ctChartCallType"></canvas></div>
         <div class="chart-container" style="flex:1;"><canvas id="ctChartProblem"></canvas></div>
+    </div>
+    <div class="dash-row">
+        <div class="chart-container" style="flex:1;"><canvas id="ctChartHandled"></canvas></div>
     </div>
     <div class="dash-row">
         <div class="chart-container" style="flex:1; display:flex; padding:0; overflow:hidden;">
@@ -438,7 +195,7 @@
   <div class="header-nav" style="background: #fbeee6;"><h3 style="margin:0; color:var(--brand3);">WCR Defective Parts</h3><button class="back-btn" onclick="openPortal('home')">⬅️ Main Menu</button></div>
   <div class="tabs"><div class="tab wcr-tab active" onclick="showWcrTab('wcr-entry', this)">New Entry</div><div class="tab wcr-tab" onclick="showWcrTab('wcr-repair', this); wcrLoadPending();">Repair Updates</div><div class="tab wcr-tab" onclick="showWcrTab('wcr-approve', this); wcrLoadApprovals();">Scrap Approval</div><div class="tab wcr-tab" onclick="showWcrTab('wcr-inv', this); wcrLoadInventory();">Inventory</div><div class="tab wcr-tab" onclick="showWcrTab('wcr-reports', this)">Detailed Reports</div></div>
   <div id="wcr-entry" class="content wcr-content active">
-    <form onsubmit="event.preventDefault(); wcrSubmitEntry(this);">
+    <form id="wcrEntryForm" onsubmit="event.preventDefault(); wcrSubmitEntry();">
       <div style="background: #f1f2f6; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
           <div class="grid">
               <div>
@@ -463,7 +220,7 @@
   </div>
   <div id="wcr-repair" class="content wcr-content">
     <div id="wcrList">Loading...</div>
-    <div id="wcrUpdatePanel" class="panel" style="display:none; border-color:var(--brand3);"><h4 id="wcrTarget" style="color:var(--brand3)"></h4><form onsubmit="event.preventDefault(); wcrSaveUpdate(this);"><input type="hidden" name="row" id="wcrRow"><label>Action Taken *</label><textarea name="actionTaken" rows="2" required style="margin-bottom:10px;"></textarea><div class="grid"><div><label>Issue Found (Simple)</label><input type="text" name="issueFound" placeholder="e.g. Diode burnt"></div><div><label>Component Replaced</label><input type="text" name="componentReplaced" placeholder="e.g. 5V Zener"></div></div><label>Root Cause (Why-Why Analysis)</label><textarea name="rootCause" rows="2" placeholder="Explain simple reason for failure..."></textarea><label>Move To Decision *</label><select name="moveTo" required style="margin-bottom:10px; margin-top:5px;"><option value="">-- Select Decision --</option><option value="Good Location">Good Location (Close)</option><option value="Scrap">Scrap (Send for Approval)</option></select><button class="btn btn-wcr" type="submit">Update & Proceed</button></form></div>
+    <div id="wcrUpdatePanel" class="panel" style="display:none; border-color:var(--brand3);"><h4 id="wcrTarget" style="color:var(--brand3)"></h4><form id="wcrRepairForm" onsubmit="event.preventDefault(); wcrSaveUpdate(this);"><input type="hidden" name="row" id="wcrRow"><label>Action Taken *</label><textarea name="actionTaken" rows="2" required style="margin-bottom:10px;"></textarea><div class="grid"><div><label>Issue Found (Simple)</label><input type="text" name="issueFound" placeholder="e.g. Diode burnt"></div><div><label>Component Replaced</label><input type="text" name="componentReplaced" placeholder="e.g. 5V Zener"></div></div><label>Root Cause (Why-Why Analysis)</label><textarea name="rootCause" rows="2" placeholder="Explain simple reason for failure..."></textarea><label>Move To Decision *</label><select name="moveTo" required style="margin-bottom:10px; margin-top:5px;"><option value="">-- Select Decision --</option><option value="Good Location">Good Location (Close)</option><option value="Scrap">Scrap (Send for Approval)</option></select><button class="btn btn-wcr" type="submit">Update & Proceed</button></form></div>
   </div>
   <div id="wcr-approve" class="content wcr-content"><div id="wcrApproveList">Loading...</div><div id="wcrApprovePanel" class="panel" style="display:none; background:#fffdf5; border-color:#e74c3c;"><h4 id="wcrAppTarget" style="color:#e74c3c;"></h4><input type="hidden" id="wcrAppRow"><div class="grid"><div><label>Admin Password *</label><input type="password" id="wcrPwd" placeholder="Enter Password" required></div><div><label>Decision *</label><select id="wcrDecision"><option value="Approve">Approve Scrap</option><option value="Reject">Reject (Return to Repair)</option></select></div></div><button class="btn" style="background:#e74c3c;" onclick="wcrProcessApprove()">Process Approval</button></div></div>
   
@@ -499,302 +256,43 @@
     <div class="chat-input-area"><button class="chat-send-btn" style="background:#f1c40f;" onclick="sendCallFormRequest()" title="Send Call Registration Form"><i class="fa-solid fa-clipboard-list"></i></button><input type="text" id="adminReplyText" placeholder="Type message..." onkeypress="handleEnter(event)"><button class="chat-send-btn" onclick="sendAdminReply()"><i class="fa-solid fa-paper-plane"></i></button></div>
   </div>
 </div>
-
 <script>
-  // ==========================================
-  // DEPLOY THIS HTML ON GITHUB PAGES
-  // PASTE YOUR GOOGLE SCRIPT WEB APP URL HERE:
-  // ==========================================
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyngMC3rvNMzYOH30XZDSOxMfYN9MHc1tACzWrNR1PtBtSWDGXPrEEJLBoNtbMWmp3qHw/exec";
+  // ===================== GITHUB API CONFIGURATION =====================
+  // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
+  const API_URL = "PASTE_YOUR_WEB_APP_URL_HERE";
 
-  function apiCall(actionName, parameters = {}) {
-      return fetch(WEB_APP_URL, {
-          method: "POST",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify({ action: actionName, params: parameters })
-      })
-      .then(response => response.json())
-      .catch(error => {
-          console.error("API Error:", error);
-          Swal.fire('Connection Error', 'Failed to connect to server.', 'error');
-          return {status: 'error', message: error.message};
-      });
+  async function apiCall(action, params = {}) {
+      try {
+          let response = await fetch(API_URL, {
+              method: 'POST',
+              body: JSON.stringify({action: action, params: params}),
+              headers: {'Content-Type': 'text/plain;charset=utf-8'}
+          });
+          let data = await response.json();
+          if(data.status === 'success') return data.data;
+          else throw new Error(data.message);
+      } catch(e) {
+          console.error(e);
+          throw e;
+      }
   }
 
-  function serializeForm(form) {
+  function formToObj(form) {
       let obj = {};
-      new FormData(form).forEach((val, key) => obj[key] = val);
+      let formData = new FormData(form);
+      for (let [key, value] of formData.entries()) {
+          obj[key] = value;
+      }
       let checkboxes = form.querySelectorAll('input[type="checkbox"]');
       checkboxes.forEach(cb => { obj[cb.name] = cb.checked; });
       return obj;
   }
-
-  function submitQuality(module, form) {
-       Swal.fire({title:'Saving Entry...',didOpen:()=>Swal.showLoading()});
-       let data = serializeForm(form);
-       apiCall('q_submitForm', {module: module, data: data}).then(res => {
-           if(res.status !== 'success') return Swal.fire('Error', res.message, 'error');
-           Swal.fire('Saved!', res.data, 'success');
-           form.reset();
-       });
-  }
-
-  function showQTab(id, prefix) {
-      document.querySelectorAll('.' + prefix + '-content').forEach(c=>c.classList.remove('active'));
-      document.querySelectorAll('.' + prefix + '-tab').forEach(t=>t.classList.remove('active'));
-      document.getElementById(id).classList.add('active');
-      event.currentTarget.classList.add('active');
-  }
-
-  function qLoadPending(module) {
-      document.getElementById(module + '-pendingList').innerHTML = "Fetching...";
-      apiCall('q_getPending', {module: module}).then(res => {
-          if(res.status !== 'success') return;
-          let d = res.data;
-          if(!d.length){ document.getElementById(module + '-pendingList').innerHTML="No pending items."; return; } 
-          let h=""; 
-          d.forEach(x => { 
-              let c = (x.status === "Hold" || x.status === "Delayed") ? "orange" : (x.status === "Pending" || x.status === "Ongoing" || x.status === "In Production") ? "#0984e3" : "red";
-              
-              let extraInfo = "";
-              if(module === 'SQ') {
-                  extraInfo = `<br><small>Lot Qty: <b>${x.lotQty}</b> | Prod: <b>${x.okQty}</b> | Disp: <b>${x.rejQty}</b></small>`;
-              }
-              
-              h += `<div class="card" onclick="qOpenSweetUpdate('${module}', ${x.row}, '${safeB64(x.title)}', '${x.okQty}', '${x.rejQty}', '${x.lotQty}')">
-                      <div class="tat-badge" style="color:${c}; border:1px solid ${c};">${x.status}</div>
-                      <b>${x.title}</b><br><small>Start/Entry: ${x.date}</small>
-                      ${extraInfo}
-                      <br><small style="color:#555;">Remarks: ${x.remarks || 'None'}</small>
-                    </div>`; 
-          }); 
-          document.getElementById(module + '-pendingList').innerHTML = h; 
-      });
-  }
-
-  function qOpenSweetUpdate(module, row, titleBase64, defOk, defRej, lotQty) {
-      let title = safeDec(titleBase64);
-      
-      if(module === 'RRT') {
-          Swal.fire({
-              title: '<span style="font-size:16px; color:#f39c12;">Update Test: ' + title + '</span>',
-              html: `
-              <div style="text-align:left;">
-                  <label style="font-size:12px; font-weight:bold;">Latest Observation / Update *</label>
-                  <textarea id="swal-obs" class="swal2-textarea" style="margin:0 0 15px 0; width:100%; height:60px;" placeholder="What happened today?"></textarea>
-                  <label style="font-size:12px; font-weight:bold;">Status *</label>
-                  <select id="swal-status" class="swal2-input" style="margin:0; width:100%; height:40px;">
-                      <option value="Ongoing">Ongoing (Continue Test)</option>
-                      <option value="Passed">Passed (Test Complete)</option>
-                      <option value="Failed">Failed (Test Aborted)</option>
-                  </select>
-              </div>`,
-              showCancelButton: true, confirmButtonText: 'Save Update', confirmButtonColor: '#f39c12',
-              preConfirm: () => {
-                  return { obs: document.getElementById('swal-obs').value, status: document.getElementById('swal-status').value };
-              }
-          }).then((result) => {
-              if(result.isConfirmed) {
-                  Swal.fire({title:'Updating...',didOpen:()=>Swal.showLoading()});
-                  apiCall('q_updateRRT', {row: row, obs: result.value.obs, status: result.value.status}).then(res => {
-                      if(res.status !== 'success') return Swal.fire('Error', res.message, 'error');
-                      Swal.fire('Updated!', res.data, 'success'); qLoadPending(module);
-                  });
-              }
-          });
-      } 
-      else if(module === 'SQ') {
-          Swal.fire({
-              title: '<span style="font-size:16px; color:#9b59b6;">Update Production: ' + title + '</span>',
-              html: `
-              <div style="text-align:left;">
-                  <div style="display:flex; gap:10px; margin-bottom:10px;">
-                      <div style="flex:1"><label style="font-size:12px; font-weight:bold;">Produced Qty</label><input type="number" id="swal-prod" class="swal2-input" value="${defOk}" style="margin:0; width:100%; height:40px;"></div>
-                      <div style="flex:1"><label style="font-size:12px; font-weight:bold;">Dispatched Qty</label><input type="number" id="swal-disp" class="swal2-input" value="${defRej}" style="margin:0; width:100%; height:40px;"></div>
-                  </div>
-                  <label style="font-size:12px; font-weight:bold;">Status *</label>
-                  <select id="swal-status" class="swal2-input" style="margin:0 0 10px 0; width:100%; height:40px;">
-                      <option value="In Production">In Production</option>
-                      <option value="Delayed">Delayed / Hold</option>
-                      <option value="Completed">Completed</option>
-                  </select>
-                  <label style="font-size:12px; font-weight:bold;">Latest Remarks</label>
-                  <input type="text" id="swal-rem" class="swal2-input" style="margin:0; width:100%; height:40px;" placeholder="e.g. Material shortage...">
-              </div>`,
-              showCancelButton: true, confirmButtonText: 'Save Production Data', confirmButtonColor: '#9b59b6',
-              preConfirm: () => {
-                  return { prod: document.getElementById('swal-prod').value, disp: document.getElementById('swal-disp').value, status: document.getElementById('swal-status').value, rem: document.getElementById('swal-rem').value };
-              }
-          }).then((result) => {
-              if(result.isConfirmed) {
-                  Swal.fire({title:'Updating...',didOpen:()=>Swal.showLoading()});
-                  apiCall('q_updateSQ', {row: row, prodQty: result.value.prod, dispQty: result.value.disp, status: result.value.status, remarks: result.value.rem}).then(res => {
-                      if(res.status !== 'success') return Swal.fire('Error', res.message, 'error');
-                      Swal.fire('Updated!', res.data, 'success'); qLoadPending(module);
-                  });
-              }
-          });
-      }
-      else {
-          let qtyHtml = '';
-          if (module === 'IQC' || module === 'PPA') {
-              qtyHtml = `
-              <div style="display:flex; gap:10px; margin-bottom:15px;">
-                  <div style="flex:1; text-align:left;"><label style="font-size:12px; color:#555; font-weight:bold;">OK Qty</label><input type="number" id="swal-ok" class="swal2-input" style="margin:0; width:100%; height:40px; font-size:14px; background:#f0fdf4;" value="${defOk}"></div>
-                  <div style="flex:1; text-align:left;"><label style="font-size:12px; color:#555; font-weight:bold;">Reject Qty</label><input type="number" id="swal-rej" class="swal2-input" style="margin:0; width:100%; height:40px; font-size:14px; background:#fff0f0;" value="${defRej}"></div>
-              </div>`;
-          }
-          
-          Swal.fire({
-              title: '<span style="font-size:16px; color:#27ae60;">' + title + '</span>',
-              html: `
-              <div style="text-align:left;">
-                  ${qtyHtml}
-                  <label style="font-size:12px; color:#555; font-weight:bold;">Decision *</label>
-                  <select id="swal-dec" class="swal2-input" style="margin:0 0 15px 0; width:100%; height:40px; font-size:14px;">
-                      <option value="OK">🟢 OK</option>
-                      <option value="Reject">🔴 Reject</option>
-                      <option value="Hold">🟠 Hold</option>
-                  </select>
-                  <label style="font-size:12px; color:#555; font-weight:bold;">Remarks</label>
-                  <textarea id="swal-rem" class="swal2-textarea" style="margin:0; width:100%; height:60px; font-size:14px;" placeholder="Enter remarks..."></textarea>
-              </div>
-              `,
-              showCancelButton: true, confirmButtonText: 'Save Decision', confirmButtonColor: '#27ae60',
-              preConfirm: () => {
-                  let dec = document.getElementById('swal-dec').value;
-                  let rem = document.getElementById('swal-rem').value;
-                  let okQ = document.getElementById('swal-ok') ? document.getElementById('swal-ok').value : null;
-                  let rejQ = document.getElementById('swal-rej') ? document.getElementById('swal-rej').value : null;
-                  return { dec: dec, rem: rem, okQ: okQ, rejQ: rejQ };
-              }
-          }).then((result) => {
-              if(result.isConfirmed) {
-                  Swal.fire({title:'Updating...',didOpen:()=>Swal.showLoading()});
-                  apiCall('q_updateDecision', {module: module, row: row, decision: result.value.dec, remarks: result.value.rem, okQty: result.value.okQ, rejQty: result.value.rejQ}).then(res => {
-                      if(res.status !== 'success') return Swal.fire('Error', res.message, 'error');
-                      Swal.fire('Updated!', res.data, 'success'); qLoadPending(module);
-                  });
-              }
-          });
-      }
-  }
-
-  function qFetchReports(module) {
-      let s = document.getElementById(module + '-rFrom').value;
-      let e = document.getElementById(module + '-rTo').value;
-      document.getElementById(module + '-reportRes').innerHTML = "Fetching...";
-      
-      apiCall('q_getReports', {module: module, startStr: s, endStr: e}).then(res => {
-          if(res.status !== 'success') return;
-          let headers = res.data.headers;
-          let rows = res.data.data;
-          
-          if(rows.length === 0) { document.getElementById(module + '-reportRes').innerHTML = "No completed records found."; return; }
-          
-          let h = '<table><tr>';
-          headers.forEach(head => h += `<th>${head}</th>`);
-          h += '</tr>';
-          
-          rows.forEach(r => {
-              h += '<tr>';
-              r.forEach(val => {
-                  let vStr = String(val);
-                  let clr = "";
-                  if(vStr === "OK" || vStr === "Passed" || vStr === "Completed") clr = "color:green; font-weight:bold;";
-                  if(vStr === "Reject" || vStr === "Failed") clr = "color:red; font-weight:bold;";
-                  if(vStr === "Hold" || vStr === "Delayed") clr = "color:orange; font-weight:bold;";
-                  h += `<td style="${clr}">${vStr}</td>`;
-              });
-              h += '</tr>';
-          });
-          h += '</table>';
-          document.getElementById(module + '-reportRes').innerHTML = h;
-      });
-  }
-
-  let qCharts = {};
-  function qLoadDashboard(module) {
-      document.getElementById(module + '-dtot').innerText = "...";
-      apiCall('q_getDashboardStats', {module: module}).then(res => {
-          if(res.status !== 'success') return;
-          let stats = res.data;
-          document.getElementById(module + '-dtot').innerText = stats.total;
-          document.getElementById(module + '-dpen').innerText = stats.pending + stats.hold;
-          document.getElementById(module + '-dok').innerText = stats.ok;
-          document.getElementById(module + '-drej').innerText = stats.reject;
-          
-          renderQualityCharts(module, stats);
-      });
-  }
-
-  function renderQualityCharts(module, stats) {
-      if(qCharts[module+'_v']) qCharts[module+'_v'].destroy();
-      if(qCharts[module+'_m']) qCharts[module+'_m'].destroy();
-      if(qCharts[module+'_p']) qCharts[module+'_p'].destroy();
-
-      let ctxV = document.getElementById(module+'-chart-v');
-      let ctxM = document.getElementById(module+'-chart-m');
-      let ctxP = document.getElementById(module+'-chart-p');
-
-      if(ctxV) {
-          let vLabels = Object.keys(stats.vendors);
-          let vData = vLabels.map(v => stats.vendors[v].details.length);
-          let bgColors = ['#3498db','#e74c3c','#f1c40f','#2ecc71','#9b59b6','#1abc9c','#34495e'];
-          qCharts[module+'_v'] = new Chart(ctxV.getContext('2d'), {
-              type: 'doughnut',
-              data: { labels: vLabels, datasets: [{ data: vData, backgroundColor: bgColors }] },
-              options: { maintainAspectRatio: false, plugins: { title: {display:true, text:'Vendor Wise (Click for details)'}}, onClick: (e, els) => handleQChartClick('Vendor', stats.vendors, els, qCharts[module+'_v']) }
-          });
-      }
-      if(ctxM) {
-          let mLabels = Object.keys(stats.models);
-          let mData = mLabels.map(m => stats.models[m].details.length);
-          qCharts[module+'_m'] = new Chart(ctxM.getContext('2d'), {
-              type: 'bar',
-              data: { labels: mLabels, datasets: [{ label: 'Total Items', data: mData, backgroundColor: '#0984e3' }] },
-              options: { maintainAspectRatio: false, plugins: { title: {display:true, text:'Model Wise (Click for details)'}}, onClick: (e, els) => handleQChartClick('Model', stats.models, els, qCharts[module+'_m']) }
-          });
-      }
-      if(ctxP) {
-          let pLabels = Object.keys(stats.parts);
-          let pData = pLabels.map(p => stats.parts[p].details.length);
-          qCharts[module+'_p'] = new Chart(ctxP.getContext('2d'), {
-              type: 'bar',
-              data: { labels: pLabels, datasets: [{ label: 'Total Items', data: pData, backgroundColor: '#27ae60' }] },
-              options: { maintainAspectRatio: false, plugins: { title: {display:true, text:'Part Wise (Click for details)'}}, onClick: (e, els) => handleQChartClick('Part', stats.parts, els, qCharts[module+'_p']) }
-          });
-      }
-  }
-
-  function handleQChartClick(category, dataObj, elements, chartInst) {
-      if(!elements.length) return;
-      let label = chartInst.data.labels[elements[0].index];
-      let details = dataObj[label].details;
-      let h = `<table style="width:100%; text-align:left; font-size:12px; border-collapse:collapse;">
-               <tr><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Date</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Status</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">OK/Prod Qty</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Rej/Disp Qty</th></tr>`;
-      details.forEach(r => {
-          let clr = "black";
-          if(r.dec === "OK" || r.dec.indexOf("COMPL") > -1 || r.dec.indexOf("PASS") > -1) clr = "green";
-          else if(r.dec === "REJECT" || r.dec.indexOf("FAIL") > -1) clr = "red";
-          else if(r.dec === "HOLD" || r.dec.indexOf("DELAY") > -1) clr = "orange";
-          else if(r.dec.indexOf("ONGO") > -1 || r.dec.indexOf("PROD") > -1) clr = "#0984e3";
-          
-          h += `<tr>
-                  <td style="border-bottom:1px solid #eee; padding:5px;">${r.date}</td>
-                  <td style="border-bottom:1px solid #eee; padding:5px; color:${clr}; font-weight:bold;">${r.dec}</td>
-                  <td style="border-bottom:1px solid #eee; padding:5px;">${r.okQ}</td>
-                  <td style="border-bottom:1px solid #eee; padding:5px;">${r.rejQ}</td>
-                </tr>`;
-      });
-      h += '</table>';
-      Swal.fire({title: `${category}: ${label}`, html: `<div style="max-height:300px; overflow-y:auto;">${h}</div>`, width: '80%', showCloseButton: true, showConfirmButton: false});
-  }
+  // ====================================================================
 
   google.charts.load('current', {'packages':['geochart']});
 
   let barChartInst=null, empChartInst=null;
-  let ctChartW=null, ctChartM=null, ctChartH=null, ctChartP=null;
+  let ctChartW=null, ctChartM=null, ctChartH=null, ctChartP=null, ctChartC=null;
   
   const indianStates = ["Andaman & Nicobar","Andhra Pradesh","Arunachal Pradesh","Assam","Bihar","Chandigarh","Chhattisgarh","Dadra & Nagar Haveli","Daman & Diu","Delhi","Goa","Gujarat","Haryana","Himachal Pradesh","Jammu & Kashmir","Jharkhand","Karnataka","Kerala","Ladakh","Lakshadweep","Madhya Pradesh","Maharashtra","Manipur","Meghalaya","Mizoram","Nagaland","Odisha","Puducherry","Punjab","Rajasthan","Sikkim","Tamil Nadu","Telangana","Tripura","Uttar Pradesh","Uttarakhand","West Bengal"];
   let pwPartsCat=[], pwModelsHtml='', pwQuoteData={}, pwMultiItems=[], pwItemCount=1, wcrItemCount=1, wcrPartsHtml='';
@@ -806,33 +304,86 @@
   let loggedInUser = "";
   let currentRawProblems = null; 
   let currentRawStates = null; 
-  let qUserPasswords = {};
+  let currentRawCallTypes = null; 
 
-  function goBackToMain() {
-      ['mainSelectionScreen','loginScreen','qualityLoginScreen','landingScreen','qualityLandingScreen','dashPortal','pwPortal','ctPortal','wcrPortal'].forEach(id => {
-          let el = document.getElementById(id);
-          if(el) el.style.display = 'none';
-      });
-      document.querySelectorAll('.q-portal').forEach(el => el.style.display = 'none');
-      document.getElementById('mainSelectionScreen').style.display = 'flex';
+  let lastChatCount = -1;
+  let lastCallCount = -1;
+
+  function safeB64(str) { return btoa(unescape(encodeURIComponent(str || ''))); }
+  function safeDec(b64) { return decodeURIComponent(escape(atob(b64 || ''))); }
+  function numToWords(num) {
+    if(num == 0 || isNaN(num)) return "Zero";
+    let a = ['','One ','Two ','Three ','Four ', 'Five ','Six ','Seven ','Eight ','Nine ','Ten ','Eleven ','Twelve ','Thirteen ','Fourteen ','Fifteen ','Sixteen ','Seventeen ','Eighteen ','Nineteen '];
+    let b = ['', '', 'Twenty','Thirty','Forty','Fifty', 'Sixty','Seventy','Eighty','Ninety'];
+    let n = Math.floor(Math.abs(num));
+    if ((n = n.toString()).length > 9) return 'Overflow';
+    let nArray = ('000000000' + n).substr(-9).match(/^(\d{2})(\d{2})(\d{2})(\d{1})(\d{2})$/);
+    if (!nArray) return; 
+    let str = '';
+    str += (nArray[1] != 0) ? (a[Number(nArray[1])] || b[nArray[1][0]] + ' ' + a[nArray[1][1]]) + 'Crore ' : '';
+    str += (nArray[2] != 0) ? (a[Number(nArray[2])] || b[nArray[2][0]] + ' ' + a[nArray[2][1]]) + 'Lakh ' : '';
+    str += (nArray[3] != 0) ? (a[Number(nArray[3])] || b[nArray[3][0]] + ' ' + a[nArray[3][1]]) + 'Thousand ' : '';
+    str += (nArray[4] != 0) ? (a[Number(nArray[4])] || b[nArray[4][0]] + ' ' + a[nArray[4][1]]) + 'Hundred ' : '';
+    str += (nArray[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(nArray[5])] || b[nArray[5][0]] + ' ' + a[nArray[5][1]]) : '';
+    return str.trim();
+  }
+  function filterTable(containerId, val) {
+      let table = document.querySelector('#' + containerId + ' table');
+      if(!table) return;
+      let rows = table.getElementsByTagName('tr');
+      let q = val.toLowerCase();
+      for(let i = 1; i < rows.length; i++) {
+          let text = rows[i].innerText.toLowerCase();
+          rows[i].style.display = text.includes(q) ? '' : 'none';
+      }
+  }
+  function filterPwTable() {
+      let type = document.getElementById('pwSearchType').value;
+      let val = document.getElementById('pwSearchInput').value.toLowerCase();
+      let table = document.querySelector('#pwReportRes table');
+      if(!table) return;
+      let rows = table.getElementsByTagName('tr');
+      for(let i = 1; i < rows.length; i++) {
+          let show = false;
+          if(type === "all") {
+              show = rows[i].innerText.toLowerCase().includes(val);
+          } else {
+              let colIdx = parseInt(type);
+              let cells = rows[i].getElementsByTagName('td');
+              if(cells.length > colIdx && cells[colIdx].innerText.toLowerCase().includes(val)) {
+                  show = true;
+              }
+          }
+          rows[i].style.display = show ? '' : 'none';
+      }
+  }
+  
+  function triggerNotification(title, msg) { 
+      try { 
+          let audio = new Audio('https://actions.google.com/sounds/v1/communications/chime_short.ogg'); 
+          audio.play().catch(e=>{}); 
+      } catch(e) {} 
+      try { 
+          if(typeof window !== "undefined" && window.Notification && window.Notification.permission === "granted") { 
+              new window.Notification(title, {body: msg}); 
+          } 
+      } catch(e) {} 
   }
 
-  function choosePortal(type) {
-      document.getElementById('mainSelectionScreen').style.display = 'none';
-      if (type === 'support') {
-          document.getElementById('loginScreen').style.display = 'flex';
-      } else if (type === 'quality') {
-          document.getElementById('qualityLoginScreen').style.display = 'flex';
-          loadQualityUsers();
-      }
+  function checkNewCallsAlert() { 
+      apiCall('ct_getPendingCalls').then(data => { 
+          if (lastCallCount !== -1 && data.length > lastCallCount) { 
+              triggerNotification("New Service Request! 🚀", "A new Installation, Demo, or Warranty request has just been logged."); 
+              if (document.getElementById('ct-pending').classList.contains('active')) { 
+                  ctLoadPending(); 
+              } 
+          } 
+          lastCallCount = data.length; 
+      }).catch(e=>{}); 
   }
 
   function initApp() { 
-      let sHTML='<option value="">-- Select State --</option>'; 
-      indianStates.forEach(s=>sHTML+=`<option value="${s}">${s}</option>`); 
-      document.getElementById('ctState').innerHTML=sHTML; 
-      
-      goBackToMain(); 
+      let sHTML='<option value="">-- Select State --</option>'; indianStates.forEach(s=>sHTML+=`<option value="${s}">${s}</option>`); document.getElementById('ctState').innerHTML=sHTML; 
       loadDropdowns(); 
       fetchAdminChats(); 
       setInterval(fetchAdminChats,4000); 
@@ -853,53 +404,25 @@
       document.getElementById('wcrPerson').value = u;
       
       Swal.fire({toast:true, position:'top-end', icon:'success', title:`Welcome, ${u}!`, showConfirmButton:false, timer:2000});
-  }
 
-  function loadQualityUsers() {
-      Swal.fire({title:'Loading Users...', didOpen:()=>Swal.showLoading()});
-      apiCall('getQualityData').then(res => {
-          Swal.close();
-          if(res.status !== 'success') return Swal.fire('Error', res.message, 'error');
-          qUserPasswords = res.data.passwords;
-          let html = '<option value="">-- Select User --</option>';
-          res.data.users.forEach(u => { html += `<option value="${u}">${u}</option>`; });
-          document.getElementById('qLoginUserSelect').innerHTML = html;
-      });
-  }
-
-  function processQualityLogin() {
-      let u = document.getElementById('qLoginUserSelect').value;
-      let p = document.getElementById('qLoginPassword').value;
-      if(!u) return Swal.fire('Error', 'Please select a user', 'error');
-      if(qUserPasswords[u] !== p) return Swal.fire('Error', 'Incorrect Password!', 'error');
+      try { 
+          if(window.Notification && window.Notification.permission !== "granted") { 
+              window.Notification.requestPermission().catch(e=>{}); 
+          } 
+          let dAud = new Audio('https://actions.google.com/sounds/v1/communications/chime_short.ogg'); 
+          dAud.volume=0; 
+          dAud.play().catch(e=>{}); 
+      } catch(e) {}
       
-      document.getElementById('qualityLoginScreen').style.display = 'none';
-      document.getElementById('qualityLandingScreen').style.display = 'flex';
-      Swal.fire({toast:true, position:'top-end', icon:'success', title:`Welcome, ${u}!`, showConfirmButton:false, timer:2000});
+      checkNewCallsAlert(); 
+      setInterval(checkNewCallsAlert, 10000);
   }
 
-  function openPortal(portal) { 
-      ['landingScreen','dashPortal','pwPortal','ctPortal','wcrPortal'].forEach(id=>document.getElementById(id).style.display='none'); 
-      if(portal==='home') document.getElementById('landingScreen').style.display='flex'; 
-      else document.getElementById(portal+'Portal').style.display='block'; 
-  }
-
-  function openQualityPortal(portal) {
-      document.getElementById('qualityLandingScreen').style.display = 'none';
-      document.querySelectorAll('.q-portal').forEach(el => el.style.display = 'none');
-      if(portal === 'home') {
-          document.getElementById('qualityLandingScreen').style.display = 'flex';
-      } else {
-          let el = document.getElementById(portal + 'Portal');
-          if(el) el.style.display = 'block';
-      }
-  }
+  function openPortal(portal) { ['landingScreen','dashPortal','pwPortal','ctPortal','wcrPortal'].forEach(id=>document.getElementById(id).style.display='none'); if(portal==='home') document.getElementById('landingScreen').style.display='flex'; else document.getElementById(portal+'Portal').style.display='block'; }
   
   function loadDashboard() {
      document.getElementById('dashLoader').style.display = 'block'; document.getElementById('dashContent').style.display = 'none';
-     apiCall('getDashboardStats').then(res => {
-         if(res.status !== 'success') return Swal.fire('Error', res.message, 'error');
-         let stats = res.data;
+     apiCall('getDashboardStats').then(stats => {
          document.getElementById('dashLoader').style.display = 'none'; document.getElementById('dashContent').style.display = 'block';
          document.getElementById('d-tot').innerText = stats.totalTickets; document.getElementById('d-pen').innerText = stats.totalPending; document.getElementById('d-clo').innerText = stats.totalClosed; document.getElementById('d-cha').innerText = stats.chat.active;
          if(barChartInst) barChartInst.destroy(); if(empChartInst) empChartInst.destroy();
@@ -907,6 +430,8 @@
          const empNames = Object.keys(stats.employees);
          const empActive = empNames.map(n => stats.employees[n].active); const empClosed = empNames.map(n => stats.employees[n].closed);
          empChartInst = new Chart(document.getElementById('empChart').getContext('2d'), { type: 'bar', data: { labels: empNames, datasets: [ { label: 'Pending Cases', data: empActive, backgroundColor: '#f1c40f' }, { label: 'Closed Cases', data: empClosed, backgroundColor: '#3498db' } ] }, options: { responsive: true, indexAxis: 'y', plugins: { title: { display: true, text: 'Employee Performance' } } } });
+     }).catch(e => {
+         document.getElementById('dashLoader').innerText = "Error loading data.";
      });
   }
   function showPwTab(id, el) { document.querySelectorAll('.pw-content').forEach(c=>c.classList.remove('active')); document.querySelectorAll('.pw-tab').forEach(t=>t.classList.remove('active')); document.getElementById(id).classList.add('active'); el.classList.add('active'); document.getElementById('pwRepairPanel').style.display='none'; document.getElementById('pwPayPanel').style.display='none'; document.getElementById('pwMultiPanel').style.display='none'; }
@@ -915,105 +440,64 @@
   function toggleGroup(id) { var el=document.getElementById(id); el.style.display=(el.style.display==='none'||el.style.display==='')?'block':'none'; }
   
   function loadDropdowns() {
-    apiCall('getDropdownData').then(res => {
-      if(res.status !== 'success') return;
-      let data = res.data;
+    apiCall('getDropdownData').then(data => {
       userPasswords = data.passwords;
-      
-      pwModelsHtml = '<option value="">-- Select --</option>'; data.models.forEach(m => pwModelsHtml+=`<option value="${m}">${m}</option>`); 
-      document.querySelectorAll('.i-model').forEach(d=>d.innerHTML=pwModelsHtml);
-      document.querySelectorAll('.q-model').forEach(d=>d.innerHTML=pwModelsHtml);
-      
-      let pHTML = '<option value="">-- Select User --</option>'; 
-      let fHTML = '<option value="all">All Users</option>'; 
+      pwModelsHtml = '<option value="">-- Select --</option>'; data.models.forEach(m => pwModelsHtml+=`<option value="${m}">${m}</option>`); document.querySelectorAll('.i-model').forEach(d=>d.innerHTML=pwModelsHtml);
+      let pHTML = '<option value="">-- Select User --</option>'; let fHTML = '<option value="all">All Users</option>'; 
       data.persons.forEach(p => { pHTML += `<option value="${p}">${p}</option>`; fHTML += `<option value="${p}">${p}</option>`; }); 
-      
       document.getElementById('loginUserSelect').innerHTML=pHTML; document.getElementById('pwPerson').innerHTML=pHTML; document.getElementById('ctPerson').innerHTML=pHTML; document.getElementById('wcrPerson').innerHTML=pHTML;
       document.getElementById('pwRUser').innerHTML=fHTML; document.getElementById('ctRUser').innerHTML=fHTML; document.getElementById('wcrRUser').innerHTML=fHTML;
-
       document.getElementById('pwFailureList').innerHTML=''; data.failures.forEach(f => document.getElementById('pwFailureList').innerHTML+=`<option value="${f}">`);
       document.getElementById('pwQuotePart').innerHTML='<option value="">-- Select --</option>'; pwPartsCat=data.parts; pwPartsCat.forEach((p, i) => document.getElementById('pwQuotePart').innerHTML+=`<option value="${i}">${p.name} - ₹${p.price}</option>`);
       wcrPartsHtml = '<option value="">-- Select --</option>'; if(data.wcrParts) data.wcrParts.forEach(w => wcrPartsHtml += `<option value="${w}">${w}</option>`); document.querySelectorAll('.wcr-part').forEach(d=>d.innerHTML=wcrPartsHtml);
-      
-      // Populate Datalist for Quality Part Code
-      let qpList = document.getElementById('qPartList');
-      if (qpList) {
-          let partHtml = '';
-          if(data.wcrParts) data.wcrParts.forEach(w => partHtml += `<option value="${w}">`);
-          pwPartsCat.forEach(p => partHtml += `<option value="${p.name}">`);
-          qpList.innerHTML = partHtml;
-      }
-
-      globalBankInfo = data.bankDetails || "Bank details not provided in Settings.";
-      globalTermsList = data.termsConditions || [];
-      
+      globalBankInfo = data.bankDetails || "Bank details not provided in Settings."; globalTermsList = data.termsConditions || [];
       let dl = document.getElementById('wcrSourceList');
-      if(dl) {
-          dl.innerHTML = '';
-          if(data.wcrSources) data.wcrSources.forEach(s => { dl.innerHTML += `<option value="${s}">`; });
-      }
-    });
+      if(dl) { dl.innerHTML = ''; if(data.wcrSources) data.wcrSources.forEach(s => { dl.innerHTML += `<option value="${s}">`; }); }
+    }).catch(e=>{});
   }
-  function addPwItem() { pwItemCount++; var c=document.getElementById('pwItemsContainer'); var b=document.createElement('div'); b.className='item-box'; b.id='pw_item_'+pwItemCount; b.innerHTML=`<button type="button" class="remove-btn" onclick="document.getElementById('pw_item_${pwItemCount}').remove()">×</button><div class="grid"><div><label>Model *</label><select class="i-model" required>${pwModelsHtml}</select></div><div><label>Part *</label><select class="i-part" required><option value="">-- Select --</option><option value="PCB">PCB</option><option value="SMPS">SMPS</option><option value="Adaptor">Adaptor</option><option value="Other">Other</option></select></div></div><div class="grid"><div><label>SL. No</label><input type="text" class="i-serial"></div><div><label>Issue</label><input type="text" class="i-issue"></div></div>`; c.appendChild(b); }
   
+  function addPwItem() { pwItemCount++; var c=document.getElementById('pwItemsContainer'); var b=document.createElement('div'); b.className='item-box'; b.id='pw_item_'+pwItemCount; b.innerHTML=`<button type="button" class="remove-btn" onclick="document.getElementById('pw_item_${pwItemCount}').remove()">×</button><div class="grid"><div><label>Model *</label><select class="i-model" required>${pwModelsHtml}</select></div><div><label>Part *</label><select class="i-part" required><option value="">-- Select --</option><option value="PCB">PCB</option><option value="SMPS">SMPS</option><option value="Adaptor">Adaptor</option><option value="Other">Other</option></select></div></div><div class="grid"><div><label>SL. No</label><input type="text" class="i-serial"></div><div><label>Issue</label><input type="text" class="i-issue"></div></div>`; c.appendChild(b); }
   function submitPwEntry() { 
       var fData={ customerName:document.getElementById('pwCust').value, contactNumber:document.getElementById('pwContact').value, receivingDate:document.getElementById('pwDate').value, receivedDocNo:document.getElementById('pwDoc').value, responsiblePerson:document.getElementById('pwPerson').value }; 
-      var iArr=[]; 
-      document.querySelectorAll('#pwItemsContainer .item-box').forEach(b=>iArr.push({ model:b.querySelector('.i-model').value, partType:b.querySelector('.i-part').value, serial:b.querySelector('.i-serial').value, issue:b.querySelector('.i-issue').value })); 
+      var iArr=[]; document.querySelectorAll('#pwItemsContainer .item-box').forEach(b=>iArr.push({ model:b.querySelector('.i-model').value, partType:b.querySelector('.i-part').value, serial:b.querySelector('.i-serial').value, issue:b.querySelector('.i-issue').value })); 
       if(!iArr.length) return; 
       
       Swal.fire({title:'Processing...', didOpen:()=>Swal.showLoading()}); 
-      apiCall('processForm', {formData: fData, itemsArray: iArr}).then(res => { 
-          if(res.status !== 'success') return Swal.fire('Error', res.message, 'error');
-          let bcs = res.data;
-          document.getElementById('pwEntryForm').reset(); 
-          document.getElementById('pwPerson').value = loggedInUser;
+      apiCall('processForm', {formData: fData, itemsArray: iArr}).then(bcs => { 
+          document.getElementById('pwEntryForm').reset(); document.getElementById('pwPerson').value = loggedInUser;
           document.getElementById('pwItemsContainer').innerHTML=`<div class="item-box" id="pw_item_1"><div class="grid"><div><label>Model *</label><select class="i-model" required>${pwModelsHtml}</select></div><div><label>Part *</label><select class="i-part" required><option value="">-- Select --</option><option value="PCB">PCB</option><option value="SMPS">SMPS</option><option value="Adaptor">Adaptor</option><option value="Other">Other</option></select></div></div><div class="grid"><div><label>SL. No</label><input type="text" class="i-serial"></div><div><label>Issue</label><input type="text" class="i-issue"></div></div></div>`; 
           let generatedIds = bcs.map(b => b.id).join(', ');
-          Swal.fire({ title: 'Saved Successfully!', html: `<b>${bcs.length}</b> entries generated.<br><br><b>Task IDs (Barcodes):</b><br><span style="font-size:16px; color:#e74c3c; font-weight:bold;">${generatedIds}</span><br><br><small>You can print them or write them manually.</small>`, icon: 'success', showCancelButton: true, confirmButtonText: '🖨️ Print Barcodes', cancelButtonText: 'Close' }).then(r=>{ if(r.isConfirmed) printBarcodes(bcs, fData.customerName); }); 
-          loadPwRepairs(); 
-      }); 
+          Swal.fire({ title: 'Saved Successfully!', html: `<b>${bcs.length}</b> entries generated.<br><br><b>Task IDs (Barcodes):</b><br><span style="font-size:16px; color:#e74c3c; font-weight:bold;">${generatedIds}</span><br><br><small>You can print them or write them manually.</small>`, icon: 'success', showCancelButton: true, confirmButtonText: '🖨️ Print Barcodes', cancelButtonText: 'Close' }).then(r=>{ if(r.isConfirmed) printBarcodes(bcs, fData.customerName); }); loadPwRepairs(); 
+      }).catch(e=>{ Swal.fire('Error', e.message, 'error'); }); 
   }
   function printBarcodes(bcs, txt) { var win=window.open('','_blank'); var html='<html><head><style>@page{size:50mm 25mm;margin:0;} body{margin:0;display:flex;flex-direction:column;align-items:center;font-family:Arial;} .label{width:50mm;height:25mm;page-break-after:always;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2mm;background:#fff;} .label img{max-width:100%;max-height:14mm;} .sub{font-size:8px;font-weight:bold;white-space:nowrap;overflow:hidden;} .micro{font-size:6px;}</style></head><body>'; bcs.forEach(b=>{ JsBarcode("#barcodeCanvas", b.id, {format:"CODE128", displayValue:true, fontSize:16, height:40, margin:0}); html+=`<div class="label"><img src="${document.getElementById("barcodeCanvas").toDataURL("image/png")}" /><div class="sub">${txt.substring(0,15)} | ${b.partType}</div><div class="micro">SN: ${b.serial||'N/A'}</div></div>`; }); html+='<script>window.onload=function(){window.print();window.close();};<'+'/script></body></html>'; win.document.write(html); win.document.close(); }
-  
   function loadPwRepairs() { 
       document.getElementById('pwRepairList').innerHTML="Fetching..."; 
-      apiCall('getPendingRepairs').then(res => { 
-          if(res.status !== 'success') return;
-          let d = res.data;
+      apiCall('getPendingRepairs').then(d => { 
           if(!d.length){ document.getElementById('pwRepairList').innerHTML="No records."; return; } 
           let h="", g={}; d.forEach(c=>{if(!g[c.customer]) g[c.customer]=[]; g[c.customer].push(c);}); let i=0; 
-          for(let c in g){ 
-              i++; h+=`<div class="group-wrap"><div class="group-header" onclick="toggleGroup('pwr-${i}')"><span>👤 ${c}</span><span class="badge" style="background:#e1b12c;">${g[c].length} Parts</span></div><div class="group-body" id="pwr-${i}">`; 
-              g[c].forEach(x=>{ h+=`<div class="card" onclick="openPwRepair(${x.row},'${safeB64(x.serial)}','${safeB64(c)}','${x.taskId}')"><div class="tat-badge">⏱ TAT: ${x.tat}</div><b>${x.taskId}</b><br><small>${x.model} | ${x.partType}</small><br><small style="color:#d63031; font-weight:bold;">Issue: ${x.issue}</small></div>`; }); 
-              h+='</div></div>'; 
-          } 
+          for(let c in g){ i++; h+=`<div class="group-wrap"><div class="group-header" onclick="toggleGroup('pwr-${i}')"><span>👤 ${c}</span><span class="badge" style="background:#e1b12c;">${g[c].length} Parts</span></div><div class="group-body" id="pwr-${i}">`; g[c].forEach(x=>{ h+=`<div class="card" onclick="openPwRepair(${x.row},'${safeB64(x.serial)}','${safeB64(c)}','${x.taskId}')"><div class="tat-badge">⏱ TAT: ${x.tat}</div><b>${x.taskId}</b><br><small>${x.model} | ${x.partType}</small><br><small style="color:#d63031; font-weight:bold;">Issue: ${x.issue}</small></div>`; }); h+='</div></div>'; } 
           document.getElementById('pwRepairList').innerHTML=h; 
-      }); 
+      }).catch(e=>{ document.getElementById('pwRepairList').innerHTML="Error."; }); 
   }
   function openPwRepair(r,s,c,id){ document.getElementById('pwRepairPanel').style.display='block'; document.getElementById('pwRepTitle').innerText=safeDec(c)+' ('+id+')'; document.getElementById('pwRepRow').value=r; document.getElementById('pwFailureInput').value=''; window.scrollTo(0, document.body.scrollHeight);}
-  function submitPwRepair(f){ Swal.fire({title:'Processing...',didOpen:()=>Swal.showLoading()}); apiCall('updateRepairStatus', {form: serializeForm(f)}).then(res=>{ if(res.status!=='success') return Swal.fire('Error',res.message,'error'); Swal.fire('Updated',res.data,'success'); document.getElementById('pwRepairPanel').style.display='none'; loadPwRepairs(); loadDropdowns();}); }
+  function submitPwRepair(f){ Swal.fire({title:'Processing...',didOpen:()=>Swal.showLoading()}); apiCall('updateRepairStatus', {form: formToObj(f)}).then(r=>{Swal.fire('Updated',r,'success'); document.getElementById('pwRepairPanel').style.display='none'; loadPwRepairs(); loadDropdowns();}).catch(e=>{Swal.fire('Error',e.message,'error')}); }
   
   function loadPwPayments() { 
     document.getElementById('pwPayList').innerHTML="Fetching..."; 
-    apiCall('getPendingPayments').then(res => { 
-      if(res.status !== 'success') return;
-      let d = res.data;
+    apiCall('getPendingPayments').then(d=>{ 
       if(!d.length){ document.getElementById('pwPayList').innerHTML="No records."; return; } 
       let h="", g={}; d.forEach(c=>{if(!g[c.customer]) g[c.customer]=[]; g[c.customer].push(c);}); let i=0; 
       for(let c in g){ 
         i++; let sg=btoa(unescape(encodeURIComponent(JSON.stringify(g[c])))); 
         h+=`<div class="group-wrap"><div class="group-header" onclick="toggleGroup('pwp-${i}')"><span>👤 ${c}</span><div><span class="badge" style="background:#0984e3; cursor:pointer; margin-right:8px;" onclick="event.stopPropagation(); openPwMulti('${safeB64(c)}','${sg}')">🧾 Master Quote</span><span class="badge" style="background:#44bd32;">${g[c].length} Ready</span></div></div><div class="group-body" id="pwp-${i}">`; 
         g[c].forEach(x=>{ 
-          let sd=btoa(unescape(encodeURIComponent(JSON.stringify(x)))); 
-          let qc=x.quoteStatus==="Generated"?"q-gen":(x.quoteStatus==="Sent"?"q-sent":"q-not"); 
-          let titleColor = x.status === "Not Repairable" ? "color:#e74c3c" : "color:#333";
-          let viewBtn = '';
+          let sd=btoa(unescape(encodeURIComponent(JSON.stringify(x)))); let qc=x.quoteStatus==="Generated"?"q-gen":(x.quoteStatus==="Sent"?"q-sent":"q-not"); let titleColor = x.status === "Not Repairable" ? "color:#e74c3c" : "color:#333"; let viewBtn = '';
           if(x.quoteJson && x.quoteJson.length > 10) { viewBtn = `<button class="btn" style="background:#0984e3; padding:4px 8px; font-size:10px; width:auto; position:absolute; right:10px; bottom:10px; z-index:10;" onclick="event.stopPropagation(); viewStoredQuote('${safeB64(x.quoteJson)}')"><i class="fa-solid fa-eye"></i> View PDF</button>`; }
           h+=`<div class="card card-pay" onclick="openPwPay('${sd}')"><div class="tat-badge">⏱ TAT: ${x.tat}</div><b style="${titleColor}">${x.taskId} - ${x.model} (${x.status})</b><br><small>Part: ${x.partType}</small><br><small style="color:#d63031; font-weight:bold;">Issue: ${x.issue}</small><br><span class="q-tag ${qc}">${x.quoteStatus}</span> ${viewBtn}</div>`;
         }); h+='</div></div>'; 
       } document.getElementById('pwPayList').innerHTML=h; 
-    }); 
+    }).catch(e=>{ document.getElementById('pwPayList').innerHTML="Error."; }); 
   }
   
   function openPwPay(sd) { 
@@ -1030,102 +514,25 @@
   function pwCalcQuote() { 
     if(pwQuoteData.status === "Not Repairable") return; let i=document.getElementById('pwQuotePart').value; if(i==="") return; let p=pwPartsCat[i]; let b=parseFloat(p.price); let t=b*0.18; let tot=b+t; 
     document.getElementById('pwQBase').value=b.toFixed(2); document.getElementById('pwQTax').value=t.toFixed(2); document.getElementById('pwQTotal').value=tot.toFixed(2); 
-    pwQuoteData.partName=p.name; pwQuoteData.basePrice=b.toFixed(2); pwQuoteData.igst=t.toFixed(2); pwQuoteData.total=tot.toFixed(2); pwQuoteData.fullDescription=pwQuoteData.model+' - '+p.name; 
-    pwQuoteData.hsnDesc=p.hsnDesc||""; pwQuoteData.hsnNum=p.hsnNum||"84439959";
+    pwQuoteData.partName=p.name; pwQuoteData.basePrice=b.toFixed(2); pwQuoteData.igst=t.toFixed(2); pwQuoteData.total=tot.toFixed(2); pwQuoteData.fullDescription=pwQuoteData.model+' - '+p.name; pwQuoteData.hsnDesc=p.hsnDesc||""; pwQuoteData.hsnNum=p.hsnNum||"84439959";
   }
   function generatePdfHtml(q, isMulti) {
-      let isNR = q.status === "Not Repairable" || q.partName === "Not Repairable";
-      let qtyStr = isNR ? "-" : "1"; let taxStr = isNR ? "-" : "18%"; let priceStr = isNR ? "-" : q.basePrice;
-      let amtWords = isNR ? "Zero" : numToWords(q.total);
-      let tcHtml = globalTermsList.length > 0 ? "<ol style='margin:5px 0; padding-left:15px;'>" + globalTermsList.map(item => `<li>${item}</li>`).join("") + "</ol>" : "Terms and conditions not specified.";
-      let itemsHtml = "";
+      let isNR = q.status === "Not Repairable" || q.partName === "Not Repairable"; let qtyStr = isNR ? "-" : "1"; let taxStr = isNR ? "-" : "18%"; let priceStr = isNR ? "-" : q.basePrice; let amtWords = isNR ? "Zero" : numToWords(q.total); let tcHtml = globalTermsList.length > 0 ? "<ol style='margin:5px 0; padding-left:15px;'>" + globalTermsList.map(item => `<li>${item}</li>`).join("") + "</ol>" : "Terms and conditions not specified."; let itemsHtml = "";
       if(!isMulti) {
-         itemsHtml = `<tr>
-          <td class="tc">1</td>
-          <td><b>${q.fullDescription}</b>${q.hsnDesc ? '<br><span style="color:#555;font-size:10px;">HSN Desc: '+q.hsnDesc+'</span>' : ''}${isNR ? `<br><span style="color:#d63031; font-weight:bold; font-size:10px;">[NOT REPAIRABLE]</span>` : ''}<br><span style="font-size:10px; color:#555;">Task: ${q.taskId} | Rec: ${q.receivedPart} | Fail: ${q.partFailure}</span></td>
-          <td class="tc">Nos</td><td class="tc">${isNR ? '-' : (q.hsnNum || '84439959')}</td><td class="tc">${qtyStr}</td><td class="tr">${priceStr}</td><td class="tr">${isNR ? '-' : q.basePrice}</td>
-        </tr>
-        <tr><td colspan="7" style="border-top:none; color:#333; font-size:10px; padding-top:0;">Tax Type: IGST &nbsp;&nbsp;|&nbsp;&nbsp; Tax Rate: 18% &nbsp;&nbsp;|&nbsp;&nbsp; Tax Amount: ${isNR ? '-' : q.igst}</td></tr>`;
+         itemsHtml = `<tr><td class="tc">1</td><td><b>${q.fullDescription}</b>${q.hsnDesc ? '<br><span style="color:#555;font-size:10px;">HSN Desc: '+q.hsnDesc+'</span>' : ''}${isNR ? `<br><span style="color:#d63031; font-weight:bold; font-size:10px;">[NOT REPAIRABLE]</span>` : ''}<br><span style="font-size:10px; color:#555;">Task: ${q.taskId} | Rec: ${q.receivedPart} | Fail: ${q.partFailure}</span></td><td class="tc">Nos</td><td class="tc">${isNR ? '-' : (q.hsnNum || '84439959')}</td><td class="tc">${qtyStr}</td><td class="tr">${priceStr}</td><td class="tr">${isNR ? '-' : q.basePrice}</td></tr><tr><td colspan="7" style="border-top:none; color:#333; font-size:10px; padding-top:0;">Tax Type: IGST &nbsp;&nbsp;|&nbsp;&nbsp; Tax Rate: 18% &nbsp;&nbsp;|&nbsp;&nbsp; Tax Amount: ${isNR ? '-' : q.igst}</td></tr>`;
       } else {
-         q.items.forEach((x, i) => {
-            let nIsNR = x.status === "Not Repairable" || x.partName === "Not Repairable";
-            itemsHtml += `<tr><td class="tc">${i+1}</td><td><b>${x.fullDescription}</b>${x.hsnDesc ? '<br><span style="color:#555;font-size:10px;">HSN Desc: '+x.hsnDesc+'</span>' : ''}${nIsNR ? `<br><span style="color:#d63031; font-weight:bold; font-size:10px;">[NOT REPAIRABLE]</span>` : ''}<br><span style="font-size:10px; color:#555;">Task: ${x.taskId} | Rec: ${x.partType} | Fail: ${x.partFailure}</span></td><td class="tc">Nos</td><td class="tc">${nIsNR?'-':(x.hsnNum || '84439959')}</td><td class="tc">${nIsNR?'-':'1'}</td><td class="tr">${nIsNR?'-':x.basePrice}</td><td class="tr">${nIsNR?'-':x.basePrice}</td></tr>
-            <tr><td colspan="7" style="border-top:none; color:#333; font-size:10px; padding-top:0;">Tax Type: IGST &nbsp;&nbsp;|&nbsp;&nbsp; Tax Rate: 18% &nbsp;&nbsp;|&nbsp;&nbsp; Tax Amount: ${nIsNR?'-':x.igst}</td></tr>`;
-         });
+         q.items.forEach((x, i) => { let nIsNR = x.status === "Not Repairable" || x.partName === "Not Repairable"; itemsHtml += `<tr><td class="tc">${i+1}</td><td><b>${x.fullDescription}</b>${x.hsnDesc ? '<br><span style="color:#555;font-size:10px;">HSN Desc: '+x.hsnDesc+'</span>' : ''}${nIsNR ? `<br><span style="color:#d63031; font-weight:bold; font-size:10px;">[NOT REPAIRABLE]</span>` : ''}<br><span style="font-size:10px; color:#555;">Task: ${x.taskId} | Rec: ${x.partType} | Fail: ${x.partFailure}</span></td><td class="tc">Nos</td><td class="tc">${nIsNR?'-':(x.hsnNum || '84439959')}</td><td class="tc">${nIsNR?'-':'1'}</td><td class="tr">${nIsNR?'-':x.basePrice}</td><td class="tr">${nIsNR?'-':x.basePrice}</td></tr><tr><td colspan="7" style="border-top:none; color:#333; font-size:10px; padding-top:0;">Tax Type: IGST &nbsp;&nbsp;|&nbsp;&nbsp; Tax Rate: 18% &nbsp;&nbsp;|&nbsp;&nbsp; Tax Amount: ${nIsNR?'-':x.igst}</td></tr>`; });
       }
-      return `<html><head><title>Quotation - ${q.quoteNo}</title>
-      <style>
-        body { font-family: Arial, sans-serif; font-size: 11px; color: #000; padding: 20px; }
-        .main-table { width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: -1px; }
-        .main-table td, .main-table th { border: 1px solid #000; padding: 5px; vertical-align: top; line-height: 1.3; }
-        .tc { text-align: center; } .tr { text-align: right; } .b { font-weight: bold; }
-        .header-title { font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 10px; text-decoration: underline; text-transform: uppercase; }
-        .no-pad { padding: 0 !important; }
-        .inner-table { width: 100%; border-collapse: collapse; height: 100%; }
-        .inner-table td { border: none; padding: 5px; border-bottom: 1px solid #000; }
-        .inner-table tr:last-child td { border-bottom: none; }
-        .inner-table td:first-child { border-right: 1px solid #000; font-weight: bold; width: 40%; }
-      </style></head><body>
-      <div class="header-title">${isMulti ? 'MASTER ' : ''}QUOTATION</div>
-      <table class="main-table">
-        <tr>
-          <td style="width:55%;">
-            <div style="font-size:16px; font-weight:bold; color:#0984e3; margin-bottom:5px;">WEPSOL</div>
-            <b>WeP Solutions Limited.</b><br>Plot no-87, PBU Baddi, EPIP Phase-1, Jharmajri,<br>Baddi-174103<br>Himachal Pradesh<br>India<br>
-            <b>STATE CODE:</b> 02<br><b>GSTIN:</b> 02AAACD5108M1ZZ<br><b>PAN No:</b> AAACD5108M
-          </td>
-          <td style="width:45%;" class="no-pad">
-            <table class="inner-table">
-              <tr><td>Quotation No</td><td>${q.quoteNo}</td></tr>
-              <tr><td>Quotation Date</td><td>${q.quoteDate}</td></tr>
-              <tr><td>Salesperson</td><td>${q.salesperson || "Admin"}</td></tr>
-              <tr><td>Place of Supply</td><td>As per customer address</td></tr>
-            </table>
-          </td>
-        </tr>
-      </table>
-      
-      <table class="main-table">
-        <tr style="background:#f0f0f0;"><td style="width:50%;" class="b">Bill To:</td><td style="width:50%;" class="b">Ship To:</td></tr>
-        <tr>
-          <td><b style="font-size:13px;">${q.customer}</b><br><br><b>Contact:</b> ${q.contact || "N/A"}<br><b>Address:</b> As per registered records.<br></td>
-          <td><b style="font-size:13px;">${q.customer}</b><br><br><b>Contact:</b> ${q.contact || "N/A"}<br><b>Address:</b> As per registered records.<br></td>
-        </tr>
-      </table>
-      <table class="main-table" style="margin-top:8px;">
-        <tr style="background:#f0f0f0;"><th class="tc">Sno.</th><th>Product Description</th><th class="tc">UOM</th><th class="tc">HSN Code</th><th class="tc">Qty</th><th class="tr">Unit Price</th><th class="tr">Total Amount</th></tr>
-        ${itemsHtml}
-      </table>
-      
-      <table class="main-table" style="margin-top:8px;">
-        <tr><td style="width:70%; border-right:none;" rowspan="3"><b>Amount in Words:</b><br>INR ${amtWords} Only</td><td class="tr b" style="border-left:1px solid #000; border-bottom:none;">Sub Total:</td><td class="tr">${q.basePrice}</td></tr>
-        <tr><td class="tr b" style="border-left:1px solid #000; border-bottom:none; border-top:none;">Tax Amount (18%):</td><td class="tr" style="border-top:none;">${q.igst}</td></tr>
-        <tr><td class="tr b" style="border-left:1px solid #000; border-top:none;">Gross Total:</td><td class="tr b" style="border-top:none;">${q.total}</td></tr>
-      </table>
-      
-      <table class="main-table" style="border-top:none;">
-        <tr>
-          <td style="width:60%; border-right:none; font-size:10px;">
-            <b>Bank Details:</b><br>${globalBankInfo.replace(/\n/g, '<br>')}<br><br>
-            <b>Terms & Conditions:</b><br>${tcHtml}
-          </td>
-          <td style="width:40%; text-align:right; vertical-align:bottom; border-left:none;">
-            <b>For WeP Solutions Limited</b><br><br><br><br>Authorized Signatory<br>E & O.E.
-          </td>
-        </tr>
-      </table>
-      <script>window.print();<`+`/script></body></html>`;
+      return `<html><head><title>Quotation - ${q.quoteNo}</title><style>body { font-family: Arial, sans-serif; font-size: 11px; color: #000; padding: 20px; } .main-table { width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: -1px; } .main-table td, .main-table th { border: 1px solid #000; padding: 5px; vertical-align: top; line-height: 1.3; } .tc { text-align: center; } .tr { text-align: right; } .b { font-weight: bold; } .header-title { font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 10px; text-decoration: underline; text-transform: uppercase; } .no-pad { padding: 0 !important; } .inner-table { width: 100%; border-collapse: collapse; height: 100%; } .inner-table td { border: none; padding: 5px; border-bottom: 1px solid #000; } .inner-table tr:last-child td { border-bottom: none; } .inner-table td:first-child { border-right: 1px solid #000; font-weight: bold; width: 40%; }</style></head><body><div class="header-title">${isMulti ? 'MASTER ' : ''}QUOTATION</div><table class="main-table"><tr><td style="width:55%;"><div style="font-size:16px; font-weight:bold; color:#0984e3; margin-bottom:5px;">WEPSOL</div><b>WeP Solutions Limited.</b><br>Plot no-87, PBU Baddi, EPIP Phase-1, Jharmajri,<br>Baddi-174103<br>Himachal Pradesh<br>India<br><b>STATE CODE:</b> 02<br><b>GSTIN:</b> 02AAACD5108M1ZZ<br><b>PAN No:</b> AAACD5108M</td><td style="width:45%;" class="no-pad"><table class="inner-table"><tr><td>Quotation No</td><td>${q.quoteNo}</td></tr><tr><td>Quotation Date</td><td>${q.quoteDate}</td></tr><tr><td>Salesperson</td><td>${q.salesperson || "Admin"}</td></tr><tr><td>Place of Supply</td><td>As per customer address</td></tr></table></td></tr></table><table class="main-table"><tr style="background:#f0f0f0;"><td style="width:50%;" class="b">Bill To:</td><td style="width:50%;" class="b">Ship To:</td></tr><tr><td><b style="font-size:13px;">${q.customer}</b><br><br><b>Contact:</b> ${q.contact || "N/A"}<br><b>Address:</b> As per registered records.<br></td><td><b style="font-size:13px;">${q.customer}</b><br><br><b>Contact:</b> ${q.contact || "N/A"}<br><b>Address:</b> As per registered records.<br></td></tr></table><table class="main-table" style="margin-top:8px;"><tr style="background:#f0f0f0;"><th class="tc">Sno.</th><th>Product Description</th><th class="tc">UOM</th><th class="tc">HSN Code</th><th class="tc">Qty</th><th class="tr">Unit Price</th><th class="tr">Total Amount</th></tr>${itemsHtml}</table><table class="main-table" style="margin-top:8px;"><tr><td style="width:70%; border-right:none;" rowspan="3"><b>Amount in Words:</b><br>INR ${amtWords} Only</td><td class="tr b" style="border-left:1px solid #000; border-bottom:none;">Sub Total:</td><td class="tr">${q.basePrice}</td></tr><tr><td class="tr b" style="border-left:1px solid #000; border-bottom:none; border-top:none;">Tax Amount (18%):</td><td class="tr" style="border-top:none;">${q.igst}</td></tr><tr><td class="tr b" style="border-left:1px solid #000; border-top:none;">Gross Total:</td><td class="tr b" style="border-top:none;">${q.total}</td></tr></table><table class="main-table" style="border-top:none;"><tr><td style="width:60%; border-right:none; font-size:10px;"><b>Bank Details:</b><br>${globalBankInfo.replace(/\n/g, '<br>')}<br><br><b>Terms & Conditions:</b><br>${tcHtml}</td><td style="width:40%; text-align:right; vertical-align:bottom; border-left:none;"><b>For WeP Solutions Limited</b><br><br><br><br>Authorized Signatory<br>E & O.E.</td></tr></table><script>window.print();<`+`/script></body></html>`;
   }
   function pwGenPrint() { 
     if(!pwQuoteData.total) return Swal.fire('Error','Calculate quote first.','error'); 
     Swal.fire({title:'Generating...',didOpen:()=>Swal.showLoading()});
-    apiCall('saveQuotation', {quoteData: pwQuoteData}).then(res => { 
-      Swal.close(); 
-      if(res.status!=='success') return Swal.fire('Error',res.message,'error');
-      let win=window.open('','_blank'); 
-      pwQuoteData.quoteNo = res.data.quoteNo; pwQuoteData.quoteDate = res.data.date;
+    apiCall('saveQuotation', {quoteData: pwQuoteData}).then(r=>{ 
+      Swal.close(); let win=window.open('','_blank'); 
+      pwQuoteData.quoteNo = r.quoteNo; pwQuoteData.quoteDate = r.date;
       win.document.write(generatePdfHtml(pwQuoteData, false)); win.document.close(); loadPwPayments(); 
-    });
+    }).catch(e=>{Swal.fire('Error',e.message,'error')});
   }
   function viewStoredQuote(encodedJson) { let qData = JSON.parse(safeDec(encodedJson)); let isMulti = qData.items ? true : false; let win = window.open('','_blank'); win.document.write(generatePdfHtml(qData, isMulti)); win.document.close(); }
   function openPwMulti(c, sd) { document.getElementById('pwPayPanel').style.display='none'; document.getElementById('pwMultiPanel').style.display='block'; document.getElementById('pwMultiTitle').innerText="🧾 Master Quotation: "+safeDec(c); pwMultiItems=JSON.parse(safeDec(sd)); let h=''; pwMultiItems.forEach((x,i)=>{ if(x.status === "Not Repairable") { h+=`<div style="border:1px solid #eee;padding:10px;margin-bottom:5px;background:#fffdf5;"><b style="color:#d63031">${x.taskId} (Not Repairable)</b> - ${x.model}<br><small>Remark: ${x.reason}</small><input type="hidden" class="mq-s" data-i="${i}" value="NR"></div>`; } else { h+=`<div style="border:1px solid #eee;padding:10px;margin-bottom:5px;background:#fff;"><b>${x.taskId}</b> - ${x.model}<select class="mq-s" data-i="${i}" onchange="pwCalcMulti()" style="margin-top:5px;"><option value="">-- Select Rate --</option>`; pwPartsCat.forEach((p,j)=>{h+=`<option value="${j}">${p.name} - ₹${p.price}</option>`;}); h+='</select></div>'; } }); document.getElementById('pwMultiContainer').innerHTML=h; document.getElementById('pwMBase').value=''; document.getElementById('pwMTax').value=''; document.getElementById('pwMTotal').value=''; window.scrollTo(0, document.body.scrollHeight); }
@@ -1135,26 +542,22 @@
     for(let i=0;i<s.length;i++) if(s[i].value==="") return Swal.fire('Error','Select rate for all items.','error'); 
     Swal.fire({title:'Generating...',didOpen:()=>Swal.showLoading()});
     let bPrice = document.getElementById('pwMBase').value; let iPrice = document.getElementById('pwMTax').value; let tPrice = document.getElementById('pwMTotal').value;
-    apiCall('saveMultiQuotation', {customer: pwMultiItems[0].customer, itemsArray: pwMultiItems, base: bPrice, igst: iPrice, total: tPrice}).then(res => { 
-      Swal.close(); 
-      if(res.status!=='success') return Swal.fire('Error',res.message,'error');
-      let win=window.open('','_blank'); 
-      let masterObj = { quoteNo: res.data.quoteNo, quoteDate: res.data.date, customer: pwMultiItems[0].customer || pwMultiItems[0].person || "-", contact: pwMultiItems[0].contact || "N/A", salesperson: "Admin", basePrice: bPrice, igst: iPrice, total: tPrice, items: pwMultiItems };
+    apiCall('saveMultiQuotation', {customer: pwMultiItems[0].customer, itemsArray: pwMultiItems, base: bPrice, igst: iPrice, total: tPrice}).then(r=>{ 
+      Swal.close(); let win=window.open('','_blank'); 
+      let masterObj = { quoteNo: r.quoteNo, quoteDate: r.date, customer: pwMultiItems[0].customer || pwMultiItems[0].person || "-", contact: pwMultiItems[0].contact || "N/A", salesperson: "Admin", basePrice: bPrice, igst: iPrice, total: tPrice, items: pwMultiItems };
       win.document.write(generatePdfHtml(masterObj, true)); win.document.close(); 
       document.getElementById('pwMultiPanel').style.display='none'; loadPwPayments(); 
-    });
+    }).catch(e=>{Swal.fire('Error',e.message,'error')});
   }
-  function pwMarkSent() { if(pwQuoteData.row) apiCall('markQuoteSent', {row: pwQuoteData.row}).then(res=>{Swal.fire('Success',res.data,'success'); loadPwPayments();}); }
-  function pwMarkMultiSent() { if(!pwMultiItems.length) return; apiCall('markMultiQuoteSent', {itemsArray: pwMultiItems}).then(res=>{Swal.fire('Success',res.data,'success'); loadPwPayments();}); }
-  function submitPwPayment(f) { Swal.fire({title:'Processing...',didOpen:()=>Swal.showLoading()}); apiCall('closePayment', {form: serializeForm(f)}).then(res=>{Swal.fire('Closed!',res.data,'success'); document.getElementById('pwPayPanel').style.display='none'; loadPwPayments();}); }
-  function pwSubmitMultiPayment() { let doc=document.getElementById('pwMDoc').value, trk=document.getElementById('pwMTrack').value; if(!doc||!trk) return; Swal.fire({title:'Processing...',didOpen:()=>Swal.showLoading()}); apiCall('closeMultiPayment', {itemsArray: pwMultiItems, docNo: doc, trackNo: trk}).then(res=>{Swal.fire('Closed!',res.data,'success'); document.getElementById('pwMultiPanel').style.display='none'; loadPwPayments();}); }
+  function pwMarkSent() { if(pwQuoteData.row) apiCall('markQuoteSent', {row: pwQuoteData.row}).then(r=>{Swal.fire('Success',r,'success'); loadPwPayments();}).catch(e=>{}); }
+  function pwMarkMultiSent() { if(!pwMultiItems.length) return; apiCall('markMultiQuoteSent', {itemsArray: pwMultiItems}).then(r=>{Swal.fire('Success',r,'success'); loadPwPayments();}).catch(e=>{}); }
+  function submitPwPayment(f) { Swal.fire({title:'Processing...',didOpen:()=>Swal.showLoading()}); apiCall('closePayment', {form: formToObj(f)}).then(r=>{Swal.fire('Closed!',r,'success'); document.getElementById('pwPayPanel').style.display='none'; loadPwPayments();}).catch(e=>{Swal.fire('Error',e.message,'error')}); }
+  function pwSubmitMultiPayment() { let doc=document.getElementById('pwMDoc').value, trk=document.getElementById('pwMTrack').value; if(!doc||!trk) return; Swal.fire({title:'Processing...',didOpen:()=>Swal.showLoading()}); apiCall('closeMultiPayment', {itemsArray: pwMultiItems, docNo: doc, trackNo: trk}).then(r=>{Swal.fire('Closed!',r,'success'); document.getElementById('pwMultiPanel').style.display='none'; loadPwPayments();}).catch(e=>{Swal.fire('Error',e.message,'error')}); }
   
   function pwFetchReports() { 
       let s=document.getElementById('pwRFrom').value, e=document.getElementById('pwRTo').value, u=document.getElementById('pwRUser').value; 
       document.getElementById('pwReportRes').innerHTML="Fetching..."; 
-      apiCall('getClosedReports', {startStr: s, endStr: e, userFilter: u}).then(res => { 
-          if(res.status !== 'success') return;
-          let d = res.data;
+      apiCall('getClosedReports', {startStr: s, endStr: e, userFilter: u}).then(d=>{ 
           if(!d.length) return document.getElementById('pwReportRes').innerHTML="No records found."; 
           let h='<table><tr><th>Date</th><th>Customer Details</th><th>Task / Hardware Details</th><th>Action & Status</th><th>Financials</th></tr>'; 
           d.forEach(r=>{ 
@@ -1164,29 +567,49 @@
               h+=`<tr><td>Rec: ${r.recDate}<br>Disp: ${r.dispDate}</td><td><b>${r.customer}</b></td><td>${hwDetail}</td><td style="color:${statClr};"><b>${r.status}</b><br><small style="color:#333;">${r.action}</small></td><td>${finDetail}</td></tr>`; 
           }); 
           document.getElementById('pwReportRes').innerHTML=h+'</table>'; 
-      }); 
+      }).catch(e=>{ document.getElementById('pwReportRes').innerHTML="Error."; }); 
   }
   
-  function ctSubmitEntry(form) { Swal.fire({title:'Saving...',didOpen:()=>Swal.showLoading()}); apiCall('ct_processForm', {formObject: serializeForm(form)}).then(res=>{ Swal.fire('Saved!',res.data,'success'); form.reset(); document.getElementById('ctPerson').value = loggedInUser; ctLoadPending(); }); }
-  function ctLoadPending() { 
-      document.getElementById('ctList').innerHTML="Fetching..."; 
-      apiCall('ct_getPendingCalls').then(res => { 
-          if(res.status !== 'success') { document.getElementById('ctList').innerHTML=`<div style="color:red; padding:10px;">Error: ${res.message}</div>`; return; }
-          let data = res.data;
-          let html=data.length?"":"No pending calls."; 
-          data.forEach(c=>{ let assignInfo=c.assigned?`<span class="ct-assign">Assign: ${c.assigned}</span>`:""; let showTask=c.taskId?`${c.taskId} - `:''; html+=`<div class="ct-card" onclick="ctOpenUpdate(${c.row}, '${safeB64(c.customerName)}', '${safeB64(c.action)}', '${safeB64(c.assigned)}')"><div class="ct-tat">TAT: ${c.tat}</div><b>${showTask}${c.customerName}</b> ${assignInfo}<div style="color:#1976d2;font-size:12px;margin:2px 0;">📞 ${c.contact}</div><small>Model: ${c.model}<br>Issue: ${c.issue}</small></div>`; }); 
-          document.getElementById('ctList').innerHTML=html; 
-      }); 
+  function ctSubmitEntry(form) { Swal.fire({title:'Saving...',didOpen:()=>Swal.showLoading()}); apiCall('ct_processForm', {formObject: formToObj(form)}).then(res=>{ Swal.fire('Saved!',res,'success'); form.reset(); document.getElementById('ctPerson').value = loggedInUser; ctLoadPending(); }).catch(e=>{Swal.fire('Error',e.message,'error')}); }
+  
+  /* --- SMART CATEGORY LOGIC FOR PENDING CALLS --- */
+  function ctLoadPending() {
+      document.getElementById('ctList').innerHTML="Fetching...";
+      apiCall('ct_getPendingCalls').then(data=>{
+          if(!data.length){ document.getElementById('ctList').innerHTML="No pending calls."; return; }
+          let groups = { 'Installation': [], 'Demo': [], 'Warranty': [], 'Chatbot': [], 'Manual Logged': [] };
+          data.forEach(c=>{
+              let iss = (c.issue || "").toUpperCase(); let act = (c.action || "").toUpperCase();
+              if(act.includes("REGISTERED VIA CHAT") || iss.includes("ISSUE: ")) { groups['Chatbot'].push(c); }
+              else if(iss.includes("INSTALLATION REQUEST")) { groups['Installation'].push(c); }
+              else if(iss.includes("DEMO REQUEST")) { groups['Demo'].push(c); }
+              else if(iss.includes("WARRANTY COMPLAINT")) { groups['Warranty'].push(c); }
+              else { groups['Manual Logged'].push(c); }
+          });
+          let html=""; 
+          let gClr = {'Installation':'#0984e3','Demo':'#27ae60','Warranty':'#e67e22','Chatbot':'#ff0073','Manual Logged':'#2c3e50'};
+          let gIco = {'Installation':'fa-screwdriver-wrench','Demo':'fa-desktop','Warranty':'fa-file-shield','Chatbot':'fa-robot','Manual Logged':'fa-phone'};
+          let i=0;
+          for(let g in groups) {
+              if(groups[g].length > 0) {
+                  i++; html+=`<div class="group-wrap"><div class="group-header" onclick="toggleGroup('ct-g-${i}')"><span><i class="fa-solid ${gIco[g]}" style="color:${gClr[g]};"></i> ${g}</span><span class="badge" style="background:${gClr[g]}; color:#fff; padding:2px 8px; border-radius:10px; font-size:11px;">${groups[g].length} Calls</span></div><div class="group-body" id="ct-g-${i}" style="display:block;">`;
+                  groups[g].forEach(c=>{
+                      let assignInfo=c.assigned?`<span class="ct-assign">Assign: ${c.assigned}</span>`:""; let showTask=c.taskId?`${c.taskId} - `:'';
+                      html+=`<div class="ct-card" style="border-left-color:${gClr[g]};" onclick="ctOpenUpdate(${c.row}, '${safeB64(c.customerName)}', '${safeB64(c.action)}', '${safeB64(c.assigned)}')"><div class="ct-tat" style="color:${gClr[g]}; background:${gClr[g]}15; border-color:${gClr[g]}50;">TAT: ${c.tat}</div><b>${showTask}${c.customerName}</b> ${assignInfo}<div style="color:#1976d2;font-size:12px;margin:2px 0;">📞 ${c.contact}</div><small>Model: ${c.model}<br>Issue: ${c.issue}</small></div>`;
+                  }); html+='</div></div>';
+              }
+          }
+          document.getElementById('ctList').innerHTML=html;
+      }).catch(err=>{ document.getElementById('ctList').innerHTML=`<div style="color:red; padding:10px;">Error fetching data</div>`; });
   }
+
   function ctOpenUpdate(r, encN, encAct, encAss) { document.getElementById('ctUpdatePanel').style.display='block'; document.getElementById('ctTargetCust').innerText="Update: "+safeDec(encN); document.getElementById('ctRow').value=r; document.getElementById('ctAction').value=safeDec(encAct); document.getElementById('ctAssigned').value=safeDec(encAss); window.scrollTo(0, document.body.scrollHeight); }
-  function ctSaveUpdate() { Swal.fire({title:'Updating...',didOpen:()=>Swal.showLoading()}); apiCall('ct_updateCallStatus', {row: document.getElementById('ctRow').value, action: document.getElementById('ctAction').value, status: document.getElementById('ctStatus').value, assignedTo: document.getElementById('ctAssigned').value}).then(res=>{ Swal.fire('Updated!',res.data,'success'); document.getElementById('ctUpdatePanel').style.display='none'; ctLoadPending(); }); }
+  function ctSaveUpdate() { Swal.fire({title:'Updating...',didOpen:()=>Swal.showLoading()}); apiCall('ct_updateCallStatus', {row: document.getElementById('ctRow').value, action: document.getElementById('ctAction').value, status: document.getElementById('ctStatus').value, assignedTo: document.getElementById('ctAssigned').value}).then(res=>{ Swal.fire('Updated!',res,'success'); document.getElementById('ctUpdatePanel').style.display='none'; ctLoadPending(); }).catch(e=>{Swal.fire('Error',e.message,'error')}); }
   
   function ctFetchReports() { 
       let s=document.getElementById('ctRFrom').value, e=document.getElementById('ctRTo').value, u=document.getElementById('ctRUser').value; 
       document.getElementById('ctReportRes').innerHTML="Loading..."; 
-      apiCall('ct_getClosedReport', {startStr: s, endStr: e, userFilter: u}).then(res => { 
-          if(res.status !== 'success') return;
-          let data = res.data;
+      apiCall('ct_getClosedReport', {startStr: s, endStr: e, userFilter: u}).then(data=>{ 
           if(!data.length) return document.getElementById('ctReportRes').innerHTML="No records."; 
           let html=`<b>Total: ${data.length}</b><table><tr><th>Date</th><th>Customer, Task & Contact</th><th>Issue/Action</th><th>TAT/By</th></tr>`; 
           data.forEach(c=>{ 
@@ -1194,166 +617,85 @@
               html+=`<tr><td>${c.date}</td><td><b>${showTask}${c.name}</b><br><small style="color:#0984e3; font-weight:bold;">📞 ${c.contact}</small><br><small>${c.model}</small></td><td><small>Iss: ${c.issue}</small><br><span style="color:green">Act: ${c.action}</span></td><td>${c.tat}<br>By: ${c.handledBy}</td></tr>`; 
           }); 
           document.getElementById('ctReportRes').innerHTML=html+"</table>"; 
-      }); 
+      }).catch(e=>{ document.getElementById('ctReportRes').innerHTML="Error."; }); 
   }
 
   function ctLoadDashboard() {
+      let s = document.getElementById('ctDashFrom') ? document.getElementById('ctDashFrom').value : "";
+      let e = document.getElementById('ctDashTo') ? document.getElementById('ctDashTo').value : "";
+
       Swal.fire({title:'Loading Call Data...', didOpen:()=>Swal.showLoading()});
-      apiCall('ct_getDashboardStats').then(res => {
-          if(res.status !== 'success') return Swal.fire('Error', res.message, 'error');
-          let stats = res.data;
+      apiCall('ct_getDashboardStats', {startStr: s, endStr: e}).then(stats => {
           Swal.close();
           document.getElementById('ct-dash-avg').innerText = stats.avgPerDay;
           document.getElementById('ct-dash-tot').innerText = stats.total;
           
-          currentRawProblems = stats.rawProblems; 
-          currentRawStates = stats.rawStates;
+          currentRawProblems = stats.rawProblems; currentRawStates = stats.rawStates; currentRawCallTypes = stats.rawCallTypes;
 
-          if(ctChartW) ctChartW.destroy();
-          if(ctChartM) ctChartM.destroy();
-          if(ctChartH) ctChartH.destroy();
-          if(ctChartP) ctChartP.destroy();
+          if(ctChartW) ctChartW.destroy(); if(ctChartM) ctChartM.destroy(); if(ctChartH) ctChartH.destroy(); if(ctChartP) ctChartP.destroy(); if(ctChartC) ctChartC.destroy();
 
-          ctChartW = new Chart(document.getElementById('ctChartWarranty').getContext('2d'), { 
-              type: 'pie', data: { labels: Object.keys(stats.warranty), datasets: [{ data: Object.values(stats.warranty), backgroundColor: ['#2ecc71', '#e74c3c'] }] }, 
-              options: { maintainAspectRatio: false, plugins: { title: { display: false } } } 
-          });
+          ctChartW = new Chart(document.getElementById('ctChartWarranty').getContext('2d'), { type: 'pie', data: { labels: Object.keys(stats.warranty), datasets: [{ data: Object.values(stats.warranty), backgroundColor: ['#2ecc71', '#e74c3c'] }] }, options: { maintainAspectRatio: false, plugins: { title: { display: false } } } });
           
-          let sortedModels = Object.keys(stats.models).sort((a,b) => stats.models[b] - stats.models[a]);
-          let sortedModelCounts = sortedModels.map(m => stats.models[m]);
-
+          let sortedModels = Object.keys(stats.models).sort((a,b) => stats.models[b] - stats.models[a]); let sortedModelCounts = sortedModels.map(m => stats.models[m]);
           document.getElementById('modelChartDiv').style.height = (sortedModels.length > 8 ? sortedModels.length * 25 : 220) + "px";
 
-          ctChartM = new Chart(document.getElementById('ctChartModel').getContext('2d'), { 
-              type: 'bar', 
-              data: { labels: sortedModels, datasets: [{ label: 'Calls', data: sortedModelCounts, backgroundColor: '#3498db' }] }, 
-              options: { 
-                  indexAxis: 'y', 
-                  maintainAspectRatio: false,
-                  plugins: { title: { display: true, text: 'Model-wise Calls (Sorted)' } } 
-              } 
-          });
-
-          ctChartH = new Chart(document.getElementById('ctChartHandled').getContext('2d'), { 
-              type: 'bar', data: { labels: Object.keys(stats.handledBy), datasets: [{ label: 'Calls Handled', data: Object.values(stats.handledBy), backgroundColor: '#9b59b6' }] }, 
-              options: { plugins: { title: { display: true, text: 'Handled By' } } } 
-          });
-
-          ctChartP = new Chart(document.getElementById('ctChartProblem').getContext('2d'), { 
-              type: 'doughnut', data: { labels: Object.keys(stats.problems), datasets: [{ data: Object.values(stats.problems), backgroundColor: ['#f1c40f','#e67e22','#e74c3c','#3498db','#1abc9c','#9b59b6','#95a5a6'] }] }, 
-              options: { 
-                  plugins: { title: { display: true, text: 'Problem Categories (Click slice for details)' } },
-                  onClick: (evt, elements) => {
-                      if (elements.length > 0) {
-                          const index = elements[0].index;
-                          const label = ctChartP.data.labels[index];
-                          showProblemDetails(label);
-                      }
-                  }
-              } 
-          });
+          ctChartM = new Chart(document.getElementById('ctChartModel').getContext('2d'), { type: 'bar', data: { labels: sortedModels, datasets: [{ label: 'Calls', data: sortedModelCounts, backgroundColor: '#3498db' }] }, options: { indexAxis: 'y', maintainAspectRatio: false, plugins: { title: { display: true, text: 'Model-wise Calls (Sorted)' } } } });
+          ctChartH = new Chart(document.getElementById('ctChartHandled').getContext('2d'), { type: 'bar', data: { labels: Object.keys(stats.handledBy), datasets: [{ label: 'Calls Handled', data: Object.values(stats.handledBy), backgroundColor: '#9b59b6' }] }, options: { plugins: { title: { display: true, text: 'Handled By' } } } });
+          ctChartP = new Chart(document.getElementById('ctChartProblem').getContext('2d'), { type: 'doughnut', data: { labels: Object.keys(stats.problems), datasets: [{ data: Object.values(stats.problems), backgroundColor: ['#f1c40f','#e67e22','#e74c3c','#3498db','#1abc9c','#9b59b6','#95a5a6'] }] }, options: { plugins: { title: { display: true, text: 'Problem Categories' } }, onClick: (evt, elements) => { if (elements.length > 0) { const index = elements[0].index; const label = ctChartP.data.labels[index]; showProblemDetails(label); } } } });
+          ctChartC = new Chart(document.getElementById('ctChartCallType').getContext('2d'), { type: 'doughnut', data: { labels: Object.keys(stats.callTypes), datasets: [{ data: Object.values(stats.callTypes), backgroundColor: ['#0984e3','#27ae60','#e67e22','#ff0073','#2c3e50'] }] }, options: { plugins: { title: { display: true, text: 'Call Categories (Click for details)' } }, onClick: (evt, elements) => { if (elements.length > 0) { const index = elements[0].index; const label = ctChartC.data.labels[index]; showCallTypeDetails(label); } } } });
 
           google.charts.setOnLoadCallback(() => {
-              var data = new google.visualization.DataTable();
-              data.addColumn('string', 'State');
-              data.addColumn('number', 'Calls');
+              var data = new google.visualization.DataTable(); data.addColumn('string', 'State'); data.addColumn('number', 'Calls');
               for(let state in stats.states) { data.addRow([state, stats.states[state]]); }
-              
-              var options = { region: 'IN', displayMode: 'regions', resolution: 'provinces', colorAxis: {colors: ['#ffe0eb', '#ff006e']} };
-              var chart = new google.visualization.GeoChart(document.getElementById('ctMapContainer'));
-              
-              google.visualization.events.addListener(chart, 'select', function() {
-                  var selection = chart.getSelection();
-                  if (selection.length > 0) {
-                      var state = data.getValue(selection[0].row, 0);
-                      showStateDetails(state);
-                  }
-              });
-
-              chart.draw(data, options);
+              var options = { region: 'IN', displayMode: 'regions', resolution: 'provinces', colorAxis: {colors: ['#ffe0eb', '#ff006e']} }; var chart = new google.visualization.GeoChart(document.getElementById('ctMapContainer'));
+              google.visualization.events.addListener(chart, 'select', function() { var selection = chart.getSelection(); if (selection.length > 0) { var state = data.getValue(selection[0].row, 0); showStateDetails(state); } }); chart.draw(data, options);
           });
           
-          let sortedStates = Object.keys(stats.states).sort((a,b) => stats.states[b] - stats.states[a]);
-          let stateHtml = '';
-          sortedStates.forEach(s => { 
-              stateHtml += `<tr style="cursor:pointer;" onclick="showStateDetails('${s}')" onmouseover="this.style.background='#f1f2f6'" onmouseout="this.style.background='none'">
-                  <td style="padding:8px; border-bottom:1px solid #eee; color:#ff006e; font-weight:bold;"><u>${s}</u></td>
-                  <td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold; text-align:right;">${stats.states[s]}</td>
-              </tr>`; 
-          });
+          let sortedStates = Object.keys(stats.states).sort((a,b) => stats.states[b] - stats.states[a]); let stateHtml = '';
+          sortedStates.forEach(s => { stateHtml += `<tr style="cursor:pointer;" onclick="showStateDetails('${s}')" onmouseover="this.style.background='#f1f2f6'" onmouseout="this.style.background='none'"><td style="padding:8px; border-bottom:1px solid #eee; color:#ff006e; font-weight:bold;"><u>${s}</u></td><td style="padding:8px; border-bottom:1px solid #eee; font-weight:bold; text-align:right;">${stats.states[s]}</td></tr>`; });
           document.getElementById('ctStateTableBody').innerHTML = stateHtml;
-          
-      });
+      }).catch(e=>{Swal.fire('Error',e.message,'error')});
   }
   
+  function showCallTypeDetails(category) {
+      if(!currentRawCallTypes || !currentRawCallTypes[category]) return; let dataList = currentRawCallTypes[category]; if(dataList.length === 0) return Swal.fire('No Data', `No cases in ${category}`, 'info');
+      let h = `<table style="width:100%; text-align:left; font-size:12px; border-collapse:collapse;"><tr><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Date</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Customer / Model</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">City</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Issue</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Action</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">TAT</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">By</th></tr>`;
+      dataList.forEach(r => { h += `<tr><td style="border-bottom:1px solid #eee; padding:5px;">${r.date}</td><td style="border-bottom:1px solid #eee; padding:5px; font-weight:bold;">${r.name}<br><small style="color:#0984e3;">${r.model}</small></td><td style="border-bottom:1px solid #eee; padding:5px;">${r.city}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.issue}</td><td style="border-bottom:1px solid #eee; padding:5px; color:green;">${r.action}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.tat}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.handledBy}</td></tr>`; }); h += `</table>`;
+      Swal.fire({ title: `Category: ${category}`, html: `<div style="max-height: 400px; overflow-y: auto;">${h}</div>`, width: '90%', showCloseButton: true, showConfirmButton: false });
+  }
+
   function showProblemDetails(category) {
-      if(!currentRawProblems || !currentRawProblems[category]) return;
-      let dataList = currentRawProblems[category];
-      if(dataList.length === 0) return Swal.fire('No Data', `No cases in ${category}`, 'info');
-      
-      let h = `<table style="width:100%; text-align:left; font-size:12px; border-collapse:collapse;">
-                  <tr><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Date</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Customer</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">City</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Issue</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Action</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">TAT</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">By</th></tr>`;
-      dataList.forEach(r => {
-          h += `<tr>
-                  <td style="border-bottom:1px solid #eee; padding:5px;">${r.date}</td>
-                  <td style="border-bottom:1px solid #eee; padding:5px; font-weight:bold;">${r.name}</td>
-                  <td style="border-bottom:1px solid #eee; padding:5px;">${r.city}</td>
-                  <td style="border-bottom:1px solid #eee; padding:5px;">${r.issue}</td>
-                  <td style="border-bottom:1px solid #eee; padding:5px; color:green;">${r.action}</td>
-                  <td style="border-bottom:1px solid #eee; padding:5px;">${r.tat}</td>
-                  <td style="border-bottom:1px solid #eee; padding:5px;">${r.handledBy}</td>
-                </tr>`;
-      });
-      h += `</table>`;
+      if(!currentRawProblems || !currentRawProblems[category]) return; let dataList = currentRawProblems[category]; if(dataList.length === 0) return Swal.fire('No Data', `No cases in ${category}`, 'info');
+      let h = `<table style="width:100%; text-align:left; font-size:12px; border-collapse:collapse;"><tr><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Date</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Customer</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">City</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Issue</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Action</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">TAT</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">By</th></tr>`;
+      dataList.forEach(r => { h += `<tr><td style="border-bottom:1px solid #eee; padding:5px;">${r.date}</td><td style="border-bottom:1px solid #eee; padding:5px; font-weight:bold;">${r.name}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.city}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.issue}</td><td style="border-bottom:1px solid #eee; padding:5px; color:green;">${r.action}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.tat}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.handledBy}</td></tr>`; }); h += `</table>`;
       Swal.fire({ title: `Category: ${category}`, html: `<div style="max-height: 400px; overflow-y: auto;">${h}</div>`, width: '90%', showCloseButton: true, showConfirmButton: false });
   }
 
   function showStateDetails(state) {
-      if(!currentRawStates || !currentRawStates[state]) return;
-      let dataList = currentRawStates[state];
-      if(dataList.length === 0) return Swal.fire('No Data', `No cases in ${state}`, 'info');
-      
-      let h = `<table style="width:100%; text-align:left; font-size:12px; border-collapse:collapse;">
-                  <tr><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Date</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Customer</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">City</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Issue</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Action</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">TAT</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">By</th></tr>`;
-      dataList.forEach(r => {
-          h += `<tr>
-                  <td style="border-bottom:1px solid #eee; padding:5px;">${r.date}</td>
-                  <td style="border-bottom:1px solid #eee; padding:5px; font-weight:bold;">${r.name}</td>
-                  <td style="border-bottom:1px solid #eee; padding:5px;">${r.city}</td>
-                  <td style="border-bottom:1px solid #eee; padding:5px;">${r.issue}</td>
-                  <td style="border-bottom:1px solid #eee; padding:5px; color:green;">${r.action}</td>
-                  <td style="border-bottom:1px solid #eee; padding:5px;">${r.tat}</td>
-                  <td style="border-bottom:1px solid #eee; padding:5px;">${r.handledBy}</td>
-                </tr>`;
-      });
-      h += `</table>`;
+      if(!currentRawStates || !currentRawStates[state]) return; let dataList = currentRawStates[state]; if(dataList.length === 0) return Swal.fire('No Data', `No cases in ${state}`, 'info');
+      let h = `<table style="width:100%; text-align:left; font-size:12px; border-collapse:collapse;"><tr><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Date</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Customer</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">City</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Issue</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Action</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">TAT</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">By</th></tr>`;
+      dataList.forEach(r => { h += `<tr><td style="border-bottom:1px solid #eee; padding:5px;">${r.date}</td><td style="border-bottom:1px solid #eee; padding:5px; font-weight:bold;">${r.name}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.city}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.issue}</td><td style="border-bottom:1px solid #eee; padding:5px; color:green;">${r.action}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.tat}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.handledBy}</td></tr>`; }); h += `</table>`;
       Swal.fire({ title: `State: ${state}`, html: `<div style="max-height: 400px; overflow-y: auto;">${h}</div>`, width: '90%', showCloseButton: true, showConfirmButton: false });
   }
   
   function addWcrItem() { wcrItemCount++; var c=document.getElementById('wcrItemsContainer'); var b=document.createElement('div'); b.className='item-box'; b.style.borderColor='var(--brand3)'; b.id='wcr_item_'+wcrItemCount; b.innerHTML=`<button type="button" class="remove-btn" onclick="document.getElementById('wcr_item_${wcrItemCount}').remove()">×</button><div class="grid"><div><label>Model *</label><select class="i-model" required>${pwModelsHtml}</select></div><div><label>Part Type *</label><select class="wcr-part" required>${wcrPartsHtml}</select></div></div><div class="grid"><div><label>SL. No</label><input type="text" class="wcr-serial"></div><div><label>Issue</label><input type="text" class="wcr-issue"></div></div>`; c.appendChild(b); }
   function wcrSubmitEntry() { 
       var fData={ sourceName:document.getElementById('wcrSource').value, receivingDate:document.getElementById('wcrDate').value, responsiblePerson:document.getElementById('wcrPerson').value, refTask:document.getElementById('wcrRefTask').value, docketNo:document.getElementById('wcrDocket').value }; 
-      var iArr=[]; 
-      document.querySelectorAll('#wcrItemsContainer .item-box').forEach(b=>iArr.push({ model:b.querySelector('.i-model').value, partType:b.querySelector('.wcr-part').value, serial:b.querySelector('.wcr-serial').value, issue:b.querySelector('.wcr-issue').value })); 
+      var iArr=[]; document.querySelectorAll('#wcrItemsContainer .item-box').forEach(b=>iArr.push({ model:b.querySelector('.i-model').value, partType:b.querySelector('.wcr-part').value, serial:b.querySelector('.wcr-serial').value, issue:b.querySelector('.wcr-issue').value })); 
       if(!iArr.length) return; 
       Swal.fire({title:'Processing...', didOpen:()=>Swal.showLoading()}); 
-      apiCall('wcr_processForm', {formData: fData, itemsArray: iArr}).then(res => { 
-          if(res.status !== 'success') return Swal.fire('Error', res.message, 'error');
-          let bcs = res.data;
+      apiCall('wcr_processForm', {formData: fData, itemsArray: iArr}).then(bcs=>{ 
           document.getElementById('wcrSource').value=''; document.getElementById('wcrRefTask').value=''; document.getElementById('wcrDocket').value=''; 
           document.getElementById('wcrPerson').value = loggedInUser;
           document.getElementById('wcrItemsContainer').innerHTML=`<div class="item-box" id="wcr_item_1" style="border-color:var(--brand3);"><div class="grid"><div><label>Model *</label><select class="i-model" required>${pwModelsHtml}</select></div><div><label>Part *</label><select class="wcr-part" required>${wcrPartsHtml}</select></div></div><div class="grid"><div><label>SL. No</label><input type="text" class="wcr-serial"></div><div><label>Issue</label><input type="text" class="wcr-issue"></div></div></div>`; 
           let generatedIds = bcs.map(b => b.id).join(', ');
-          Swal.fire({ title:'Saved Successfully!', html: `<b>${bcs.length}</b> WCR entries generated.<br><br><b>WCR Task IDs:</b><br><span style="font-size:16px; color:#e74c3c; font-weight:bold;">${generatedIds}</span><br><br><small>You can print them or write them manually.</small>`, icon:'success', showCancelButton:true, confirmButtonText:'🖨️ Print Barcodes', cancelButtonText:'Close' }).then(r=>{ if(r.isConfirmed) printBarcodes(bcs, fData.sourceName); }); 
-          wcrLoadPending(); loadDropdowns(); 
-      }); 
+          Swal.fire({ title:'Saved Successfully!', html: `<b>${bcs.length}</b> WCR entries generated.<br><br><b>WCR Task IDs:</b><br><span style="font-size:16px; color:#e74c3c; font-weight:bold;">${generatedIds}</span><br><br><small>You can print them or write them manually.</small>`, icon:'success', showCancelButton:true, confirmButtonText:'🖨️ Print Barcodes', cancelButtonText:'Close' }).then(r=>{ if(r.isConfirmed) printBarcodes(bcs, fData.sourceName); }); wcrLoadPending(); loadDropdowns(); 
+      }).catch(e=>{Swal.fire('Error',e.message,'error')}); 
   }
   
   function wcrLoadPending() { 
       document.getElementById('wcrList').innerHTML="Fetching..."; 
-      apiCall('wcr_getPendingRepairs').then(res => { 
-          if(res.status !== 'success') return;
-          let d = res.data;
+      apiCall('wcr_getPendingRepairs').then(d=>{ 
           if(!d.length){ document.getElementById('wcrList').innerHTML="No pending parts."; return; } 
           let h="", g={}; d.forEach(c=>{if(!g[c.source]) g[c.source]=[]; g[c.source].push(c);}); let i=0; 
           for(let c in g){ 
@@ -1363,38 +705,19 @@
                   h+=`<div class="card card-wcr" onclick="wcrOpenRepair(${x.row}, '${safeB64(c)}', '${x.taskId}')"><div class="tat-badge" style="color:var(--brand3)">⏱ TAT: ${x.tat}</div><b>${x.refTask || 'N/A'}</b>${showRef} (SN: ${x.serial||'-'})<br><small>${x.model} | ${x.partType}</small><br><small style="color:#d63031; font-weight:bold;">Issue: ${x.issue}</small>${alertHtml}</div>`; 
               }); h+='</div></div>'; 
           } document.getElementById('wcrList').innerHTML=h; 
-      }); 
+      }).catch(e=>{ document.getElementById('wcrList').innerHTML="Error."; }); 
   }
   
   function wcrOpenRepair(r, encC, id) { document.getElementById('wcrUpdatePanel').style.display='block'; document.getElementById('wcrTarget').innerText="Repair: "+safeDec(encC)+" ("+id+")"; document.getElementById('wcrRow').value=r; window.scrollTo(0, document.body.scrollHeight); }
-  function wcrSaveUpdate(f) { Swal.fire({title:'Updating...',didOpen:()=>Swal.showLoading()}); apiCall('wcr_updateRepairStatus', {form: serializeForm(f)}).then(res=>{Swal.fire('Done',res.data,'success'); document.getElementById('wcrUpdatePanel').style.display='none'; wcrLoadPending(); wcrLoadInventory();}); }
+  function wcrSaveUpdate(f) { Swal.fire({title:'Updating...',didOpen:()=>Swal.showLoading()}); apiCall('wcr_updateRepairStatus', {form: formToObj(f)}).then(r=>{Swal.fire('Done',r,'success'); document.getElementById('wcrUpdatePanel').style.display='none'; wcrLoadPending(); wcrLoadInventory();}).catch(e=>{Swal.fire('Error',e.message,'error')}); }
   
-  function wcrLoadApprovals() { 
-      document.getElementById('wcrApproveList').innerHTML="Fetching..."; 
-      apiCall('wcr_getPendingApprovals').then(res => { 
-          if(res.status !== 'success') return;
-          let d = res.data;
-          if(!d.length){ document.getElementById('wcrApproveList').innerHTML="No approvals pending."; return; } 
-          let h=""; d.forEach(c=>{ h+=`<div class="card card-wcr" onclick="wcrOpenApprove(${c.row}, '${safeB64(c.source)}', '${c.taskId}')"><b>${c.refTask || 'N/A'}</b> <small style="color:#0984e3">[Ref: ${c.taskId}]</small> - 🏢 ${c.source}<br><small>${c.model} | Part: ${c.partType}</small><br><span style="color:#e74c3c;font-weight:bold;font-size:11px;">Action: ${c.action} (Req. Scrap)</span></div>`; }); 
-          document.getElementById('wcrApproveList').innerHTML=h; 
-      }); 
-  }
+  function wcrLoadApprovals() { document.getElementById('wcrApproveList').innerHTML="Fetching..."; apiCall('wcr_getPendingApprovals').then(d=>{ if(!d.length){ document.getElementById('wcrApproveList').innerHTML="No approvals pending."; return; } let h=""; d.forEach(c=>{ h+=`<div class="card card-wcr" onclick="wcrOpenApprove(${c.row}, '${safeB64(c.source)}', '${c.taskId}')"><b>${c.refTask || 'N/A'}</b> <small style="color:#0984e3">[Ref: ${c.taskId}]</small> - 🏢 ${c.source}<br><small>${c.model} | Part: ${c.partType}</small><br><span style="color:#e74c3c;font-weight:bold;font-size:11px;">Action: ${c.action} (Req. Scrap)</span></div>`; }); document.getElementById('wcrApproveList').innerHTML=h; }).catch(e=>{}); }
   function wcrOpenApprove(r, encSrc, id) { document.getElementById('wcrApprovePanel').style.display='block'; document.getElementById('wcrAppTarget').innerText="Review Scrap: "+id; document.getElementById('wcrAppRow').value=r; document.getElementById('wcrPwd').value=''; window.scrollTo(0, document.body.scrollHeight); }
-  function wcrProcessApprove() { 
-      let r=document.getElementById('wcrAppRow').value, dec=document.getElementById('wcrDecision').value, pwd=document.getElementById('wcrPwd').value; 
-      if(!pwd) return Swal.fire('Error','Password required!','error'); 
-      Swal.fire({title:'Processing...',didOpen:()=>Swal.showLoading()}); 
-      apiCall('wcr_processApproval', {row: r, decision: dec, pwd: pwd}).then(res=>{ 
-          if(res.status !== 'success' || res.data.includes("ERROR")) Swal.fire('Error', res.data || res.message, 'error'); 
-          else { Swal.fire('Success', res.data, 'success'); document.getElementById('wcrApprovePanel').style.display='none'; wcrLoadApprovals(); wcrLoadInventory(); } 
-      }); 
-  }
+  function wcrProcessApprove() { let r=document.getElementById('wcrAppRow').value, dec=document.getElementById('wcrDecision').value, pwd=document.getElementById('wcrPwd').value; if(!pwd) return Swal.fire('Error','Password required!','error'); Swal.fire({title:'Processing...',didOpen:()=>Swal.showLoading()}); apiCall('wcr_processApproval', {row: r, decision: dec, pwd: pwd}).then(res=>{ if(res.includes("ERROR")) Swal.fire('Error', res, 'error'); else { Swal.fire('Success', res, 'success'); document.getElementById('wcrApprovePanel').style.display='none'; wcrLoadApprovals(); wcrLoadInventory(); } }).catch(e=>{Swal.fire('Error',e.message,'error')}); }
   
   function wcrLoadInventory() {
     document.getElementById('wcrInvList').innerHTML = "Fetching Inventory...";
-    apiCall('wcr_getInventory').then(res => {
-      if(res.status !== 'success') return;
-      let d = res.data;
+    apiCall('wcr_getInventory').then(d => {
       if(!d.length) return document.getElementById('wcrInvList').innerHTML = "No parts available in inventory.";
       let h = `<table><tr><th>Model</th><th>Part Type</th><th>Good Location</th><th>Scrap Location</th><th>Actions</th></tr>`;
       d.forEach(i => {
@@ -1404,7 +727,7 @@
          h += `</td></tr>`;
       });
       document.getElementById('wcrInvList').innerHTML = h + `</table>`;
-    });
+    }).catch(e=>{});
   }
   
   function wcrPromptIssue(encM, encP, loc) { 
@@ -1428,8 +751,8 @@
           if(res.isConfirmed) { 
               Swal.fire({title:'Processing...',didOpen:()=>Swal.showLoading()}); 
               apiCall('wcr_issuePart', {model: m, part: p, loc: loc, qtyStr: res.value.qty, ref: res.value.task, serial: res.value.serial}).then(r => { 
-                  Swal.fire('Success', r.data, 'success'); wcrLoadInventory(); 
-              }); 
+                  Swal.fire('Success', r, 'success'); wcrLoadInventory(); 
+              }).catch(e=>{Swal.fire('Error',e.message,'error')}); 
           } 
       }); 
   }
@@ -1437,9 +760,7 @@
   function wcrFetchReports() { 
       let s=document.getElementById('wcrRFrom').value, e=document.getElementById('wcrRTo').value, u=document.getElementById('wcrRUser').value; 
       document.getElementById('wcrReportRes').innerHTML="Fetching..."; 
-      apiCall('wcr_getReports', {startStr: s, endStr: e, userFilter: u}).then(res => { 
-          if(res.status !== 'success') return;
-          let d = res.data;
+      apiCall('wcr_getReports', {startStr: s, endStr: e, userFilter: u}).then(d=>{ 
           if(!d.list.length && (!d.issuedList || !d.issuedList.length)) return document.getElementById('wcrReportRes').innerHTML="No records found."; 
           
           let h=`<div style="display:flex;gap:10px;margin-bottom:10px;">
@@ -1478,17 +799,40 @@
           }
 
           document.getElementById('wcrReportRes').innerHTML=h; 
-      }); 
+      }).catch(e=>{ document.getElementById('wcrReportRes').innerHTML="Error."; }); 
   }
   function toggleChatPanel() { const panel = document.getElementById('chatPanel'); panel.style.display = panel.style.display === 'flex' ? 'none' : 'flex'; if(panel.style.display === 'flex') fetchAdminChats(); }
-  function fetchAdminChats() { apiCall('getAdminActiveChats').then(res => { if(res.status!=='success')return; let data=res.data; const badge = document.getElementById('chatBadge'); if(data.count > 0) { badge.style.display = 'flex'; badge.innerText = data.count; } else { badge.style.display = 'none'; } const listDiv = document.getElementById('chatListView'); if(data.list.length === 0) { listDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No active chats</div>'; return; } let html = ''; data.list.forEach(c => { let unreadHtml = c.unread > 0 ? `<div class="unread-bubble">${c.unread}</div>` : ''; let safeIssue = c.issue.replace(/'/g, "\\'").replace(/"/g, '&quot;'); let safeName = c.name.replace(/'/g, "\\'").replace(/"/g, '&quot;'); html += `<div class="chat-list-item" onclick="openActiveChat('${c.chatId}', '${safeB64(safeName)}', '${c.phone}', '${safeB64(safeIssue)}')"><div><h4>${c.name} <small>(${c.phone})</small></h4><p>${c.lastMsg}</p></div><div style="text-align: right; font-size:11px; color:#888;">${c.time}<br><br>${unreadHtml}</div></div>`; }); listDiv.innerHTML = html; if(currentActiveChatId) refreshChatMessages(); }); }
-  function openActiveChat(chatId, encName, phone, encIssue) { currentActiveChatId = chatId; adminMsgCount = 0; document.getElementById('chatListView').style.display = 'none'; document.getElementById('activeChatView').style.display = 'flex'; document.getElementById('chatCustName').innerHTML = `<b>${safeDec(encName)}</b> (${phone})<br><small style="color:#ff006e;">Issue: ${safeDec(encIssue)}</small>`; document.getElementById('chatMessages').innerHTML = "Loading..."; document.querySelector('.chat-input-area').style.display = 'flex'; document.querySelector('.end-chat-btn').style.display = 'block'; apiCall('markChatReadAdmin', {chatId: chatId}); refreshChatMessages(); }
+  
+  /* --- SMART NOTIFICATION LOGIC FOR ADMIN CHATS --- */
+  function fetchAdminChats() { 
+      apiCall('getAdminActiveChats').then(data => { 
+          if (lastChatCount !== -1 && data.count > lastChatCount) {
+              triggerNotification("New Live Chat Message!", "A customer is waiting for your reply.");
+          }
+          lastChatCount = data.count;
+
+          const badge = document.getElementById('chatBadge'); 
+          if(data.count > 0) { badge.style.display = 'flex'; badge.innerText = data.count; } else { badge.style.display = 'none'; } 
+          const listDiv = document.getElementById('chatListView'); 
+          if(data.list.length === 0) { listDiv.innerHTML = '<div style="padding: 20px; text-align: center; color: #888;">No active chats</div>'; return; } 
+          let html = ''; 
+          data.list.forEach(c => { 
+              let unreadHtml = c.unread > 0 ? `<div class="unread-bubble">${c.unread}</div>` : ''; 
+              let safeIssue = c.issue.replace(/'/g, "\\'").replace(/"/g, '&quot;'); let safeName = c.name.replace(/'/g, "\\'").replace(/"/g, '&quot;'); 
+              html += `<div class="chat-list-item" onclick="openActiveChat('${c.chatId}', '${safeB64(safeName)}', '${c.phone}', '${safeB64(safeIssue)}')"><div><h4>${c.name} <small>(${c.phone})</small></h4><p>${c.lastMsg}</p></div><div style="text-align: right; font-size:11px; color:#888;">${c.time}<br><br>${unreadHtml}</div></div>`; 
+          }); 
+          listDiv.innerHTML = html; 
+          if(currentActiveChatId) refreshChatMessages(); 
+      }).catch(e=>{}); 
+  }
+
+  function openActiveChat(chatId, encName, phone, encIssue) { currentActiveChatId = chatId; adminMsgCount = 0; document.getElementById('chatListView').style.display = 'none'; document.getElementById('activeChatView').style.display = 'flex'; document.getElementById('chatCustName').innerHTML = `<b>${safeDec(encName)}</b> (${phone})<br><small style="color:#ff006e;">Issue: ${safeDec(encIssue)}</small>`; document.getElementById('chatMessages').innerHTML = "Loading..."; document.querySelector('.chat-input-area').style.display = 'flex'; document.querySelector('.end-chat-btn').style.display = 'block'; apiCall('markChatReadAdmin', {chatId: chatId}).then(r=>{}).catch(e=>{}); refreshChatMessages(); }
   function closeActiveChat() { currentActiveChatId = null; document.getElementById('activeChatView').style.display = 'none'; document.getElementById('chatListView').style.display = 'block'; fetchAdminChats(); }
-  function refreshChatMessages() { if(!currentActiveChatId) return; apiCall('getChatHistory', {chatId: currentActiveChatId}).then(res => { if(res.status!=='success')return; let history = res.data.messages; if (history.length > adminMsgCount) { const box = document.getElementById('chatMessages'); document.querySelectorAll('.temp-msg').forEach(el => el.remove()); for (let i = adminMsgCount; i < history.length; i++) { let m = history[i]; let type = m.sender === "Admin" ? "msg-admin" : "msg-cust"; let displayMsg = m.message; if(displayMsg === "[CMD:REQUEST_FORM]") displayMsg = "<i>📋 Sent Call Registration Form</i>"; else if(displayMsg.indexOf("📎 Shared a photo:") !== -1) { let link = displayMsg.split("Shared a photo: ")[1]; displayMsg = `📎 <a href="${link}" target="_blank" style="color:white; text-decoration:underline;">View Photo</a>`; } box.innerHTML += `<div class="msg-box ${type}">${displayMsg}<span class="msg-time">${m.time}</span></div>`; } box.scrollTop = box.scrollHeight; adminMsgCount = history.length; } if (res.data.status === "Closed") { document.querySelector('.chat-input-area').style.display = 'none'; document.querySelector('.end-chat-btn').style.display = 'none'; if(!document.getElementById('chat-closed-msg')) { document.getElementById('chatMessages').innerHTML += `<div id="chat-closed-msg" style="text-align:center; color:#888; font-size:12px; margin-top:10px;">This chat is closed.</div>`; document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; } } }); }
+  function refreshChatMessages() { if(!currentActiveChatId) return; apiCall('getChatHistory', {chatId: currentActiveChatId}).then(res => { let history = res.messages; if (history.length > adminMsgCount) { const box = document.getElementById('chatMessages'); document.querySelectorAll('.temp-msg').forEach(el => el.remove()); for (let i = adminMsgCount; i < history.length; i++) { let m = history[i]; let type = m.sender === "Admin" ? "msg-admin" : "msg-cust"; let displayMsg = m.message; if(displayMsg === "[CMD:REQUEST_FORM]") displayMsg = "<i>📋 Sent Call Registration Form</i>"; else if(displayMsg.indexOf("📎 Shared a photo:") !== -1) { let link = displayMsg.split("Shared a photo: ")[1]; displayMsg = `📎 <a href="${link}" target="_blank" style="color:white; text-decoration:underline;">View Photo</a>`; } box.innerHTML += `<div class="msg-box ${type}">${displayMsg}<span class="msg-time">${m.time}</span></div>`; } box.scrollTop = box.scrollHeight; adminMsgCount = history.length; } if (res.status === "Closed") { document.querySelector('.chat-input-area').style.display = 'none'; document.querySelector('.end-chat-btn').style.display = 'none'; if(!document.getElementById('chat-closed-msg')) { document.getElementById('chatMessages').innerHTML += `<div id="chat-closed-msg" style="text-align:center; color:#888; font-size:12px; margin-top:10px;">This chat is closed.</div>`; document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; } } }).catch(e=>{}); }
   function handleEnter(e) { if(e.key === 'Enter') sendAdminReply(); }
-  function sendAdminReply() { const input = document.getElementById('adminReplyText'); const msg = input.value.trim(); if(!msg || !currentActiveChatId) return; input.value = ''; document.getElementById('chatMessages').innerHTML += `<div class="msg-box msg-admin temp-msg">${msg}<span class="msg-time">Sending...</span></div>`; document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; apiCall('sendChatMessage', {chatId: currentActiveChatId, name: "Admin", phone: "", sender: "Admin", message: msg}); }
-  function sendCallFormRequest() { if(!currentActiveChatId) return; document.getElementById('chatMessages').innerHTML += `<div class="msg-box msg-admin temp-msg"><i>📋 Sending Form...</i></div>`; document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; apiCall('sendChatMessage', {chatId: currentActiveChatId, name: "Admin", phone: "", sender: "Admin", message: "[CMD:REQUEST_FORM]"}); }
-  function endLiveChatAdmin() { if(!currentActiveChatId) return; Swal.fire({ title: "End Chat", input: 'text', inputLabel: 'Enter closing remark for customer:', inputPlaceholder: 'e.g., Issue resolved. Thank you.', showCancelButton: true, confirmButtonText: "Close Chat" }).then((result) => { if (result.isConfirmed) { let remark = result.value || "Chat closed by Agent."; Swal.fire({title:'Closing...', didOpen:()=>Swal.showLoading()}); apiCall('closeLiveChat', {chatId: currentActiveChatId, remark: remark}).then(() => { Swal.close(); closeActiveChat(); }); } }); }
+  function sendAdminReply() { const input = document.getElementById('adminReplyText'); const msg = input.value.trim(); if(!msg || !currentActiveChatId) return; input.value = ''; document.getElementById('chatMessages').innerHTML += `<div class="msg-box msg-admin temp-msg">${msg}<span class="msg-time">Sending...</span></div>`; document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; apiCall('sendChatMessage', {chatId: currentActiveChatId, name: "Admin", phone: "", sender: "Admin", message: msg}).then(r=>{}).catch(e=>{}); }
+  function sendCallFormRequest() { if(!currentActiveChatId) return; document.getElementById('chatMessages').innerHTML += `<div class="msg-box msg-admin temp-msg"><i>📋 Sending Form...</i></div>`; document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; apiCall('sendChatMessage', {chatId: currentActiveChatId, name: "Admin", phone: "", sender: "Admin", message: "[CMD:REQUEST_FORM]"}).then(r=>{}).catch(e=>{}); }
+  function endLiveChatAdmin() { if(!currentActiveChatId) return; Swal.fire({ title: "End Chat", input: 'text', inputLabel: 'Enter closing remark for customer:', inputPlaceholder: 'e.g., Issue resolved. Thank you.', showCancelButton: true, confirmButtonText: "Close Chat" }).then((result) => { if (result.isConfirmed) { let remark = result.value || "Chat closed by Agent."; Swal.fire({title:'Closing...', didOpen:()=>Swal.showLoading()}); apiCall('closeLiveChat', {chatId: currentActiveChatId, remark: remark}).then(() => { Swal.close(); closeActiveChat(); }).catch(e=>{Swal.fire('Error',e.message,'error')}); } }); }
 </script>
 </body>
 </html>
