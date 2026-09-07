@@ -358,14 +358,30 @@
       }
   }
   
+/* --- PREMIUM BACKGROUND & IN-APP NOTIFICATION TRIGGER --- */
   function triggerNotification(title, msg) { 
+      // 1. Premium Chime Sound
       try { 
           let audio = new Audio('https://actions.google.com/sounds/v1/communications/chime_short.ogg'); 
           audio.play().catch(e=>{}); 
       } catch(e) {} 
+      
+      // 2. Premium In-App Toast (Jab aap screen dekh rahe honge)
+      try {
+          Swal.fire({
+              toast: true, position: 'top-end', icon: 'info',
+              title: title, text: msg, showConfirmButton: false, timer: 5000,
+              background: '#fbfbfd', color: '#0066cc'
+          });
+      } catch(e) {}
+
+      // 3. Windows/Mac Background Notification (With Premium Icon)
       try { 
           if(typeof window !== "undefined" && window.Notification && window.Notification.permission === "granted") { 
-              new window.Notification(title, {body: msg}); 
+              new window.Notification(title, {
+                  body: msg,
+                  icon: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png" // Premium Support Icon
+              }); 
           } 
       } catch(e) {} 
   }
