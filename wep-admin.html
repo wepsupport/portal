@@ -36,6 +36,12 @@
     .active-chat-view { flex: 1; display: none; flex-direction: column; background: #f4f7f6;} .active-chat-header { background: #eee; padding: 10px 15px; font-size: 13px; border-bottom: 1px solid #ddd; display: flex; align-items: center; justify-content: space-between;} .back-arrow { cursor: pointer; color: #ff006e; font-size: 16px; } .end-chat-btn { background: #e74c3c; color: white; border: none; padding: 4px 8px; border-radius: 4px; font-size: 10px; cursor: pointer; font-weight: bold; } .chat-messages { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 8px;} .msg-box { max-width: 80%; padding: 10px 12px; border-radius: 12px; font-size: 13px; line-height: 1.4; position: relative; word-wrap:break-word;} .msg-admin { background: #ff006e; color: white; align-self: flex-end; border-bottom-right-radius: 2px; } .msg-cust { background: #e1e1e1; color: #333; align-self: flex-start; border-bottom-left-radius: 2px; } .msg-time { font-size: 9px; opacity: 0.7; text-align: right; margin-top: 4px; display: block;}
     .chat-input-area { padding: 10px; background: white; border-top: 1px solid #eee; display: flex; gap: 10px; align-items: center;} .chat-input-area input { flex: 1; padding: 10px; border: 1px solid #ddd; border-radius: 20px; outline: none; font-size: 13px;} .chat-send-btn { background: #ff006e; color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer;}
     .stat-card { background: white; padding: 15px; border-radius: 8px; border: 1px solid #eee; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); flex: 1;} .stat-card h3 { margin: 0; font-size: 28px; color: #2c3e50; } .stat-card p { margin: 5px 0 0 0; font-size: 11px; color: #7f8fa6; font-weight: bold; text-transform: uppercase;} .dash-row { display: flex; gap: 15px; margin-bottom: 20px;} .chart-container { background: white; border: 1px solid #eee; border-radius: 8px; padding: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+
+    /* --- NEW CSS FOR CT SUMMARY BLOCKS --- */
+    .ct-sum-card { flex: 1; min-width: 90px; background: #fff; padding: 12px 10px; border-radius: 8px; border: 1px solid #eee; text-align: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.02); transition: 0.2s; white-space: nowrap; }
+    .ct-sum-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+    .ct-sum-card h4 { margin: 0; font-size: 11px; color: #7f8fa6; text-transform: uppercase; font-weight: 700; }
+    .ct-sum-card h2 { margin: 6px 0 0 0; font-size: 20px; color: #2c3e50; font-weight: 800; }
   </style>
 </head>
 <body onload="initApp()">
@@ -307,8 +313,10 @@
   let currentRawStates = null; 
   let currentRawCallTypes = null; 
 
+  /* --- GLOBAL VARIABLES FOR NOTIFICATIONS & ASSIGNMENTS --- */
   let lastChatCount = -1;
   let lastCallCount = -1;
+  let globalAssignedCounts = {};
 
   function safeB64(str) { return btoa(unescape(encodeURIComponent(str || ''))); }
   function safeDec(b64) { return decodeURIComponent(escape(atob(b64 || ''))); }
@@ -359,15 +367,13 @@
       }
   }
   
-  /* --- PREMIUM BACKGROUND & IN-APP NOTIFICATION TRIGGER --- */
+  /* --- BACKGROUND & IN-APP NOTIFICATION TRIGGER FUNCTION --- */
   function triggerNotification(title, msg) { 
-      // 1. Premium Chime Sound
       try { 
           let audio = new Audio('https://actions.google.com/sounds/v1/communications/chime_short.ogg'); 
           audio.play().catch(e=>{}); 
       } catch(e) {} 
       
-      // 2. Premium In-App Toast (Jab aap screen dekh rahe honge)
       try {
           Swal.fire({
               toast: true, position: 'top-end', icon: 'info',
@@ -376,12 +382,11 @@
           });
       } catch(e) {}
 
-      // 3. Windows/Mac Background Notification (With Premium Icon)
       try { 
           if(typeof window !== "undefined" && window.Notification && window.Notification.permission === "granted") { 
               new window.Notification(title, {
                   body: msg,
-                  icon: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png" // Premium Support Icon
+                  icon: "https://cdn-icons-png.flaticon.com/512/1077/1077114.png"
               }); 
           } 
       } catch(e) {} 
@@ -391,7 +396,6 @@
   function checkNewCallsAlert() { 
       apiCall('ct_getPendingCalls').then(data => { 
           if (lastCallCount !== -1 && data.length > lastCallCount) { 
-              let newCallsCount = data.length - lastCallCount;
               let latestCall = data[data.length - 1]; 
               
               let iss = (latestCall.issue || "").toUpperCase();
@@ -615,26 +619,73 @@
   function ctSubmitEntry(form) { Swal.fire({title:'Saving...',didOpen:()=>Swal.showLoading()}); apiCall('ct_processForm', {formObject: formToObj(form)}).then(res=>{ Swal.fire('Saved!',res,'success'); form.reset(); document.getElementById('ctPerson').value = loggedInUser; ctLoadPending(); }).catch(e=>{Swal.fire('Error',e.message,'error')}); }
   
   /* --- SMART CATEGORY LOGIC FOR PENDING CALLS --- */
+  function filterCtGroup(gName) {
+      document.querySelectorAll('.ct-group-wrap').forEach(el => {
+          if(gName === 'All' || el.dataset.gname === gName) {
+              el.style.display = 'block';
+          } else {
+              el.style.display = 'none';
+          }
+      });
+  }
+
+  function showCtAssignments() {
+      let h = '<table style="width:100%; text-align:left; border-collapse:collapse; font-size:14px;">';
+      h += '<tr><th style="border-bottom:2px solid #eee; padding:8px;">Team Member</th><th style="border-bottom:2px solid #eee; padding:8px; text-align:right;">Pending Tasks</th></tr>';
+      for(let a in globalAssignedCounts) {
+          let clr = a === 'Unassigned' ? 'color:#e74c3c; font-weight:bold;' : 'color:#2c3e50;';
+          h += `<tr><td style="padding:8px; border-bottom:1px solid #eee; ${clr}">${a}</td><td style="padding:8px; border-bottom:1px solid #eee; text-align:right; font-weight:bold;">${globalAssignedCounts[a]}</td></tr>`;
+      }
+      h += '</table>';
+      Swal.fire({ title: 'Task Assignments', html: h, confirmButtonColor: '#0984e3' });
+  }
+
   function ctLoadPending() {
       document.getElementById('ctList').innerHTML="Fetching...";
       apiCall('ct_getPendingCalls').then(data=>{
           if(!data.length){ document.getElementById('ctList').innerHTML="No pending calls."; return; }
-          let groups = { 'Installation': [], 'Demo': [], 'Warranty': [], 'Chatbot': [], 'Manual Logged': [] };
+          
+          let groups = { 'Installation': [], 'Demo': [], 'Complaint Log': [], 'Chatbot': [] };
+          globalAssignedCounts = { 'Unassigned': 0 };
+
           data.forEach(c=>{
               let iss = (c.issue || "").toUpperCase(); let act = (c.action || "").toUpperCase();
+              let assigned = c.assigned && c.assigned.trim() !== "" ? c.assigned : "Unassigned";
+
+              if(!globalAssignedCounts[assigned]) globalAssignedCounts[assigned] = 0;
+              globalAssignedCounts[assigned]++;
+
               if(act.includes("REGISTERED VIA CHAT") || iss.includes("ISSUE: ")) { groups['Chatbot'].push(c); }
               else if(iss.includes("INSTALLATION REQUEST")) { groups['Installation'].push(c); }
               else if(iss.includes("DEMO REQUEST")) { groups['Demo'].push(c); }
-              else if(iss.includes("WARRANTY COMPLAINT")) { groups['Warranty'].push(c); }
-              else { groups['Manual Logged'].push(c); }
+              else { groups['Complaint Log'].push(c); }
           });
-          let html=""; 
-          let gClr = {'Installation':'#0984e3','Demo':'#27ae60','Warranty':'#e67e22','Chatbot':'#ff0073','Manual Logged':'#2c3e50'};
-          let gIco = {'Installation':'fa-screwdriver-wrench','Demo':'fa-desktop','Warranty':'fa-file-shield','Chatbot':'fa-robot','Manual Logged':'fa-phone'};
+
+          let gClr = {'Installation':'#0984e3','Demo':'#27ae60','Complaint Log':'#e67e22','Chatbot':'#ff0073'};
+          let gIco = {'Installation':'fa-screwdriver-wrench','Demo':'fa-desktop','Complaint Log':'fa-file-shield','Chatbot':'fa-robot'};
+
+          let html = `<div style="display:flex; gap:10px; margin-bottom:15px; overflow-x:auto; padding-bottom:5px;">`;
+          
+          html += `<div class="ct-sum-card" style="border-top: 3px solid #333;" onclick="filterCtGroup('All')">
+                      <h4>All Calls</h4><h2>${data.length}</h2>
+                   </div>`;
+
+          for(let g in groups) {
+              html += `<div class="ct-sum-card" style="border-top: 3px solid ${gClr[g]};" onclick="filterCtGroup('${g}')">
+                          <h4>${g}</h4><h2>${groups[g].length}</h2>
+                       </div>`;
+          }
+
+          html += `<div class="ct-sum-card" style="border-top: 3px solid #9b59b6;" onclick="showCtAssignments()">
+                      <h4>Assignments</h4><h2 style="font-size:16px; margin-top:9px;"><i class="fa-solid fa-users"></i> View</h2>
+                   </div>`;
+          html += `</div>`;
+
           let i=0;
           for(let g in groups) {
               if(groups[g].length > 0) {
-                  i++; html+=`<div class="group-wrap"><div class="group-header" onclick="toggleGroup('ct-g-${i}')"><span><i class="fa-solid ${gIco[g]}" style="color:${gClr[g]};"></i> ${g}</span><span class="badge" style="background:${gClr[g]}; color:#fff; padding:2px 8px; border-radius:10px; font-size:11px;">${groups[g].length} Calls</span></div><div class="group-body" id="ct-g-${i}" style="display:block;">`;
+                  i++;
+                  html+=`<div class="group-wrap ct-group-wrap" data-gname="${g}"><div class="group-header" onclick="toggleGroup('ct-g-${i}')"><span><i class="fa-solid ${gIco[g]}" style="color:${gClr[g]};"></i> ${g}</span><span class="badge" style="background:${gClr[g]}; color:#fff; padding:2px 8px; border-radius:10px; font-size:11px;">${groups[g].length} Calls</span></div><div class="group-body" id="ct-g-${i}" style="display:block;">`;
                   groups[g].forEach(c=>{
                       let assignInfo=c.assigned?`<span class="ct-assign">Assign: ${c.assigned}</span>`:""; let showTask=c.taskId?`${c.taskId} - `:'';
                       html+=`<div class="ct-card" style="border-left-color:${gClr[g]};" onclick="ctOpenUpdate(${c.row}, '${safeB64(c.customerName)}', '${safeB64(c.action)}', '${safeB64(c.assigned)}')"><div class="ct-tat" style="color:${gClr[g]}; background:${gClr[g]}15; border-color:${gClr[g]}50;">TAT: ${c.tat}</div><b>${showTask}${c.customerName}</b> ${assignInfo}<div style="color:#1976d2;font-size:12px;margin:2px 0;">📞 ${c.contact}</div><small>Model: ${c.model}<br>Issue: ${c.issue}</small></div>`;
@@ -662,6 +713,7 @@
       }).catch(e=>{ document.getElementById('ctReportRes').innerHTML="Error."; }); 
   }
 
+  // --- INTERNAL DASHBOARD LOGIC ---
   function ctLoadDashboard() {
       let s = document.getElementById('ctDashFrom') ? document.getElementById('ctDashFrom').value : "";
       let e = document.getElementById('ctDashTo') ? document.getElementById('ctDashTo').value : "";
