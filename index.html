@@ -1,120 +1,276 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
   <base target="_top">
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    :root { --main-bg: #eef2f5; --main-color: #ff0073; --bot-bubble: #ffffff; --user-bubble: #ff0073; --font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: var(--main-bg); font-family: var(--font); margin: 0; padding: 0; box-sizing: border-box; }
+    /* Ultra-Premium Apple/Microsoft Style Variables */
+    :root { 
+      --bg-color: #fbfbfd; 
+      --card-bg: #ffffff;
+      --text-primary: #1d1d1f; 
+      --text-secondary: #86868b;
+      --accent-blue: #0066cc; 
+      --accent-hover: #004499;
+      --border-light: rgba(0, 0, 0, 0.06);
+      --font-stack: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.03);
+      --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.08);
+      --glass-bg: rgba(255, 255, 255, 0.85);
+      --pink-brand: #ff0073;
+    }
     
-    /* Global Wrappers */
-    .view-wrapper { display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; box-sizing: border-box; justify-content: center; }
+    body { background-color: var(--bg-color); font-family: var(--font-stack); margin: 0; padding: 0; box-sizing: border-box; color: var(--text-primary); -webkit-font-smoothing: antialiased; letter-spacing: -0.01em; }
     
-    /* Landing Page Styles */
-    .landing-header { text-align: center; margin-bottom: 30px; }
-    .landing-header h1 { color: #2c3e50; font-size: 28px; margin: 0 0 10px 0; }
-    .landing-header p { color: #7f8fa6; margin: 0; font-size: 15px; }
+    /* --- INTRO TYPING ANIMATION SCREEN (FIXED Z-INDEX) --- */
+    #intro-screen {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: var(--card-bg); 
+        z-index: 99999999; /* Sabse upar rahega */
+        display: flex; flex-direction: column; align-items: center; justify-content: center;
+        transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s ease;
+    }
+    .intro-logo-img { height: 80px; margin-bottom: 25px; opacity: 0; animation: fadeSlideUp 0.6s ease forwards 0.2s; object-fit: contain; }
     
-    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; width: 100%; max-width: 800px; }
-    .action-card { background: #fff; padding: 25px 20px; border-radius: 16px; text-align: center; box-shadow: 0 8px 20px rgba(0,0,0,0.06); cursor: pointer; transition: all 0.3s ease; border-top: 6px solid var(--main-color); }
-    .action-card:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
-    .action-card i { font-size: 40px; color: var(--main-color); margin-bottom: 15px; }
-    .action-card h3 { margin: 0; color: #2c3e50; font-size: 18px; }
-    .action-card p { margin: 10px 0 0 0; color: #7f8fa6; font-size: 13px; line-height: 1.4; }
-    .track-btn-main { background: #34495e; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; font-size: 14px; cursor: pointer; margin-top: 20px; transition: 0.3s; }
-    .track-btn-main:hover { background: #2c3e50; }
+    .typewriter-text {
+        font-size: 46px; font-weight: 900; color: var(--pink-brand); letter-spacing: 6px;
+        border-right: 4px solid var(--pink-brand); padding-right: 8px;
+        animation: blink 0.8s step-end infinite;
+        text-transform: uppercase;
+        min-height: 55px; display: inline-block;
+    }
     
-    /* Form Styles */
-    .form-container { background: #fff; padding: 30px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); width: 100%; max-width: 500px; }
-    .form-header { display: flex; align-items: center; margin-bottom: 25px; border-bottom: 2px solid #f1f2f6; padding-bottom: 15px; }
-    .form-header i { font-size: 24px; color: var(--main-color); margin-right: 15px; cursor: pointer; }
-    .form-header h2 { margin: 0; color: #2c3e50; font-size: 20px; }
-    
-    .pro-input-group { position: relative; margin-bottom: 15px; }
-    .pro-input-group label { display: block; font-size: 12px; font-weight: bold; color: #555; margin-bottom: 6px; }
-    .pro-input-group input, .pro-input-group select, .pro-input-group textarea { width: 100%; padding: 12px 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 14px; background: #fafafa; transition: border 0.3s; font-family: var(--font); }
-    .pro-input-group input:focus, .pro-input-group select:focus, .pro-input-group textarea:focus { border-color: var(--main-color); background: #fff; outline:none; }
-    .submit-btn { width: 100%; padding: 14px; background: var(--main-color); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 15px; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(255, 0, 115, 0.2); margin-top: 10px; } 
-    .submit-btn:hover { background: #d0005e; }
+    @keyframes blink { 0%, 100% { border-color: transparent; } 50% { border-color: var(--pink-brand); } }
+    @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes contentEntrance { from { opacity: 0; transform: translateY(30px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-    /* Chatbot Existing Styles */
-    .chat-container { width: 100%; max-width: 450px; height: 100vh; max-height: 800px; background: #fff; display: flex; flex-direction: column; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border-radius: 16px; overflow: hidden; position: relative; border: 1px solid #e1e8ed;}
-    .header { background: linear-gradient(135deg, var(--main-color), #c00053); color: white; padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.1); z-index: 10;}
-    .header-title { font-size: 1.1rem; display: flex; align-items: center; gap: 8px;}
-    .top-actions { display: flex; align-items: center; gap: 8px;}
-    .btn-small { background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; cursor: pointer; transition: 0.3s; font-weight: bold;}
-    .btn-small:hover { background: rgba(255,255,255,0.4); }
-    .chat-box { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; background: #f8f9fa; scroll-behavior: smooth; }
-    .msg { display: flex; flex-direction: column; max-width: 85%; animation: fadeIn 0.3s ease-in-out; }
-    .bot { align-self: flex-start; } .user { align-self: flex-end; }
-    .bubble { padding: 12px 16px; font-size: 14px; line-height: 1.5; box-shadow: 0 2px 5px rgba(0,0,0,0.04); position: relative; word-wrap: break-word;}
-    .bot .bubble { background-color: var(--bot-bubble); color: #333; border-radius: 18px 18px 18px 4px; border: 1px solid #e1e8ed;}
-    .user .bubble { background-color: var(--user-bubble); color: white; border-radius: 18px 18px 4px 18px; }
-    .msg-time { font-size: 10px; color: #999; margin-top: 4px; padding: 0 6px; } .user .msg-time { text-align: right; }
-    .action-area { padding: 15px 20px; background: #fff; border-top: 1px solid #eee; display: none; animation: slideUp 0.3s ease-out; box-shadow: 0 -5px 15px rgba(0,0,0,0.03); z-index: 5;}
-    .options-grid { display: flex; flex-direction: column; gap: 10px; }
-    .opt-btn { background: #fff; border: 1.5px solid var(--main-color); color: var(--main-color); padding: 12px 18px; border-radius: 12px; cursor: pointer; font-size: 14px; font-weight: 600; transition: all 0.2s ease; text-align: left; display: flex; justify-content: space-between; align-items: center;}
-    .opt-btn:hover { background: var(--main-color); color: #fff; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,0,113,0.2); }
-    .btn-download { border:none; background: linear-gradient(135deg, #6c5ce7, #a29bfe); color: white; justify-content: center; gap:10px; }
-    .btn-blue { border-color: #0984e3; color: #0984e3; justify-content: center; gap:10px;} .btn-blue:hover { background: #0984e3; color: #fff; box-shadow: 0 4px 12px rgba(9, 132, 227, 0.2); }
-    .live-chat-area { display: none; padding: 12px 15px; background: white; border-top: 1px solid #eee; align-items: center; gap: 10px; }
-    .live-chat-area input { flex: 1; padding: 12px 18px; border: 1px solid #ddd; border-radius: 25px; outline: none; font-size: 14px; background: #f8f9fa;} 
-    .icon-btn { background: var(--main-color); color: white; border: none; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; transition: 0.2s; flex-shrink:0;} 
-    .btn-attach { background: #34495e; } .btn-attach:hover { background: #2c3e50; }
-    .rating-area { display: none; padding: 25px 20px; background: white; border-top: 1px solid #eee; text-align: center;} .stars { font-size: 32px; color: #ddd; cursor: pointer; display: flex; justify-content: center; gap: 12px; margin-top: 15px;} .stars i:hover, .stars i.active { color: #f1c40f; transition: 0.2s;}
-    .typing { display: flex; gap: 5px; padding: 12px 16px; align-items: center; background: #fff; width: fit-content; border-radius: 18px 18px 18px 4px; border: 1px solid #e1e8ed; display: none; }
-    .dot { width: 6px; height: 6px; background: #888; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
-    .dot:nth-child(1) { animation-delay: -0.32s; } .dot:nth-child(2) { animation-delay: -0.16s; }
-    @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } } @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } @keyframes slideUp { from { transform: translateY(20px); opacity: 0;} to { transform: translateY(0); opacity: 1;} }
+    /* Frosted Glass Enterprise Header */
+    .corporate-nav { background: var(--glass-bg); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); padding: 12px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light); position: fixed; width: 100%; top: 0; box-sizing: border-box; z-index: 1000; }
+    .corporate-logo { display: flex; align-items: center; gap: 10px; font-size: 80px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.5px; }
+    .corporate-logo img { height: 80px; object-fit: contain; transition: transform 0.3s ease; }
+    .corporate-logo:hover img { transform: scale(1.05); }
+    .corporate-nav-actions { display: flex; gap: 15px; align-items: center; }
+    .lang-toggle { background: transparent; color: var(--text-primary); border: 1px solid #d2d2d7; border-radius: 8px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; outline:none; font-family: var(--font-stack); }
+    .lang-toggle:hover { background: #f5f5f7; border-color: var(--text-secondary); }
     
-    /* Loading overlay */
-    #globalLoader { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.9); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; }
-    .spinner { border: 4px solid rgba(0,0,0,0.1); width: 40px; height: 40px; border-radius: 50%; border-left-color: var(--main-color); animation: spin 1s linear infinite; margin-bottom: 15px;}
+    /* Global Wrappers - REDUCED TOP PADDING */
+    .view-wrapper { display: none; flex-direction: column; align-items: center; min-height: 100vh; padding: 100px 20px 40px 20px; box-sizing: border-box; justify-content: flex-start; }
+    
+    /* Minimalist Landing Page Header - COMPACT SPACING */
+    .landing-header { text-align: center; margin-bottom: 35px; max-width: 650px; }
+    .landing-header h1 { color: var(--text-primary); font-size: 36px; margin: 0 0 8px 0; font-weight: 800; letter-spacing: -0.04em; }
+    .landing-header p { color: var(--text-secondary); margin: 0; font-size: 16px; line-height: 1.5; font-weight: 400; }
+    
+    /* Modern Grid & Cards - COMPACT SIZE TO FIT ONE SCREEN */
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; width: 100%; max-width: 950px; margin-bottom: 30px; }
+    .action-card { background: var(--card-bg); padding: 25px 22px; border-radius: 20px; text-align: left; box-shadow: var(--shadow-soft); cursor: pointer; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid var(--border-light); display: flex; flex-direction: column; align-items: flex-start; position: relative; overflow: hidden; }
+    .action-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: var(--shadow-hover); border-color: transparent; }
+    
+    .action-card-icon { width: 46px; height: 46px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 20px; margin-bottom: 16px; box-shadow: 0 8px 16px rgba(0,0,0,0.06); }
+    .icon-install { background: linear-gradient(135deg, #e0f2fe, #bbdefb); color: #0284c7; }
+    .icon-demo { background: linear-gradient(135deg, #dcfce7, #bbf7d0); color: #16a34a; }
+    .icon-warranty { background: linear-gradient(135deg, #fef9c3, #fde047); color: #ca8a04; }
+    .icon-chat { background: linear-gradient(135deg, #fce4ec, #fbcfe8); color: var(--pink-brand); }
+    
+    .action-card h3 { margin: 0 0 6px 0; color: var(--text-primary); font-size: 18px; font-weight: 700; letter-spacing: -0.02em; }
+    .action-card p { margin: 0; color: var(--text-secondary); font-size: 13.5px; line-height: 1.4; flex-grow: 1; font-weight: 400; }
+    .card-arrow { margin-top: 15px; color: var(--accent-blue); font-size: 13.5px; font-weight: 600; display: flex; align-items: center; gap: 4px; transition: 0.3s; }
+    .action-card:hover .card-arrow { gap: 8px; }
+    
+    /* Minimalist Primary Button - COMPACT */
+    .track-btn-main { background: transparent; color: var(--accent-blue); border: none; padding: 14px 28px; border-radius: 980px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; font-family: var(--font-stack); }
+    .track-btn-main:hover { background: #f0f4f9; transform: scale(1.02); }
+    
+    /* Clean iOS Style Forms */
+    .form-container { background: var(--card-bg); padding: 50px 45px; border-radius: 28px; box-shadow: var(--shadow-soft); width: 100%; max-width: 550px; border: 1px solid var(--border-light); }
+    .form-header { display: flex; align-items: center; margin-bottom: 40px; }
+    .form-header i { font-size: 20px; color: var(--text-secondary); margin-right: 18px; cursor: pointer; padding: 12px; border-radius: 50%; background: #f5f5f7; transition: 0.2s;}
+    .form-header i:hover { background: #e8e8ed; color: var(--text-primary); }
+    .form-header h2 { margin: 0; color: var(--text-primary); font-size: 26px; font-weight: 700; letter-spacing: -0.02em; }
+    
+    .pro-input-group { position: relative; margin-bottom: 24px; text-align: left; }
+    .pro-input-group label { display: block; font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 10px; }
+    .pro-input-group input, .pro-input-group select, .pro-input-group textarea { width: 100%; padding: 15px 18px; border: 1px solid #d2d2d7; border-radius: 14px; box-sizing: border-box; font-size: 15px; background: #fafbfc; transition: 0.3s; font-family: var(--font-stack); color: var(--text-primary); }
+    .pro-input-group input:focus, .pro-input-group select:focus, .pro-input-group textarea:focus { border-color: var(--accent-blue); outline:none; box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.15); background: #fff; }
+    
+    .pro-input-group.has-icon input { padding-left: 46px; }
+    .pro-input-group.has-icon i { position: absolute; left: 16px; bottom: 16px; color: var(--text-secondary); font-size: 16px; pointer-events: none; }
+    
+    .submit-btn { width: 100%; padding: 16px; background: var(--accent-blue); color: white; border: none; border-radius: 14px; font-weight: 600; font-size: 16px; cursor: pointer; transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); font-family: var(--font-stack); margin-top: 15px; box-shadow: 0 4px 14px rgba(0, 102, 204, 0.3); } 
+    .submit-btn:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0, 102, 204, 0.4); }
+
+    /* Custom Tracking Modal UI */
+    .track-list-container { text-align: left; max-height: 400px; overflow-y: auto; padding-right: 5px; }
+    .ticket-card { background: #fbfbfd; border-radius: 16px; padding: 18px 20px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; border: 1px solid #ebecf0; }
+    .ticket-card:hover { background: #ffffff; border-color: var(--accent-blue); box-shadow: var(--shadow-soft); }
+    .tc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .tc-id { font-weight: 700; color: var(--text-primary); font-size: 15px; }
+    .tc-date { font-size: 12px; color: var(--text-secondary); }
+    .tc-body { font-size: 14px; color: var(--text-secondary); margin-bottom: 12px; }
+    .status-badge { padding: 5px 12px; border-radius: 980px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    
+    .detail-view { text-align: left; font-family: var(--font-stack); }
+    .dv-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 18px; border-bottom: 1px solid var(--border-light); }
+    .dv-header h3 { margin: 0; font-size: 20px; font-weight: 700; color: var(--text-primary); }
+    .dv-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: #fbfbfd; padding: 18px; border-radius: 16px; margin-bottom: 24px; border: 1px solid #ebecf0; }
+    .dv-item label { display: block; font-size: 11px; color: var(--text-secondary); text-transform: uppercase; font-weight: 700; margin-bottom: 6px; letter-spacing: 0.5px; }
+    .dv-item span { font-size: 15px; color: var(--text-primary); font-weight: 600; }
+    .dv-issue { grid-column: 1 / -1; }
+    .dv-history-title { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 14px; }
+    .dv-history-box { max-height: 280px; overflow-y: auto; background: #fff; border: 1px solid var(--border-light); border-radius: 16px; padding: 20px; }
+    .hist-msg { margin-bottom: 20px; }
+    .hist-msg:last-child { margin-bottom: 0; }
+    .hist-sender { font-size: 13px; font-weight: 700; margin-bottom: 6px; display: flex; justify-content: space-between; }
+    .hist-sender.customer { color: var(--accent-blue); }
+    .hist-sender.admin { color: var(--text-primary); }
+    .hist-text { font-size: 14px; color: var(--text-primary); line-height: 1.6; background: #fbfbfd; padding: 12px 16px; border-radius: 14px; display: inline-block; max-width: 90%; border: 1px solid #ebecf0; }
+
+    /* Chatbot Styles */
+    .chat-container { width: 100%; max-width: 450px; height: calc(100vh - 150px); max-height: 750px; background: var(--card-bg); display: flex; flex-direction: column; box-shadow: var(--shadow-hover); border-radius: 28px; overflow: hidden; border: 1px solid var(--border-light);}
+    .header { background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); color: var(--text-primary); padding: 18px 24px; display: flex; justify-content: space-between; align-items: center; font-weight: 600; border-bottom: 1px solid var(--border-light); z-index: 10; }
+    .header-title { font-size: 17px; display: flex; align-items: center; gap: 14px;}
+    .header-title i.fa-arrow-left { color: var(--text-secondary); cursor: pointer; padding: 8px; transition: 0.2s; border-radius: 50%; background: #f5f5f7; }
+    .header-title i.fa-arrow-left:hover { background: #e8e8ed; color: var(--text-primary); }
+    .top-actions { display: flex; align-items: center; gap: 10px;}
+    
+    .chat-box { flex: 1; padding: 24px; overflow-y: auto; display: flex; flex-direction: column; gap: 18px; background: #ffffff; scroll-behavior: smooth; }
+    .msg { display: flex; flex-direction: column; max-width: 85%; animation: fadeIn 0.3s ease-out; }
+    .bot { align-self: flex-start; } .user { align-self: flex-end; }
+    .bubble { padding: 14px 18px; font-size: 15px; line-height: 1.5; position: relative; word-wrap: break-word;}
+    .bot .bubble { background-color: #f0f4f9; color: var(--text-primary); border-radius: 20px 20px 20px 6px; }
+    .user .bubble { background-color: var(--accent-blue); color: white; border-radius: 20px 20px 6px 20px; box-shadow: 0 4px 10px rgba(0,102,204,0.2); }
+    .bubble a { color: inherit; text-decoration: underline; font-weight: 600;}
+    .msg-time { font-size: 11px; color: var(--text-secondary); margin-top: 6px; padding: 0 4px; } 
+    .user .msg-time { text-align: right; }
+   
+    .action-area { padding: 20px 24px; background: #ffffff; border-top: 1px solid var(--border-light); display: none; animation: slideUp 0.3s ease-out; z-index: 5;}
+    
+    .options-grid { display: flex; flex-direction: column; gap: 12px; max-height: 260px; overflow-y: auto; padding-right: 6px; }
+    .options-grid::-webkit-scrollbar { width: 5px; }
+    .options-grid::-webkit-scrollbar-thumb { background: #d2d2d7; border-radius: 10px; }
+
+    .opt-btn { background: #fbfbfd; border: 1px solid #ebecf0; color: var(--text-primary); padding: 15px 20px; border-radius: 14px; cursor: pointer; font-size: 15px; font-weight: 500; transition: 0.2s; text-align: left; display: flex; justify-content: space-between; align-items: center;}
+    .opt-btn:hover { background: #f0f4f9; border-color: var(--accent-blue); color: var(--accent-blue); transform: scale(0.99); }
+    .opt-btn i.fa-chevron-right { color: var(--text-secondary); font-size: 12px; }
+   
+    .live-chat-area { display: none; padding: 18px 24px; background: #fff; border-top: 1px solid var(--border-light); align-items: center; gap: 12px; }
+    .live-chat-area input { flex: 1; padding: 14px 20px; border: 1px solid #d2d2d7; border-radius: 980px; outline: none; font-size: 15px; background: #fbfbfd; transition: 0.3s;} 
+    .live-chat-area input:focus { border-color: var(--accent-blue); box-shadow: 0 0 0 4px rgba(0, 102, 204, 0.15); background: #fff;}
+    .icon-btn { background: var(--accent-blue); color: white; border: none; width: 44px; height: 44px; border-radius: 50%; cursor: pointer; font-size: 16px; display: flex; justify-content: center; align-items: center; transition: 0.2s cubic-bezier(0.16, 1, 0.3, 1); flex-shrink:0;} 
+    .icon-btn:hover { background: var(--accent-hover); transform: scale(1.08); } 
+    .btn-attach { background: #f5f5f7; color: var(--text-secondary); border: none; } 
+    .btn-attach:hover { background: #e8e8ed; color: var(--text-primary); }
+   
+    .rating-area { display: none; padding: 40px 24px; background: #fff; border-top: 1px solid var(--border-light); text-align: center;} 
+    .stars { font-size: 38px; color: #dfe1e6; cursor: pointer; display: flex; justify-content: center; gap: 12px; margin-top: 24px;} 
+    .stars i:hover, .stars i.active { color: #ff9f0a; transition: 0.2s;}
+    
+    .in-chat-form { background: #fbfbfd; border: 1px solid #ebecf0; padding: 18px; border-radius: 18px; margin-top: 5px; width: 85%; }
+    .in-chat-form label { display: block; font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 6px; text-transform: uppercase; }
+    .in-chat-form input { width: 100%; padding: 12px 14px; border: 1px solid #d2d2d7; border-radius: 10px; margin-bottom: 14px; font-size: 14px; box-sizing: border-box; background:#fff;}
+    .in-chat-form input:focus { border-color:var(--accent-blue); outline:none; box-shadow: 0 0 0 3px rgba(0,102,204,0.1); }
+    
+    .typing { display: flex; gap: 6px; padding: 16px 20px; align-items: center; background: #f0f4f9; width: fit-content; border-radius: 20px 20px 20px 6px; display: none; }
+    .dot { width: 7px; height: 7px; background: #86868b; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
+    .dot:nth-child(1) { animation-delay: -0.32s; } .dot:nth-child(2) { animation-delay: -0.16s; } 
+    .hidden { display: none; }
+    
+    /* Global Loader */
+    #globalLoader { position: fixed; top:0; left:0; width:100%; height:100%; background:var(--glass-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); z-index:9999; display:flex; flex-direction:column; align-items:center; justify-content:center; }
+    .spinner { border: 3px solid rgba(0,0,0,0.05); width: 44px; height: 44px; border-radius: 50%; border-left-color: var(--accent-blue); animation: spin 1s linear infinite; margin-bottom: 16px;}
+    
+    @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } } 
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } } 
+    @keyframes slideUp { from { transform: translateY(20px); opacity: 0;} to { transform: translateY(0); opacity: 1;} }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+        .corporate-nav { padding: 12px 20px; }
+        .corporate-logo img { height: 26px !important; }
+        .view-wrapper { padding-top: 90px; padding-left: 15px; padding-right: 15px; }
+        .landing-header h1 { font-size: 28px; letter-spacing: -0.02em; margin-bottom: 8px; }
+        .landing-header p { font-size: 15px; }
+        .card-grid { grid-template-columns: 1fr; gap: 14px; margin-bottom: 20px; }
+        .action-card { padding: 20px 18px; border-radius: 16px; }
+        .form-container { padding: 30px 24px; border-radius: 24px; }
+        .chat-container { height: calc(100vh - 100px); max-height: none; border-radius: 20px; }
+        #intro-screen .intro-logo-img { height: 50px; }
+        #intro-screen .typewriter-text { font-size: 32px; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Loading State -->
+  <!-- ===============================
+       INTRO TYPING SCREEN (JS ANIMATED)
+       =============================== -->
+  <div id="intro-screen">
+      <img class="intro-logo-img" src="PASTE_YOUR_COPIED_BASE64_CODE_HERE" alt="wepsol" onerror="this.style.display='none';">
+      <div class="typewriter-container">
+          <div id="typewriter-text" class="typewriter-text"></div>
+      </div>
+  </div>
+
+  <!-- Enterprise Header -->
+  <div class="corporate-nav">
+      <div class="corporate-logo">
+          <img src="PASTE_YOUR_COPIED_BASE64_CODE_HERE" alt="wepsol" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';">
+          <span style="display:none; font-weight:800; color:var(--accent-blue);">wepsol</span>
+      </div>
+      <div class="corporate-nav-actions">
+          <select id="langSelect" class="lang-toggle" onchange="changeLanguage()">
+              <option value="en">English</option>
+              <option value="hi">हिंदी</option>
+          </select>
+      </div>
+  </div>
+
+  <!-- Loading State (Z-Index lowered so it hides behind typing) -->
   <div id="globalLoader">
       <div class="spinner"></div>
-      <b style="color:#555;">Connecting to WeP Servers...</b>
+      <b style="color:var(--text-secondary); font-size:14px; font-weight:500;">Securely Connecting...</b>
   </div>
 
   <!-- 1. LANDING PAGE -->
-  <div id="landingPage" class="view-wrapper" style="display:none;">
+  <div id="landingPage" class="view-wrapper">
       <div class="landing-header">
-          <h1>WeP Customer Support</h1>
-          <p>Please select an option below so we can assist you better.</p>
+          <h1 id="ui-main-title">How can we help you?</h1>
+          <p id="ui-sub-title">Select an option below to get the right support quickly.</p>
       </div>
       
       <div class="card-grid">
-          <div class="action-card" style="border-top-color: #0984e3;" onclick="openFormView('install')">
-              <i class="fa-solid fa-laptop-code" style="color: #0984e3;"></i>
-              <h3>Online Installation Support</h3>
-              <p>Request support to setup and install your new WeP product.</p>
+          <div class="action-card" onclick="openFormView('install')">
+              <div class="action-card-icon icon-install"><i class="fa-solid fa-screwdriver-wrench"></i></div>
+              <h3 id="ui-card1-t">Installation Support</h3>
+              <p id="ui-card1-d">Request to setup and install your new wepsol product.</p>
+              <div class="card-arrow">Raise Request <i class="fa-solid fa-arrow-right"></i></div>
           </div>
-          <div class="action-card" style="border-top-color: #27ae60;" onclick="openFormView('demo')">
-              <i class="fa-solid fa-chalkboard-user" style="color: #27ae60;"></i>
-              <h3>For Demo</h3>
-              <p>Schedule a product demonstration with our sales team.</p>
+          <div class="action-card" onclick="openFormView('demo')">
+              <div class="action-card-icon icon-demo"><i class="fa-solid fa-desktop"></i></div>
+              <h3 id="ui-card2-t">Product Demo</h3>
+              <p id="ui-card2-d">Schedule a product demonstration online.</p>
+              <div class="card-arrow">Book Schedule <i class="fa-solid fa-arrow-right"></i></div>
           </div>
-          <div class="action-card" style="border-top-color: #e67e22;" onclick="openFormView('warranty')">
-              <i class="fa-solid fa-triangle-exclamation" style="color: #e67e22;"></i>
-              <h3>Warranty Complaint</h3>
-              <p>Register a complaint for a product under warranty.</p>
+          <div class="action-card" onclick="openFormView('warranty')">
+              <div class="action-card-icon icon-warranty"><i class="fa-solid fa-file-shield"></i></div>
+              <h3 id="ui-card3-t">Warranty Complaint</h3>
+              <p id="ui-card3-d">Register service complaint for your products.</p>
+              <div class="card-arrow">Lodge Issue <i class="fa-solid fa-arrow-right"></i></div>
           </div>
-          <div class="action-card" style="border-top-color: var(--main-color);" onclick="openChatView()">
-              <i class="fa-solid fa-comments"></i>
-              <h3>Chat with Executive</h3>
-              <p>Get instant troubleshooting or chat live with an agent.</p>
+          <div class="action-card" onclick="openChatView()">
+              <div class="action-card-icon icon-chat"><i class="fa-solid fa-headset"></i></div>
+              <h3 id="ui-card4-t">Support Assistant</h3>
+              <p id="ui-card4-d">Get instant troubleshooting or connect with a executive.</p>
+              <div class="card-arrow">Start Chat <i class="fa-solid fa-arrow-right"></i></div>
           </div>
       </div>
       
-      <!-- General Track Button on Landing Page -->
-      <button class="track-btn-main" onclick="trackTaskModal()"><i class="fa-solid fa-magnifying-glass"></i> Track Ticket Status</button>
+      <!-- Track Button -->
+      <button class="track-btn-main" onclick="trackTaskModal()"><i class="fa-solid fa-magnifying-glass"></i> <span id="ui-track-btn">Track Existing Request</span></button>
   </div>
 
   <!-- 2. DYNAMIC FORM PAGE -->
@@ -131,119 +287,225 @@
   </div>
 
   <!-- 3. EXISTING CHATBOT PAGE -->
-  <div id="chatPage" class="view-wrapper" style="display:none; padding:0;">
+  <div id="chatPage" class="view-wrapper" style="display:none;">
     <div class="chat-container">
       <div class="header">
-        <div class="header-title"><i class="fa-solid fa-arrow-left" style="cursor:pointer; margin-right:10px;" onclick="goHome()"></i> <i class="fa-solid fa-headset"></i> WeP Support Bot</div>
+        <div class="header-title"><i class="fa-solid fa-arrow-left" onclick="goHome()"></i> <i class="fa-solid fa-headset" style="color:var(--accent-blue)"></i> wepsol Assistant</div>
         <div class="top-actions">
-          <button class="btn-small" onclick="trackTaskModal()" title="Track Ticket"><i class="fa-solid fa-search"></i> Track</button>
-          <button id="endChatBtn" class="btn-small" style="background:#e74c3c; display:none;" onclick="endLiveChatCustomer()">End Chat</button>
+          <button id="endChatBtn" class="lang-toggle" style="color:var(--danger); border:none; background:transparent; display:none; padding:4px;" onclick="endLiveChatCustomer()">End Chat</button>
         </div>
       </div>
      
       <div class="chat-box" id="chatBox">
-        <div class="msg bot" id="botGreetingObj"><div class="bubble" id="botGreeting">Hello! I am the WeP Service Bot. Please select your Printer Model to get started.</div></div>
+        <div class="msg bot" id="botGreetingObj"><div class="bubble" id="botGreeting">Loading...</div></div>
         <div class="typing" id="typingIndicator"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
       </div>
      
       <div class="action-area" id="modelSelectArea" style="display:none;">
-        <div style="font-size:13px; margin-bottom:10px; font-weight:bold; color:#333;">Please select your Printer Model:</div>
-        <select id="printerModelDropdown" style="width:100%; padding:14px; border-radius:8px; border:1px solid #ddd; background:#fafafa;"><option value="">-- Select Printer Model --</option></select>
-        <button class="submit-btn" style="background:#0984e3;" onclick="confirmModel()">Start Troubleshooting <i class="fa-solid fa-arrow-right"></i></button>
+        <div class="pro-input-group">
+            <label id="modelSelectLabel">Select your Printer Model:</label>
+            <select id="printerModelDropdown"><option value="" id="drpDefault">-- Select --</option></select>
+        </div>
+        <button class="submit-btn" onclick="confirmModel()" id="btnNextStep">Continue</button>
       </div>
       
       <div class="action-area" id="optionsContainer">
-        <div class="options-grid" id="optionsGrid"><small style="color: #999;">Loading...</small></div>
-        <button class="opt-btn" id="backBtn" style="color:#7f8fa6; border-color:#dcdde1; margin-top:10px; display:none; justify-content:center;" onclick="goBackStep()"><i class="fa-solid fa-arrow-left"></i> &nbsp; Go Back</button>
+        <div class="options-grid" id="optionsGrid"></div>
+        <button class="opt-btn" id="backBtn" style="background:transparent; justify-content:center; color:var(--text-secondary); margin-top:10px; display:none; border:none; box-shadow:none;" onclick="goBackStep()"><i class="fa-solid fa-arrow-left" style="margin-right:8px;"></i> Go Back</button>
       </div>
       
       <div class="action-area" id="videoOrAgentArea">
         <div class="options-grid">
-           <button id="downloadBtn" class="opt-btn btn-download" style="display:none;" onclick="downloadDriver()"><i class="fa-solid fa-cloud-arrow-down"></i> Download Driver / Files</button>
-           <button id="videoBtn" class="opt-btn btn-blue" style="display:none;" onclick="openFixVideo()"><i class="fa-brands fa-youtube"></i> Watch Tutorial Video</button>
-           <div style="text-align:center; font-size:12px; color:#888; margin:5px 0;">-- OR --</div>
-           <button class="opt-btn" style="border-color:#27ae60; color:#27ae60; justify-content: center; gap:10px;" onclick="handleAction('RESOLVED')"><i class="fa-solid fa-check-circle"></i> My Issue is Resolved</button>
-           <button class="opt-btn" style="justify-content: center; gap:10px;" onclick="showLeadForm()"><i class="fa-solid fa-headset"></i> Connect to Executive</button>
+           <button id="downloadBtn" class="opt-btn" style="background:var(--text-primary); color:#fff; justify-content:center; display:none; border:none;" onclick="downloadDriver()"><i class="fa-solid fa-cloud-arrow-down" style="color:#fff;"></i> <span id="lblDownload">Download Resources</span></button>
+           <button id="videoBtn" class="opt-btn" style="background:#e6f0ff; color:var(--accent-blue); justify-content:center; display:none; border:none;" onclick="openFixVideo()"><i class="fa-brands fa-youtube" style="color:var(--accent-blue);"></i> <span id="lblWatchVideo">Watch Tutorial</span></button>
+           
+           <div style="text-align:center; font-size:12px; font-weight:600; color:var(--text-secondary); margin:5px 0;" id="lblOr">OR</div>
+           
+           <button class="opt-btn" style="color:#00875a; border-color:#00875a; justify-content:center; background:#f0fdf4;" onclick="handleAction('RESOLVED')"><i class="fa-solid fa-check-circle" style="color:#00875a;"></i> <span id="lblResolved">Issue Resolved</span></button>
+           <button class="opt-btn" style="color:var(--text-primary); justify-content:center;" onclick="showLeadForm()"><i class="fa-solid fa-headset" style="color:var(--text-primary);"></i> <span id="lblNeedExec">Connect to Executive</span></button>
         </div>
       </div>
      
       <div id="leadForm" class="action-area">
-        <div style="font-size: 15px; color: #333; margin-bottom: 15px; font-weight:bold; text-align:center;">Live Agent Contact Form</div>
-        <div class="pro-input-group"><label>Your Name *</label><input type="text" id="custName" placeholder="Full Name"></div>
-        <div class="pro-input-group"><label>Phone Number *</label><input type="tel" id="custPhone" placeholder="10-digit Mobile Number" pattern="[0-9]{10}" maxlength="10"></div>
-        <button class="submit-btn" onclick="startLiveChat()">Start Live Chat</button>
+        <div style="font-size: 16px; color: var(--text-primary); margin-bottom: 20px; font-weight:700;" id="formLabel">Contact Live Agent</div>
+        <div class="pro-input-group has-icon">
+            <label>Full Name</label>
+            <i class="fa-regular fa-user"></i>
+            <input type="text" id="custName" placeholder="Your Name">
+        </div>
+        <div class="pro-input-group has-icon">
+            <label>Mobile Number</label>
+            <i class="fa-solid fa-phone"></i>
+            <input type="tel" id="custPhone" placeholder="10 Digits" pattern="[0-9]{10}" maxlength="10">
+        </div>
+        <button class="submit-btn" onclick="startLiveChat()" id="startChatBtn">Start Session</button>
       </div>
       
       <div id="liveChatInput" class="live-chat-area">
-        <button class="icon-btn btn-attach" title="Share Photo" onclick="document.getElementById('hiddenFileInput').click()"><i class="fa-solid fa-paperclip"></i></button>
-        <input type="text" id="custReplyText" placeholder="Type a message..." onkeypress="if(event.key==='Enter') sendCustReply()">
-        <button class="icon-btn" onclick="sendCustReply()"><i class="fa-solid fa-paper-plane"></i></button>
-        <input type="file" id="hiddenFileInput" style="display:none;" accept="image/*" onchange="handlePhotoUpload(this)">
+        <button class="icon-btn btn-attach" title="Attach File" onclick="document.getElementById('hiddenFileInput').click()"><i class="fa-solid fa-paperclip"></i></button>
+        <input type="text" id="custReplyText" placeholder="Message..." onkeypress="if(event.key==='Enter') sendCustReply()">
+        <button class="icon-btn" onclick="sendCustReply()"><i class="fa-solid fa-arrow-up"></i></button>
+        <input type="file" id="hiddenFileInput" class="hidden" accept="image/*" onchange="handlePhotoUpload(this)">
       </div>
       
       <div id="ratingArea" class="rating-area">
-        <div style="font-size:15px; font-weight:bold; color:#333;">Chat Closed! Please rate your experience:</div>
+        <div style="font-size:18px; font-weight:700; color:var(--text-primary);" id="ratingTitle">Session ended. Please rate us:</div>
         <div class="stars" id="starContainer"><i class="fa-solid fa-star" onclick="submitRating(1)" onmouseover="hoverStar(1)"></i><i class="fa-solid fa-star" onclick="submitRating(2)" onmouseover="hoverStar(2)"></i><i class="fa-solid fa-star" onclick="submitRating(3)" onmouseover="hoverStar(3)"></i><i class="fa-solid fa-star" onclick="submitRating(4)" onmouseover="hoverStar(4)"></i><i class="fa-solid fa-star" onclick="submitRating(5)" onmouseover="hoverStar(5)"></i></div>
       </div>
     </div>
   </div>
 
   <script>
-    // ==========================================
-    // PASTE YOUR GOOGLE SCRIPT WEB APP URL HERE:
-    // ==========================================
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyngMC3rvNMzYOH30XZDSOxMfYN9MHc1tACzWrNR1PtBtSWDGXPrEEJLBoNtbMWmp3qHw/exec";
+    // ===================== GITHUB API CONFIGURATION =====================
+    // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
+    const API_URL = "https://script.google.com/macros/s/AKfycby0pD-YMamDL1k1DsGWlyHwJYREP63vTdIeE3NPxJ5glsYoU5toLdMVO2QQaGYNxpYE/exec";
+
+    async function apiCall(action, params = {}) {
+        try {
+            let response = await fetch(API_URL, {
+                method: 'POST',
+                body: JSON.stringify({action: action, params: params}),
+                headers: {'Content-Type': 'text/plain;charset=utf-8'}
+            });
+            let data = await response.json();
+            if(data.status === 'success') return data.data;
+            else throw new Error(data.message);
+        } catch(e) {
+            console.error(e);
+            throw e;
+        }
+    }
+    // ====================================================================
+
+    const uiText = {
+      en: { 
+          title: "How can we help you?", sub: "Select an option below to get the right support quickly.",
+          c1t: "Installation Support", c1d: "Request to setup and install your new wepsol product.",
+          c2t: "Product Demo", c2d: "Schedule a product demonstration online.",
+          c3t: "Warranty Complaint", c3d: "Register a complaint for your products.",
+          c4t: "Support Assistant", c4d: "Get instant troubleshooting or connect with a executive.",
+          track: "Track Existing Request",
+          greeting: "Hello! I am the wepsol Service Bot. Please select your Printer Model to get started.", loading: "Loading...", selectNext: "Please select an option below:", selectModel: "Printer Model", drpDefault: "-- Select --", nextStep: "Continue", modelWait: "Model selection is required.", watchVideo: "Watch Tutorial", downloadFile: "Download Resources", needExecutive: "Connect to Executive", resolved: "Issue Resolved", or: "OR", formTitle: "Contact Live Agent", namePlaceholder: "Full Name", phonePlaceholder: "10-digit Mobile Number", startChatBtn: "Start Session", chatInputPlaceholder: "Message...", endBtn: "End Chat", rateExperience: "Session ended. Please rate us:", agentConnected: "Live Chat Connected. An agent will be with you shortly.", formError: "Please enter your Name and a valid 10-digit Mobile Number.", userEnded: "You ended the chat. Please rate your experience.", ratedMsg: "Thank you! You rated this chat {count} stars.", formCity: "City", formState: "State", formSerial: "Serial No (Opt)", formNext: "Submit Details", trackTitle: "Track Ticket Status", invalidPhone: "Mobile number must be exactly 10 digits." 
+      },
+      hi: { 
+          title: "हम आपकी कैसे मदद कर सकते हैं?", sub: "शुरू करने के लिए नीचे दी गई सेवा श्रेणी चुनें या हमारी सपोर्ट टीम से जुड़ें।",
+          c1t: "इंस्टॉलेशन सपोर्ट", c1d: "अपने नए wepsol उत्पाद को सेट अप और इंस्टॉल करने के लिए इंजीनियर का अनुरोध करें।",
+          c2t: "प्रोडक्ट डेमो", c2d: "हमारी सेल्स टीम के साथ एक व्यक्तिगत उत्पाद प्रदर्शन शेड्यूल करें।",
+          c3t: "वारंटी शिकायत", c3d: "अपने वारंटी वाले उत्पादों के लिए सेवा शिकायत दर्ज करें।",
+          c4t: "सपोर्ट असिस्टेंट", c4d: "तुरंत स्वचालित समस्या निवारण प्राप्त करें या लाइव एक्जीक्यूटिव से जुड़ें।",
+          track: "अपना टिकट ट्रैक करें",
+          greeting: "नमस्ते! मैं wepsol सर्विस बॉट हूँ। कृपया शुरू करने के लिए अपना प्रिंटर मॉडल चुनें।", loading: "लोड हो रहा है...", selectNext: "कृपया नीचे से एक विकल्प चुनें:", selectModel: "प्रिंटर मॉडल चुनें:", drpDefault: "-- चुनें --", nextStep: "आगे बढ़ें", modelWait: "मॉडल चुनना आवश्यक है।", watchVideo: "वीडियो देखें", downloadFile: "रिसोर्स डाउनलोड करें", needExecutive: "एक्जीक्यूटिव से बात करें", resolved: "समस्या हल हो गई", or: "या", formTitle: "लाइव एजेंट संपर्क", namePlaceholder: "पूरा नाम", phonePlaceholder: "10-अंकों का मोबाइल नंबर", startChatBtn: "सत्र शुरू करें", chatInputPlaceholder: "मैसेज टाइप करें...", endBtn: "चैट बंद करें", rateExperience: "सत्र समाप्त! कृपया रेट करें:", agentConnected: "लाइव चैट कनेक्ट हो गया है। एक एजेंट जल्द ही आपसे जुड़ेगा।", formError: "कृपया अपना नाम और सही 10-अंकों का मोबाइल नंबर दर्ज करें।", userEnded: "आपने चैट समाप्त कर दी है। कृपया अपना अनुभव रेट करें।", ratedMsg: "धन्यवाद! आपने {count} स्टार दिए हैं।", formCity: "शहर (City)", formState: "राज्य (State)", formSerial: "सीरियल नंबर (Opt)", formNext: "जमा करें", trackTitle: "टिकट स्थिति ट्रैक करें", invalidPhone: "मोबाइल नंबर ठीक 10 अंकों का होना चाहिए।" 
+      }
+    };
+
+    let currentLang='en', treeNodes=[], globalModels=[], selectedModelText="", currentPath=[], myChatId=null, lastChatId=null, myName="", myPhone="", myMsgCount=0, formTriggeredIds={}, callFormActive=false;
+    let finalSelectedNode = null;
+    let globalTickets = [];
     
-    function apiCall(actionName, parameters = {}) {
-        return fetch(WEB_APP_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "text/plain;charset=utf-8",
-            },
-            body: JSON.stringify({ action: actionName, params: parameters })
-        })
-        .then(response => response.json())
-        .catch(error => {
-            console.error("API Error:", error);
-            Swal.fire('Connection Error', 'Failed to connect to server.', 'error');
-            return {status: 'error', message: error.message};
-        });
+    let isDataLoaded = false;
+    let isTypingDone = false;
+
+    function checkIntroComplete() {
+        if(isTypingDone && isDataLoaded) {
+            const intro = document.getElementById('intro-screen');
+            if(!intro) return;
+            
+            let loader = document.getElementById('globalLoader');
+            if(loader) loader.style.display = 'none';
+            
+            intro.style.opacity = '0';
+            intro.style.transform = 'translateY(-20px) scale(0.98)';
+            setTimeout(() => {
+                intro.style.display = 'none';
+                let lp = document.getElementById('landingPage');
+                if(lp) {
+                    lp.style.display = 'flex';
+                    lp.style.animation = 'contentEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+                }
+            }, 600); 
+        }
     }
 
-    let globalModels = [];
-    let treeNodes=[], selectedModelText="", currentPath=[], myChatId=null, lastChatId=null, myName="", myPhone="", myMsgCount=0, formTriggeredIds={}, callFormActive=false;
-    let finalSelectedNode = null;
-    let globalTickets = []; // Used for multi-tracking
-    
     window.onload = () => {
-        // Fetch Chatbot & Model Data in Background
-        apiCall('getChatbotInitialData').then(res => {
-            document.getElementById('globalLoader').style.display = 'none';
-            if(res.status === 'success') {
-                treeNodes = res.data.nodes; 
-                globalModels = res.data.models;
-                const drp = document.getElementById('printerModelDropdown');
-                globalModels.forEach(m => { let opt = document.createElement('option'); opt.value = m; opt.innerText = m; drp.appendChild(opt); });
-                document.getElementById('landingPage').style.display = 'flex';
-            } else {
-                Swal.fire("Error", "Could not connect to database.", "error");
-            }
+        const textToType = "WEPSOL";
+        const typeElem = document.getElementById('typewriter-text');
+        if(typeElem) {
+            let typeIdx = 0;
+            typeElem.innerHTML = ""; 
+            setTimeout(() => {
+                let typeInt = setInterval(() => {
+                    if(typeIdx < textToType.length) {
+                        typeElem.innerHTML += textToType.charAt(typeIdx);
+                        typeIdx++;
+                    } else {
+                        clearInterval(typeInt);
+                        setTimeout(() => {
+                            isTypingDone = true;
+                            checkIntroComplete();
+                        }, 1000); 
+                    }
+                }, 200); 
+            }, 500); 
+        } else {
+            isTypingDone = true;
+        }
+
+        applyLanguage();
+        apiCall('getChatbotInitialData').then(data => {
+            treeNodes = data.nodes; 
+            globalModels = data.models;
+            const drp = document.getElementById('printerModelDropdown');
+            globalModels.forEach(m => { let opt = document.createElement('option'); opt.value = m; opt.innerText = m; drp.appendChild(opt); });
+            isDataLoaded = true;
+            checkIntroComplete();
+        }).catch(e => {
+            document.getElementById('botGreeting').innerText="Error connecting to servers."; 
+            isDataLoaded = true; checkIntroComplete();
         });
     };
 
-    // --- NAVIGATION LOGIC ---
+    function changeLanguage() { currentLang = document.getElementById('langSelect').value; applyLanguage(); }
+    function applyLanguage() {
+        const t = uiText[currentLang];
+        document.getElementById('ui-main-title').innerText = t.title;
+        document.getElementById('ui-sub-title').innerText = t.sub;
+        document.getElementById('ui-card1-t').innerText = t.c1t; document.getElementById('ui-card1-d').innerText = t.c1d;
+        document.getElementById('ui-card2-t').innerText = t.c2t; document.getElementById('ui-card2-d').innerText = t.c2d;
+        document.getElementById('ui-card3-t').innerText = t.c3t; document.getElementById('ui-card3-d').innerText = t.c3d;
+        document.getElementById('ui-card4-t').innerText = t.c4t; document.getElementById('ui-card4-d').innerText = t.c4d;
+        document.getElementById('ui-track-btn').innerText = t.track;
+        
+        document.getElementById('modelSelectLabel').innerText = t.selectModel;
+        document.getElementById('drpDefault').innerText = t.drpDefault;
+        document.getElementById('btnNextStep').innerHTML = t.nextStep;
+        document.getElementById('lblWatchVideo').innerText = t.watchVideo;
+        document.getElementById('lblDownload').innerText = t.downloadFile;
+        document.getElementById('lblNeedExec').innerText = t.needExecutive;
+        document.getElementById('formLabel').innerText = t.formTitle;
+        document.getElementById('custName').placeholder = t.namePlaceholder;
+        document.getElementById('custPhone').placeholder = t.phonePlaceholder;
+        document.getElementById('startChatBtn').innerText = t.startChatBtn;
+        document.getElementById('custReplyText').placeholder = t.chatInputPlaceholder;
+        document.getElementById('endChatBtn').innerText = t.endBtn;
+        document.getElementById('ratingTitle').innerText = t.rateExperience;
+        document.getElementById('lblResolved').innerText = t.resolved;
+        document.getElementById('lblOr').innerText = t.or;
+       
+        if(!selectedModelText) { document.getElementById('botGreeting').innerText = t.greeting; }
+    }
+
     function goHome() {
         document.getElementById('formPage').style.display = 'none';
         document.getElementById('chatPage').style.display = 'none';
-        document.getElementById('landingPage').style.display = 'flex';
+        let lp = document.getElementById('landingPage');
+        lp.style.display = 'flex';
+        lp.style.animation = 'none'; 
     }
 
     function openChatView() {
         document.getElementById('landingPage').style.display = 'none';
         document.getElementById('chatPage').style.display = 'flex';
-        if(!selectedModelText) {
-            renderModels();
-        }
+        if(!selectedModelText) renderModels();
     }
 
     function openFormView(type) {
@@ -253,212 +515,165 @@
         let container = document.getElementById('formContentArea');
         let title = document.getElementById('formTitle');
         let mOpts = '<option value="">-- Select Model --</option>';
-        globalModels.forEach(m => mOpts += `<option value="${m}">${m}</option>`);
+        if (globalModels && globalModels.length > 0) { globalModels.forEach(m => mOpts += `<option value="${m}">${m}</option>`); } 
+        else { mOpts += `<option value="BP 2100">BP 2100</option><option value="WeP BP-85T">WeP BP-85T</option><option value="Other">Other</option>`; }
 
         if(type === 'install') {
-            title.innerText = 'Online Installation Support';
+            title.innerText = uiText[currentLang].c1t;
             container.innerHTML = `
                 <form onsubmit="event.preventDefault(); submitCustForm('install')">
                     <div class="pro-input-group"><label>Customer Name *</label><input type="text" id="f_name" required></div>
-                    <div class="pro-input-group"><label>Customer Number *</label><input type="tel" id="f_phone" pattern="[0-9]{10}" maxlength="10" placeholder="10 Digits" required></div>
-                    <div class="pro-input-group"><label>Model *</label><select id="f_model" required>${mOpts}</select></div>
+                    <div class="pro-input-group"><label>Mobile Number *</label><input type="tel" id="f_phone" pattern="[0-9]{10}" maxlength="10" placeholder="10 Digits" required></div>
+                    <div class="pro-input-group"><label>Printer Model *</label><select id="f_model" required>${mOpts}</select></div>
                     <div class="pro-input-group"><label>Serial Number (Optional)</label><input type="text" id="f_serial"></div>
                     <div class="pro-input-group"><label>Preferred Time *</label><input type="time" id="f_time" required></div>
-                    <button class="submit-btn" style="background:#0984e3;" type="submit">Submit Request</button>
+                    <button class="submit-btn" type="submit">Submit Request</button>
                 </form>
             `;
-        } 
-        else if (type === 'demo') {
-            title.innerText = 'Request For Demo';
+        } else if (type === 'demo') {
+            title.innerText = uiText[currentLang].c2t;
             container.innerHTML = `
                 <form onsubmit="event.preventDefault(); submitCustForm('demo')">
-                    <div class="pro-input-group"><label>Customer Number *</label><input type="tel" id="f_phone" pattern="[0-9]{10}" maxlength="10" placeholder="10 Digits" required></div>
+                    <div class="pro-input-group"><label>Mobile Number *</label><input type="tel" id="f_phone" pattern="[0-9]{10}" maxlength="10" placeholder="10 Digits" required></div>
                     <div class="pro-input-group"><label>Dealer / Sales Person Name *</label><input type="text" id="f_dealer" required></div>
                     <div class="pro-input-group"><label>Preferred Model *</label><select id="f_model" required>${mOpts}</select></div>
                     <div class="pro-input-group"><label>Preferred Date and Time *</label><input type="datetime-local" id="f_datetime" required></div>
                     <div class="pro-input-group"><label>Location (Optional)</label><input type="text" id="f_loc" placeholder="City or Address"></div>
-                    <button class="submit-btn" style="background:#27ae60;" type="submit">Book Demo</button>
+                    <button class="submit-btn" type="submit">Book Schedule</button>
                 </form>
             `;
-        }
-        else if (type === 'warranty') {
-            title.innerText = 'Warranty Complaint';
+        } else if (type === 'warranty') {
+            title.innerText = uiText[currentLang].c3t;
             container.innerHTML = `
                 <form onsubmit="event.preventDefault(); submitCustForm('warranty')">
-                    <div class="pro-input-group"><label>Customer Number *</label><input type="tel" id="f_phone" pattern="[0-9]{10}" maxlength="10" placeholder="10 Digits" required></div>
+                    <div class="pro-input-group"><label>Mobile Number *</label><input type="tel" id="f_phone" pattern="[0-9]{10}" maxlength="10" placeholder="10 Digits" required></div>
                     <div class="pro-input-group"><label>Serial Number *</label><input type="text" id="f_serial" required></div>
                     <div class="pro-input-group"><label>Write Your Issue *</label><textarea id="f_issue" rows="3" required></textarea></div>
                     <div class="pro-input-group"><label>Address *</label><textarea id="f_address" rows="2" required></textarea></div>
                     <div class="pro-input-group"><label>Dealer/ASP Name (Optional)</label><input type="text" id="f_dealer"></div>
                     <div class="pro-input-group"><label>Required Parts (Optional)</label><input type="text" id="f_parts" placeholder="e.g. Logic Card"></div>
-                    <button class="submit-btn" style="background:#e67e22;" type="submit">Submit Complaint</button>
+                    <button class="submit-btn" type="submit">Lodge Issue</button>
                 </form>
             `;
         }
     }
 
-    // --- FORM SUBMISSION LOGIC ---
     function submitCustForm(type) {
-        let fObj = {
-            warrantyStatus: true, actionTaken: "Customer Web Request", callHandledBy: "System", status: "Pending", assignedTo: "Unassigned", location: "", state: "N/A"
-        };
-        
-        if(type === 'install') {
-            fObj.customerName = document.getElementById('f_name').value;
-            fObj.contactNumber = document.getElementById('f_phone').value;
-            fObj.model = document.getElementById('f_model').value;
-            fObj.serialNumber = document.getElementById('f_serial').value || "N/A";
-            fObj.problemDesc = "INSTALLATION REQUEST. Pref Time: " + document.getElementById('f_time').value;
-        } else if (type === 'demo') {
-            fObj.customerName = document.getElementById('f_dealer').value + " (Dealer/Sales)";
-            fObj.contactNumber = document.getElementById('f_phone').value;
-            fObj.model = document.getElementById('f_model').value;
-            fObj.serialNumber = "N/A";
-            fObj.location = document.getElementById('f_loc').value || "N/A";
-            fObj.problemDesc = "DEMO REQUEST. Pref DateTime: " + document.getElementById('f_datetime').value;
-        } else if (type === 'warranty') {
-            fObj.customerName = "Warranty Customer";
-            fObj.contactNumber = document.getElementById('f_phone').value;
-            fObj.model = "Unknown";
-            fObj.serialNumber = document.getElementById('f_serial').value;
-            fObj.location = document.getElementById('f_address').value + " | Dealer: " + (document.getElementById('f_dealer').value || "N/A");
-            fObj.problemDesc = "WARRANTY COMPLAINT: " + document.getElementById('f_issue').value + " | Req Parts: " + (document.getElementById('f_parts').value || "None");
-        }
+        let fObj = { warrantyStatus: true, actionTaken: "Customer Web Request", callHandledBy: "System", status: "Pending", assignedTo: "Unassigned", location: "", state: "N/A" };
+        if(type === 'install') { fObj.customerName = document.getElementById('f_name').value; fObj.contactNumber = document.getElementById('f_phone').value; fObj.model = document.getElementById('f_model').value; fObj.serialNumber = document.getElementById('f_serial').value || "N/A"; fObj.problemDesc = "INSTALLATION REQUEST. Pref Time: " + document.getElementById('f_time').value; } 
+        else if (type === 'demo') { fObj.customerName = document.getElementById('f_dealer').value + " (Dealer/Sales)"; fObj.contactNumber = document.getElementById('f_phone').value; fObj.model = document.getElementById('f_model').value; fObj.serialNumber = "N/A"; fObj.location = document.getElementById('f_loc').value || "N/A"; fObj.problemDesc = "DEMO REQUEST. Pref DateTime: " + document.getElementById('f_datetime').value; } 
+        else if (type === 'warranty') { fObj.customerName = "Warranty Customer"; fObj.contactNumber = document.getElementById('f_phone').value; fObj.model = "Unknown"; fObj.serialNumber = document.getElementById('f_serial').value; fObj.location = document.getElementById('f_address').value + " | Dealer: " + (document.getElementById('f_dealer').value || "N/A"); fObj.problemDesc = "WARRANTY COMPLAINT: " + document.getElementById('f_issue').value + " | Req Parts: " + (document.getElementById('f_parts').value || "None"); }
 
         Swal.fire({title:'Submitting...', allowOutsideClick: false, didOpen:()=>Swal.showLoading()});
         apiCall('ct_processForm', {formObject: fObj}).then(res => {
-            if(res.status === 'success') {
-                Swal.fire('Success!', 'Your request has been registered. Ticket ID: ' + res.data.replace('Entry Saved! Task No: ', ''), 'success').then(() => goHome());
-            } else {
-                Swal.fire('Error', res.message, 'error');
-            }
-        });
+            Swal.fire({title: 'Success!', text: 'Your request has been registered. Ticket ID: ' + res.replace('Entry Saved! Task No: ', ''), icon: 'success', confirmButtonColor: '#0066cc', confirmButtonText: 'Done'}).then(() => goHome());
+        }).catch(err => { Swal.fire('Error', err.message, 'error'); });
     }
 
+    // --- PREMIUM TICKET TRACKING UI ---
     async function trackTaskModal() {
-      const { value: taskId } = await Swal.fire({ 
-          title: "Track Ticket/Chat Status", 
-          input: 'text', 
-          inputPlaceholder: 'e.g. CT-0001 or 10-digit Mobile', 
-          showCancelButton: true, 
-          confirmButtonText: 'Search',
-          confirmButtonColor: '#ff0073' 
-      });
+      const { value: taskId } = await Swal.fire({ title: uiText[currentLang].trackTitle, input: 'text', inputPlaceholder: 'e.g. CT-0001 or 10-digit Mobile', showCancelButton: true, confirmButtonText: 'Search', confirmButtonColor: '#0066cc', customClass: { popup: 'premium-swal' } });
       if (taskId) { 
-          Swal.fire({title: 'Searching...', allowOutsideClick: false, didOpen: () => Swal.showLoading()}); 
-          
-          apiCall('trackCustomerTask', {taskId: taskId}).then(res => {
-              if(res.status === 'success') {
-                  let tickets = res.data;
-                  if(!tickets || tickets.length === 0) { 
-                      Swal.fire("Not Found", "No tickets found for this detail.", "error"); 
-                  } else if(tickets.length === 1) {
-                      showSingleTicket(tickets[0]);
-                  } else {
-                      let h = `<div style="text-align:left; max-height:300px; overflow-y:auto;">`;
-                      tickets.forEach((t, idx) => {
-                          let clr = t.status.toLowerCase() === 'closed' ? 'green' : '#e74c3c';
-                          h += `<div style="padding:10px; border:1px solid #ddd; margin-bottom:10px; border-radius:8px; cursor:pointer; background:#f9f9f9;" onclick="openTicketIdx(${idx})">
-                                  <b>${t.taskId}</b> - ${t.date}<br>
-                                  <small>${t.model}</small><br>
-                                  <span style="color:${clr}; font-weight:bold; font-size:12px;">${t.status}</span>
-                                </div>`;
-                      });
-                      h += `</div>`;
-                      globalTickets = tickets;
-                      Swal.fire({title: "Select Ticket", html: h, showConfirmButton: false, showCloseButton: true});
-                  }
-              } else {
-                  Swal.fire('Error', res.message, 'error');
+          Swal.fire({title: 'Searching Data...', allowOutsideClick: false, didOpen: () => Swal.showLoading()}); 
+          apiCall('trackCustomerTask', {taskId: taskId}).then(tickets => {
+              if(!tickets || tickets.length === 0) { Swal.fire("Not Found", "No tickets found for this detail.", "error"); } 
+              else if(tickets.length === 1) { showSingleTicket(tickets[0]); } 
+              else {
+                  let h = `<div class="track-list-container">`;
+                  tickets.forEach((t, idx) => {
+                      let clr = t.status.toLowerCase() === 'closed' ? 'var(--success)' : (t.status.toLowerCase() === 'pending' ? 'var(--warning)' : 'var(--danger)');
+                      h += `<div class="ticket-card" onclick="openTicketIdx(${idx})">
+                              <div class="tc-header">
+                                <span class="tc-id"><i class="fa-solid fa-ticket" style="color:var(--text-secondary); margin-right:4px;"></i> ${t.taskId}</span>
+                                <span class="tc-date">${t.date}</span>
+                              </div>
+                              <div class="tc-body"><strong>Model:</strong> ${t.model}</div>
+                              <div class="tc-footer">
+                                <span class="status-badge" style="background-color:${clr}15; color:${clr}; border:1px solid ${clr}40;">${t.status}</span>
+                                <span style="font-size:12px; font-weight:600; color:var(--accent-blue);">Details <i class="fa-solid fa-angle-right"></i></span>
+                              </div>
+                            </div>`;
+                  });
+                  h += `</div>`;
+                  globalTickets = tickets;
+                  Swal.fire({title: "Select Ticket", html: h, width: '450px', showConfirmButton: false, showCloseButton: true});
               }
-          });
+          }).catch(err => { Swal.fire('Error', err.message, 'error'); });
       }
     }
 
-    function openTicketIdx(idx) {
-        if(globalTickets && globalTickets[idx]) {
-            showSingleTicket(globalTickets[idx]);
-        }
-    }
+    function openTicketIdx(idx) { if(globalTickets && globalTickets[idx]) { showSingleTicket(globalTickets[idx]); } }
 
     function showSingleTicket(d) {
-        let html = `<div style='text-align:left; font-size:13px;'>
-                      <b>Task ID:</b> ${d.taskId}<br>
-                      <b>Status:</b> <span style="color:#e74c3c; font-weight:bold;">${d.status}</span><br>
-                      <b>Model:</b> ${d.model}<br>
-                      <b>Issue:</b> ${d.issue}<br><br>
-                      <b>Chat History:</b><br>
-                      <div style='max-height:200px; overflow-y:auto; background:#f4f4f4; padding:10px; border-radius:5px; margin-top:5px;'>`; 
-        
+        let stClr = d.status.toLowerCase() === 'closed' ? 'var(--success)' : (d.status.toLowerCase() === 'pending' ? 'var(--warning)' : 'var(--danger)');
+        let html = `
+        <div class="detail-view">
+            <div class="dv-header">
+                <h3>${d.taskId}</h3>
+                <span class="status-badge" style="background-color:${stClr}15; color:${stClr}; border:1px solid ${stClr}40;">${d.status}</span>
+            </div>
+            <div class="dv-grid">
+                <div class="dv-item"><label>Date</label><span>${d.date}</span></div>
+                <div class="dv-item"><label>Model</label><span>${d.model}</span></div>
+                <div class="dv-item dv-issue"><label>Reported Issue</label><span>${d.issue}</span></div>
+            </div>
+            <div class="dv-history-title">Communication History</div>
+            <div class="dv-history-box">`;
+            
         if(d.history && d.history.length > 0) { 
             d.history.forEach(m => { 
                 let dMsg = m.message; 
-                if(dMsg.indexOf("📎 Shared a photo: ") !== -1) { dMsg = `📎 <a href="${dMsg.split("Shared a photo: ")[1]}" target="_blank">View Photo</a>`; } 
-                html += `<b>${m.sender}:</b> ${dMsg} <br><small style='color:#888'>${m.time}</small><hr style='margin:4px 0; border:0; border-top:1px solid #ddd;'>`; 
+                if(dMsg.indexOf("📎 Shared a photo: ") !== -1) { dMsg = `<a href="${dMsg.split("Shared a photo: ")[1]}" target="_blank" style="color:var(--accent-blue); font-weight:500;"><i class="fa-solid fa-paperclip"></i> View Attachment</a>`; } 
+                let senderClass = m.sender.toLowerCase() === 'customer' ? 'customer' : 'admin';
+                html += `<div class="hist-msg">
+                            <div class="hist-sender ${senderClass}">
+                                <span>${m.sender}</span>
+                                <span style="color:var(--text-secondary); font-weight:400;">${m.time}</span>
+                            </div>
+                            <div class="hist-text">${dMsg}</div>
+                         </div>`; 
             }); 
         } else { 
-            html += `<i>No chat history.</i>`; 
+            html += `<div style="text-align:center; color:var(--text-secondary); padding:20px; font-size:13px;"><i>No communication history available.</i></div>`; 
         } 
         html += `</div></div>`; 
-        Swal.fire({ title: "Ticket Details", html: html, confirmButtonColor: '#3498db' });
+        Swal.fire({ html: html, width: '500px', confirmButtonText: 'Close', confirmButtonColor: '#1d1d1f' });
     }
     
-    // ----------- EXISTING CHATBOT LOGIC -----------
+    // ----------- CHATBOT LOGIC -----------
     function addMsg(text, type, time="") {
         const box = document.getElementById('chatBox'); const typing = document.getElementById('typingIndicator');
         const timeHtml = time ? `<div class="msg-time">${time}</div>` : `<div class="msg-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</div>`;
         const msgDiv = document.createElement('div'); msgDiv.className = `msg ${type}`; let messageHtml = text;
-        if (text.indexOf("📎 Shared a photo: ") !== -1) { let link = text.split("Shared a photo: ")[1]; messageHtml = `📎 Shared a photo: <br><a href="${link}" target="_blank" style="color:inherit; text-decoration:underline;">Click to View</a>`; }
+        if (text.indexOf("📎 Shared a photo: ") !== -1) { let link = text.split("Shared a photo: ")[1]; messageHtml = `<a href="${link}" target="_blank"><i class="fa-solid fa-paperclip"></i> View Photo</a>`; }
         msgDiv.innerHTML = `<div class="bubble">${messageHtml}</div>${timeHtml}`;
         if(typing) box.insertBefore(msgDiv, typing); else box.appendChild(msgDiv);
         scrollToBottom();
     }
     function scrollToBottom() { const box = document.getElementById('chatBox'); box.scrollTop = box.scrollHeight; }
    
-    function renderModels() {
-        document.getElementById('optionsContainer').style.display = 'none';
-        document.getElementById('modelSelectArea').style.display = 'block';
-        document.getElementById('videoOrAgentArea').style.display = 'none';
-        currentPath = [];
-    }
+    function renderModels() { document.getElementById('optionsContainer').style.display = 'none'; document.getElementById('modelSelectArea').style.display = 'block'; document.getElementById('videoOrAgentArea').style.display = 'none'; currentPath = []; }
     function confirmModel() {
-        const drp = document.getElementById('printerModelDropdown');
-        if(drp.value === "") { Swal.fire('Wait', 'Model selection is required.', 'warning'); return; }
-        selectedModelText = drp.value;
-        document.getElementById('modelSelectArea').style.display = 'none';
-        addMsg("Model: " + selectedModelText, 'user');
+        const drp = document.getElementById('printerModelDropdown'); if(drp.value === "") { Swal.fire('Wait', uiText[currentLang].modelWait, 'warning'); return; }
+        selectedModelText = drp.value; document.getElementById('modelSelectArea').style.display = 'none'; addMsg("Model: " + selectedModelText, 'user');
         document.getElementById('typingIndicator').style.display = 'flex'; scrollToBottom();
         setTimeout(() => { document.getElementById('typingIndicator').style.display = 'none'; renderNextStep(); }, 600);
     }
     function renderNextStep() {
-        document.getElementById('videoOrAgentArea').style.display = 'none';
-        document.getElementById('optionsContainer').style.display = 'none';
-       
+        document.getElementById('videoOrAgentArea').style.display = 'none'; document.getElementById('optionsContainer').style.display = 'none';
         let availableNodes = treeNodes.filter(n => n.model === selectedModelText || n.model === "All Models" || !n.model);
-        let matchingNodes = availableNodes.filter(n => {
-            if (n.path.length < currentPath.length) return false;
-            for(let i = 0; i < currentPath.length; i++) { if(n.path[i] !== currentPath[i]) return false; }
-            return true;
-        });
+        let matchingNodes = availableNodes.filter(n => { if (n.path.length < currentPath.length) return false; for(let i = 0; i < currentPath.length; i++) { if(n.path[i] !== currentPath[i]) return false; } return true; });
         let exactMatch = matchingNodes.find(n => n.path.length === currentPath.length);
-       
         if (exactMatch && matchingNodes.length === 1) { showSolution(exactMatch); return; }
-        let nextLevelIndex = currentPath.length;
-        let nextOptions = [...new Set(matchingNodes.map(n => n.path[nextLevelIndex]).filter(x => x))];
+        let nextLevelIndex = currentPath.length; let nextOptions = [...new Set(matchingNodes.map(n => n.path[nextLevelIndex]).filter(x => x))];
         if (nextOptions.length === 0 && matchingNodes.length > 0) { showSolution(matchingNodes[0]); return; }
         
-        addMsg("Please select an option below:", 'bot');
+        addMsg(uiText[currentLang].selectNext, 'bot');
         const grid = document.getElementById('optionsGrid'); grid.innerHTML = "";
         document.getElementById('backBtn').style.display = currentPath.length > 0 ? 'flex' : 'none';
-       
         nextOptions.forEach(opt => {
-            let btn = document.createElement('button'); btn.className = 'opt-btn';
-            btn.innerHTML = `<span><i class="fa-solid fa-angle-right"></i> ${opt}</span> <i class="fa-solid fa-chevron-right" style="color:#ddd"></i>`;
-            btn.onclick = () => {
-                currentPath.push(opt); document.getElementById('optionsContainer').style.display = 'none';
-                addMsg(opt, 'user'); document.getElementById('typingIndicator').style.display = 'flex'; scrollToBottom();
-                setTimeout(() => { document.getElementById('typingIndicator').style.display = 'none'; renderNextStep(); }, 500);
-            };
+            let btn = document.createElement('button'); btn.className = 'opt-btn'; btn.innerHTML = `<span>${opt}</span> <i class="fa-solid fa-chevron-right"></i>`;
+            btn.onclick = () => { currentPath.push(opt); document.getElementById('optionsContainer').style.display = 'none'; addMsg(opt, 'user'); document.getElementById('typingIndicator').style.display = 'flex'; scrollToBottom(); setTimeout(() => { document.getElementById('typingIndicator').style.display = 'none'; renderNextStep(); }, 500); };
             grid.appendChild(btn);
         });
         document.getElementById('optionsContainer').style.display = 'block'; scrollToBottom();
@@ -466,125 +681,77 @@
     function showSolution(node) {
         finalSelectedNode = node; document.getElementById('optionsContainer').style.display = 'none';
         addMsg(node.response || "Solution details loaded.", 'bot');
-        document.getElementById('videoBtn').style.display = node.videoUrl ? 'flex' : 'none';
-        document.getElementById('downloadBtn').style.display = node.downloadUrl ? 'flex' : 'none';
-        document.getElementById('videoOrAgentArea').style.display = 'flex'; scrollToBottom();
+        const vidUrl = node.videoUrl; const dlUrl = node.downloadUrl;
+        document.getElementById('videoBtn').style.display = vidUrl ? 'flex' : 'none'; document.getElementById('downloadBtn').style.display = dlUrl ? 'flex' : 'none'; document.getElementById('videoOrAgentArea').style.display = 'flex'; scrollToBottom();
     }
-    function goBackStep() {
-        if (currentPath.length === 0) renderModels();
-        else { currentPath.pop(); document.getElementById('optionsContainer').style.display = 'none'; document.getElementById('videoOrAgentArea').style.display = 'none'; renderNextStep(); }
-    }
+    function goBackStep() { if (currentPath.length === 0) { renderModels(); } else { currentPath.pop(); document.getElementById('optionsContainer').style.display = 'none'; document.getElementById('videoOrAgentArea').style.display = 'none'; renderNextStep(); } }
     function openFixVideo() { if(finalSelectedNode && finalSelectedNode.videoUrl) window.open(finalSelectedNode.videoUrl, '_blank'); }
     function downloadDriver() { if(finalSelectedNode && finalSelectedNode.downloadUrl) window.open(finalSelectedNode.downloadUrl, '_blank'); }
     
-    function handleAction(act) { if(act === 'RESOLVED') { document.getElementById('videoOrAgentArea').style.display = 'none'; addMsg("My Issue is Resolved", 'user'); setTimeout(() => { addMsg("Great! Thank you for contacting WeP Support. Have a nice day!", 'bot'); setTimeout(() => { location.reload(); }, 2000); }, 1000); } }
-    function showLeadForm() { document.getElementById('videoOrAgentArea').style.display = 'none'; addMsg("Connect to Executive", 'user'); document.getElementById('typingIndicator').style.display = 'flex'; scrollToBottom(); setTimeout(() => { document.getElementById('typingIndicator').style.display = 'none'; document.getElementById('leadForm').style.display = 'block'; scrollToBottom(); }, 600); }
+    function handleAction(act) { if(act === 'RESOLVED') { document.getElementById('videoOrAgentArea').style.display = 'none'; addMsg(uiText[currentLang].resolved, 'user'); setTimeout(() => { addMsg("Great! Thank you for contacting WeP Support. Have a nice day!", 'bot'); setTimeout(() => { location.reload(); }, 2000); }, 1000); } }
+    function showLeadForm() { document.getElementById('videoOrAgentArea').style.display = 'none'; addMsg(uiText[currentLang].needExecutive, 'user'); document.getElementById('typingIndicator').style.display = 'flex'; scrollToBottom(); setTimeout(() => { document.getElementById('typingIndicator').style.display = 'none'; document.getElementById('leadForm').style.display = 'block'; scrollToBottom(); }, 600); }
    
     function startLiveChat() { 
         myName = document.getElementById('custName').value.trim(); myPhone = document.getElementById('custPhone').value.trim(); 
-        if(!myName || !myPhone || myPhone.length !== 10 || isNaN(myPhone)) return Swal.fire('Error', "Name and 10-digit mobile number required.", 'error'); 
+        if(!myName || !myPhone || myPhone.length !== 10 || isNaN(myPhone)) return Swal.fire('Error', uiText[currentLang].invalidPhone, 'error'); 
         Swal.fire({title: 'Connecting...', allowOutsideClick: false, didOpen: () => Swal.showLoading()}); 
-        
-        apiCall('startLiveChatSession', { data: { name: myName, phone: myPhone, contextPath: currentPath.join(" > "), model: selectedModelText } }).then(res => {
-            if(res.status === 'success') {
-                Swal.close(); myChatId = res.data; 
-                document.getElementById('leadForm').style.display = 'none'; document.getElementById('liveChatInput').style.display = 'flex'; document.getElementById('endChatBtn').style.display = 'block'; 
-                document.getElementById('chatBox').innerHTML = `<div class="msg bot"><div class="bubble" style="background:#27ae60; color:#fff;">✅ Live Chat Support Connected. An agent will be with you shortly.</div></div>`; 
-                myMsgCount = 0; setInterval(fetchMyMessages, 4000); 
-            } else { Swal.fire('Error', res.message, 'error'); }
-        });
+        apiCall('startLiveChatSession', {data: { name: myName, phone: myPhone, contextPath: currentPath.join(" > "), model: selectedModelText }}).then(chatId => {
+            Swal.close(); myChatId = chatId; document.getElementById('leadForm').style.display = 'none'; document.getElementById('liveChatInput').style.display = 'flex'; document.getElementById('endChatBtn').style.display = 'block'; document.getElementById('chatBox').innerHTML = `<div class="msg bot"><div class="bubble" style="background:#e3fcef; color:#00875a; border-color:#00875a;"><i class="fa-solid fa-circle-check"></i> ${uiText[currentLang].agentConnected}</div></div>`; myMsgCount = 0; setInterval(fetchMyMessages, 4000); 
+        }).catch(err => { Swal.fire('Error', err.message, 'error'); }); 
     }
     
-    function sendCustReply() { 
-        const input = document.getElementById('custReplyText'); const msg = input.value.trim(); if(!msg || !myChatId) return; 
-        input.value = ''; 
-        document.getElementById('chatBox').innerHTML += `<div class="msg user temp-msg"><div class="bubble">${msg}</div><div class="msg-time">Sending...</div></div>`; 
-        scrollToBottom(); 
-        apiCall('sendChatMessage', {chatId: myChatId, name: myName, phone: myPhone, sender: "Customer", message: msg}); 
-    }
+    function sendCustReply() { const input = document.getElementById('custReplyText'); const msg = input.value.trim(); if(!msg || !myChatId) return; input.value = ''; document.getElementById('chatBox').innerHTML += `<div class="msg user temp-msg"><div class="bubble">${msg}</div><div class="msg-time">Sending...</div></div>`; scrollToBottom(); apiCall('sendChatMessage', {chatId: myChatId, name: myName, phone: myPhone, sender: "Customer", message: msg}).then(r=>{}).catch(e=>{}); }
     
     function handlePhotoUpload(input) {
       if (!myChatId || !input.files[0]) return;
-      const file = input.files[0];
+      const file = input.files[0]; Swal.fire({ title: 'Processing Image...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
       const reader = new FileReader();
       reader.onload = function(e) {
         const img = new Image();
         img.onload = function() {
-          const canvas = document.createElement('canvas'); const MAX_WIDTH = 800; const scaleSize = MAX_WIDTH / img.width; canvas.width = MAX_WIDTH; canvas.height = img.height * scaleSize;
-          const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          const canvas = document.createElement('canvas'); const MAX_WIDTH = 800; const scaleSize = MAX_WIDTH / img.width; canvas.width = MAX_WIDTH; canvas.height = img.height * scaleSize; const ctx = canvas.getContext('2d'); ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
           const base64Data = canvas.toDataURL('image/jpeg', 0.7).split(',')[1];
           Swal.fire({ title: 'Uploading...', allowOutsideClick: false, didOpen: () => { Swal.showLoading(); } });
-          
-          apiCall('uploadPhotoFromChat', {chatId: myChatId, name: myName, phone: myPhone, sender: "Customer", base64Data: base64Data, contentType: "image/jpeg", fileName: "upload.jpg"}).then(res => {
-              Swal.close();
-              if(res.status==='success' && res.data.success) { fetchMyMessages(); } else { Swal.fire('Error', 'Upload Failed: ' + (res.data ? res.data.error : res.message), 'error'); }
-              input.value = '';
-          });
+          apiCall('uploadPhotoFromChat', {chatId: myChatId, name: myName, phone: myPhone, sender: "Customer", base64Data: base64Data, contentType: "image/jpeg", fileName: "upload.jpg"}).then(res => { 
+              Swal.close(); if(res.success) { fetchMyMessages(); } else { Swal.fire('Error', 'Upload Failed', 'error'); } input.value = ''; 
+          }).catch(err => { Swal.close(); Swal.fire('Error', 'Upload Failed.', 'error'); input.value = ''; });
         }
         img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
+      }; reader.readAsDataURL(file);
     }
-    function renderInChatCallForm() { if(callFormActive) return; callFormActive = true; document.getElementById('liveChatInput').style.display = 'none'; const box = document.getElementById('chatBox'); const formHtml = `<div class="msg bot in-chat-form" id="activeCallForm" style="background:#fff; border:1px solid #ddd; padding:15px; border-radius:10px;"><h4 style="margin:0 0 10px 0; color:#ff0073;"><i class="fa-solid fa-clipboard-list"></i> Registration Form</h4><input type="text" id="regCity" placeholder="City" style="width:100%; margin-bottom:10px; padding:10px;"><input type="text" id="regState" placeholder="State" style="width:100%; margin-bottom:10px; padding:10px;"><input type="text" id="regSerial" placeholder="Serial No." style="width:100%; margin-bottom:10px; padding:10px;"><button class="submit-btn" style="margin-top:0;" onclick="submitInChatCallForm()">Submit</button></div>`; box.insertAdjacentHTML('beforeend', formHtml); scrollToBottom(); }
+
+    function renderInChatCallForm() { if(callFormActive) return; callFormActive = true; const t = uiText[currentLang]; document.getElementById('liveChatInput').style.display = 'none'; const box = document.getElementById('chatBox'); const formHtml = `<div class="msg bot in-chat-form" id="activeCallForm"><h4 style="margin:0 0 15px 0; color:var(--text-primary);">Hardware Registration</h4><label>${t.formCity} *</label><input type="text" id="regCity" placeholder="City"><label>${t.formState} *</label><input type="text" id="regState" placeholder="State"><label>${t.formSerial}</label><input type="text" id="regSerial" placeholder="Serial No."><button class="submit-btn" style="border-radius:10px;" onclick="submitInChatCallForm()">${t.formNext}</button></div>`; box.insertAdjacentHTML('beforeend', formHtml); scrollToBottom(); }
     
-    function submitInChatCallForm() { 
-        let city = document.getElementById('regCity').value.trim(); let state = document.getElementById('regState').value.trim(); let serial = document.getElementById('regSerial').value.trim(); 
-        if(!city || !state) return Swal.fire('Error', 'City and State are mandatory', 'error'); 
-        document.getElementById('activeCallForm').style.opacity = '0.5'; 
-        Swal.fire({title: 'Registering...', allowOutsideClick: false, didOpen: () => Swal.showLoading()}); 
-        
-        apiCall('registerCallFromChat', {chatId: myChatId, details: {city: city, state: state, serial: serial || "NA"}}).then(res => {
-            Swal.close();
-            if(res.status==='success') { document.getElementById('activeCallForm').remove(); document.getElementById('liveChatInput').style.display = 'flex'; callFormActive = false; } else { Swal.fire('Error', res.message, 'error'); }
-        }); 
-    }
+    function submitInChatCallForm() { let city = document.getElementById('regCity').value.trim(); let state = document.getElementById('regState').value.trim(); let serial = document.getElementById('regSerial').value.trim(); if(!city || !state) return Swal.fire('Error', 'City and State are mandatory', 'error'); document.getElementById('activeCallForm').style.opacity = '0.5'; Swal.fire({title: 'Registering...', allowOutsideClick: false, didOpen: () => Swal.showLoading()}); apiCall('registerCallFromChat', {chatId: myChatId, details: {city: city, state: state, serial: serial || "NA"}}).then(tmpTask => { Swal.close(); document.getElementById('activeCallForm').remove(); document.getElementById('liveChatInput').style.display = 'flex'; callFormActive = false; }).catch(err => { Swal.fire('Error', err.message, 'error'); }); }
    
     function fetchMyMessages() {
       if(!myChatId) return;
       apiCall('getChatHistory', {chatId: myChatId}).then(res => {
-        if(res.status !== 'success') return;
-        let d = res.data; let history = d.messages; let status = d.status;
-        if (history.length > myMsgCount) {
-            const box = document.getElementById('chatBox'); document.querySelectorAll('.temp-msg').forEach(el => el.remove());
-            for(let i = myMsgCount; i < history.length; i++) {
-                let m = history[i]; let displayMsg = m.message || "";
-                if(displayMsg === "[CMD:REQUEST_FORM]") { let msgId = m.time + m.message + i; if(!formTriggeredIds[msgId]) { formTriggeredIds[msgId] = true; renderInChatCallForm(); } continue; }
-                let type = m.sender === "Customer" ? "user" : "bot"; addMsg(displayMsg, type, m.time);
+        let history = res.messages; let status = res.status;
+        try {
+            if (history.length > myMsgCount) {
+                const box = document.getElementById('chatBox'); document.querySelectorAll('.temp-msg').forEach(el => el.remove());
+                for(let i = myMsgCount; i < history.length; i++) {
+                    let m = history[i]; let displayMsg = m.message || "";
+                    if(displayMsg === "[CMD:REQUEST_FORM]") { let msgId = m.time + m.message + i; if(!formTriggeredIds[msgId]) { formTriggeredIds[msgId] = true; renderInChatCallForm(); } continue; }
+                    let type = m.sender === "Customer" ? "user" : "bot"; addMsg(displayMsg, type, m.time);
+                }
+                myMsgCount = history.length;
             }
-            myMsgCount = history.length;
-        }
+        } catch(e) {}
         if(status === "Closed") {
             lastChatId = myChatId; myChatId = null; document.getElementById('liveChatInput').style.display = 'none'; document.getElementById('endChatBtn').style.display = 'none'; document.getElementById('ratingArea').style.display = 'block';
-            let lastMessageObj = history.length > 0 ? history[history.length-1] : null; let remarkStr = "Chat Closed.";
-            if(lastMessageObj && lastMessageObj.sender === "Admin" && lastMessageObj.message.indexOf("Admin Remark:") !== -1) { remarkStr = "<b style='color:#e74c3c'>Agent Note:</b> " + lastMessageObj.message.replace("Admin Remark:", "") + "<br><br>Please rate your experience:"; }
+            let lastMessageObj = history.length > 0 ? history[history.length-1] : null; let remarkStr = uiText[currentLang].adminEnded || "Chat Closed.";
+            if(lastMessageObj && lastMessageObj.sender === "Admin" && lastMessageObj.message.indexOf("Admin Remark:") !== -1) { remarkStr = "<b>Agent Note:</b> " + lastMessageObj.message.replace("Admin Remark:", "") + "<br><br>" + uiText[currentLang].rateExperience; }
             addMsg(remarkStr, "bot"); scrollToBottom();
         }
-      });
+      }).catch(e=>{});
     }
     
-    function endLiveChatCustomer() { 
-        if(!myChatId) return; 
-        Swal.fire({ title: "End Chat?", icon: "warning", showCancelButton: true, confirmButtonText: "Yes", confirmButtonColor: '#e74c3c' }).then((res) => { 
-            if(res.isConfirmed) { 
-                apiCall('closeLiveChat', {chatId: myChatId, remark: ""}); 
-                lastChatId = myChatId; myChatId = null; 
-                document.getElementById('liveChatInput').style.display = 'none'; document.getElementById('endChatBtn').style.display = 'none'; document.getElementById('ratingArea').style.display = 'block'; 
-                addMsg("You ended the chat. Please rate your experience.", "bot"); 
-            } 
-        }); 
-    }
-    
-    function hoverStar(count) { const stars = document.getElementById('starContainer').children; for(let i=0; i<5; i++) { stars[i].style.color = i < count ? "#f1c40f" : "#ddd"; } }
-    
-    function submitRating(count) { 
-        hoverStar(count); 
-        Swal.fire({title: '...', allowOutsideClick: false, didOpen: () => Swal.showLoading()}); 
-        apiCall('submitChatRating', {chatId: lastChatId, rating: count}).then(res => {
-            Swal.close(); 
-            document.getElementById('ratingArea').innerHTML = `<div style="color:#27ae60; font-weight:bold; margin-top:10px;">✅ You rated this chat ${count} stars!</div>`; 
-            setTimeout(() => { location.reload(); }, 3000); 
-        }); 
-    }
+    function endLiveChatCustomer() { if(!myChatId) return; Swal.fire({ title: uiText[currentLang].endBtn+"?", icon: "warning", showCancelButton: true, confirmButtonText: "Yes", confirmButtonColor: 'var(--danger)' }).then((res) => { if(res.isConfirmed) { apiCall('closeLiveChat', {chatId: myChatId, remark: ""}).then(() => {}).catch(e=>{}); lastChatId = myChatId; myChatId = null; document.getElementById('liveChatInput').style.display = 'none'; document.getElementById('endChatBtn').style.display = 'none'; document.getElementById('ratingArea').style.display = 'block'; addMsg(uiText[currentLang].userEnded, "bot"); } }); }
+    function resetChatbot() { setTimeout(() => { location.reload(); }, 2000); }
+    function hoverStar(count) { const stars = document.getElementById('starContainer').children; for(let i=0; i<5; i++) { stars[i].style.color = i < count ? "var(--warning)" : "#dfe1e6"; } }
+    function submitRating(count) { hoverStar(count); Swal.fire({title: '...', allowOutsideClick: false, didOpen: () => Swal.showLoading()}); apiCall('submitChatRating', {chatId: lastChatId, rating: count}).then(res => { Swal.close(); let msg = uiText[currentLang].ratedMsg.replace('{count}', count); document.getElementById('ratingArea').innerHTML = `<div style="color:var(--success); font-weight:600; margin-top:10px;">${msg}</div>`; setTimeout(resetChatbot, 3000); }).catch(err => { Swal.fire('Error', err.message, 'error'); }); }
   </script>
 </body>
 </html>
