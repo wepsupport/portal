@@ -5,13 +5,11 @@
   <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.5/dist/JsBarcode.all.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Added Google Charts for the Map -->
   <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
   <style>
     :root { --brand: #0984e3; --brand2: #ff006e; --brand3: #e67e22; --bg: #f5f6fa; } 
     body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 10px; }
     
-    /* Highlight for Mandatory Fields */
     input[required], select[required], textarea[required] {
         background-color: #f0fdf4 !important;
         border: 1px solid #2ecc71 !important;
@@ -146,6 +144,7 @@
   </div>
 
   <div id="ct-dash" class="content ct-content" style="background:#f9f9f9;">
+    <!-- NEW DATE FILTER FOR DASHBOARD -->
     <div class="grid" style="background: #fff; padding: 15px; border-radius: 8px; border: 1px solid #eee; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
       <div><label>From Date</label><input type="date" id="ctDashFrom"></div>
       <div><label>To Date</label><input type="date" id="ctDashTo"></div>
@@ -153,6 +152,7 @@
           <button class="btn btn-ct" onclick="ctLoadDashboard()" style="margin:0;"><i class="fa-solid fa-filter"></i> Filter Dashboard</button>
       </div>
     </div>
+
     <div class="dash-row">
         <div class="stat-card" style="border-top: 4px solid var(--brand2);"><h3 id="ct-dash-avg">0</h3><p>Avg Calls / Day</p></div>
         <div class="stat-card" style="border-top: 4px solid #3498db;"><h3 id="ct-dash-tot">0</h3><p>Total Calls</p></div>
@@ -169,6 +169,7 @@
         </div>
     </div>
     <div class="dash-row">
+        <!-- NEW CALL TYPE CHART -->
         <div class="chart-container" style="flex:1;"><canvas id="ctChartCallType"></canvas></div>
         <div class="chart-container" style="flex:1;"><canvas id="ctChartProblem"></canvas></div>
     </div>
@@ -195,7 +196,7 @@
   <div class="header-nav" style="background: #fbeee6;"><h3 style="margin:0; color:var(--brand3);">WCR Defective Parts</h3><button class="back-btn" onclick="openPortal('home')">⬅️ Main Menu</button></div>
   <div class="tabs"><div class="tab wcr-tab active" onclick="showWcrTab('wcr-entry', this)">New Entry</div><div class="tab wcr-tab" onclick="showWcrTab('wcr-repair', this); wcrLoadPending();">Repair Updates</div><div class="tab wcr-tab" onclick="showWcrTab('wcr-approve', this); wcrLoadApprovals();">Scrap Approval</div><div class="tab wcr-tab" onclick="showWcrTab('wcr-inv', this); wcrLoadInventory();">Inventory</div><div class="tab wcr-tab" onclick="showWcrTab('wcr-reports', this)">Detailed Reports</div></div>
   <div id="wcr-entry" class="content wcr-content active">
-    <form id="wcrEntryForm" onsubmit="event.preventDefault(); wcrSubmitEntry();">
+    <form onsubmit="event.preventDefault(); wcrSubmitEntry();">
       <div style="background: #f1f2f6; padding: 15px; border-radius: 6px; margin-bottom: 15px;">
           <div class="grid">
               <div>
@@ -358,7 +359,7 @@
       }
   }
   
-/* --- PREMIUM BACKGROUND & IN-APP NOTIFICATION TRIGGER --- */
+  /* --- PREMIUM BACKGROUND & IN-APP NOTIFICATION TRIGGER --- */
   function triggerNotification(title, msg) { 
       // 1. Premium Chime Sound
       try { 
@@ -386,10 +387,35 @@
       } catch(e) {} 
   }
 
+  /* --- CHECK NEW CALLS FUNCTION --- */
   function checkNewCallsAlert() { 
       apiCall('ct_getPendingCalls').then(data => { 
           if (lastCallCount !== -1 && data.length > lastCallCount) { 
-              triggerNotification("New Service Request! 🚀", "A new Installation, Demo, or Warranty request has just been logged."); 
+              let newCallsCount = data.length - lastCallCount;
+              let latestCall = data[data.length - 1]; 
+              
+              let iss = (latestCall.issue || "").toUpperCase();
+              let act = (latestCall.action || "").toUpperCase();
+              
+              let title = "New Service Request! 🚀";
+              let msg = "A new request has been logged.";
+              
+              if (act.includes("REGISTERED VIA CHAT") || iss.includes("ISSUE: ")) {
+                  title = "🚨 Priority: New Chatbot Request!";
+                  msg = "Customer registered a request via Chatbot.";
+              } else if (iss.includes("INSTALLATION REQUEST")) {
+                  title = "🛠️ New Installation Request!";
+                  msg = "A new installation request has been logged.";
+              } else if (iss.includes("DEMO REQUEST")) {
+                  title = "💻 New Demo Request!";
+                  msg = "A new product demo request has been logged.";
+              } else if (iss.includes("WARRANTY COMPLAINT")) {
+                  title = "🛡️ New Warranty Complaint!";
+                  msg = "A new warranty complaint has been logged.";
+              }
+              
+              triggerNotification(title, msg); 
+              
               if (document.getElementById('ct-pending').classList.contains('active')) { 
                   ctLoadPending(); 
               } 
