@@ -266,7 +266,7 @@
 <script>
   // ===================== GITHUB API CONFIGURATION =====================
   // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-  const API_URL = "https://script.google.com/macros/s/AKfycby0pD-YMamDL1k1DsGWlyHwJYREP63vTdIeE3NPxJ5glsYoU5toLdMVO2QQaGYNxpYE/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycby63Mo2lXXgFw3Fra3wVTbl0O38joO6LpPXhg__RcVWdL74uHE8DPEXoDRwEmjvANS2/exec";
 
   async function apiCall(action, params = {}) {
       try {
@@ -688,7 +688,9 @@
                   html+=`<div class="group-wrap ct-group-wrap" data-gname="${g}"><div class="group-header" onclick="toggleGroup('ct-g-${i}')"><span><i class="fa-solid ${gIco[g]}" style="color:${gClr[g]};"></i> ${g}</span><span class="badge" style="background:${gClr[g]}; color:#fff; padding:2px 8px; border-radius:10px; font-size:11px;">${groups[g].length} Calls</span></div><div class="group-body" id="ct-g-${i}" style="display:block;">`;
                   groups[g].forEach(c=>{
                       let assignInfo=c.assigned?`<span class="ct-assign">Assign: ${c.assigned}</span>`:""; let showTask=c.taskId?`${c.taskId} - `:'';
-                      html+=`<div class="ct-card" style="border-left-color:${gClr[g]};" onclick="ctOpenUpdate(${c.row}, '${safeB64(c.customerName)}', '${safeB64(c.action)}', '${safeB64(c.assigned)}')"><div class="ct-tat" style="color:${gClr[g]}; background:${gClr[g]}15; border-color:${gClr[g]}50;">TAT: ${c.tat}</div><b>${showTask}${c.customerName}</b> ${assignInfo}<div style="color:#1976d2;font-size:12px;margin:2px 0;">📞 ${c.contact}</div><small>Model: ${c.model}<br>Issue: ${c.issue}</small></div>`;
+                      // SERIAL NUMBER IN CARD LOGIC ADDED HERE
+                      let snHtml = c.serial && c.serial !== "N/A" && c.serial !== "null" && c.serial !== "" ? ` | SN: <b>${c.serial}</b>` : "";
+                      html+=`<div class="ct-card" style="border-left-color:${gClr[g]};" onclick="ctOpenUpdate(${c.row}, '${safeB64(c.customerName)}', '${safeB64(c.action)}', '${safeB64(c.assigned)}')"><div class="ct-tat" style="color:${gClr[g]}; background:${gClr[g]}15; border-color:${gClr[g]}50;">TAT: ${c.tat}</div><b>${showTask}${c.customerName}</b> ${assignInfo}<div style="color:#1976d2;font-size:12px;margin:2px 0;">📞 ${c.contact}</div><small>Model: ${c.model}${snHtml}<br>Issue: ${c.issue}</small></div>`;
                   }); html+='</div></div>';
               }
           }
@@ -697,7 +699,22 @@
   }
 
   function ctOpenUpdate(r, encN, encAct, encAss) { document.getElementById('ctUpdatePanel').style.display='block'; document.getElementById('ctTargetCust').innerText="Update: "+safeDec(encN); document.getElementById('ctRow').value=r; document.getElementById('ctAction').value=safeDec(encAct); document.getElementById('ctAssigned').value=safeDec(encAss); window.scrollTo(0, document.body.scrollHeight); }
-  function ctSaveUpdate() { Swal.fire({title:'Updating...',didOpen:()=>Swal.showLoading()}); apiCall('ct_updateCallStatus', {row: document.getElementById('ctRow').value, action: document.getElementById('ctAction').value, status: document.getElementById('ctStatus').value, assignedTo: document.getElementById('ctAssigned').value}).then(res=>{ Swal.fire('Updated!',res,'success'); document.getElementById('ctUpdatePanel').style.display='none'; ctLoadPending(); }).catch(e=>{Swal.fire('Error',e.message,'error')}); }
+  
+  // HANDLED BY USER LOGIC ADDED HERE
+  function ctSaveUpdate() { 
+      Swal.fire({title:'Updating...',didOpen:()=>Swal.showLoading()}); 
+      apiCall('ct_updateCallStatus', {
+          row: document.getElementById('ctRow').value, 
+          action: document.getElementById('ctAction').value, 
+          status: document.getElementById('ctStatus').value, 
+          assignedTo: document.getElementById('ctAssigned').value,
+          handledBy: loggedInUser
+      }).then(res=>{ 
+          Swal.fire('Updated!',res,'success'); 
+          document.getElementById('ctUpdatePanel').style.display='none'; 
+          ctLoadPending(); 
+      }).catch(e=>{Swal.fire('Error',e.message,'error')}); 
+  }
   
   function ctFetchReports() { 
       let s=document.getElementById('ctRFrom').value, e=document.getElementById('ctRTo').value, u=document.getElementById('ctRUser').value; 
