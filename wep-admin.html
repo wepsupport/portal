@@ -119,6 +119,8 @@
     <div id="pwReportRes" style="overflow-x:auto;"></div>
   </div>
 </div>
+
+<!-- ================= CALL TRACKING ================= -->
 <div id="ctPortal" style="display:none;" class="container container-ct">
   <div class="header-nav" style="background: #ffe0eb;"><h3 style="margin:0; color:var(--brand2);">Call Tracking System</h3><button class="back-btn" onclick="openPortal('home')">⬅️ Main Menu</button></div>
   <div class="tabs">
@@ -134,7 +136,47 @@
     </form>
   </div>
   
-  <div id="ct-pending" class="content ct-content"><div id="ctList">Loading...</div><div id="ctUpdatePanel" class="panel" style="display:none; border-color:var(--brand2);"><h4 id="ctTargetCust" style="color:var(--brand2)"></h4><input type="hidden" id="ctRow"><div class="grid"><div><label>Action Taken</label><input type="text" id="ctAction"></div><div><label>Status</label><select id="ctStatus"><option value="Pending">Pending</option><option value="Closed">Closed</option></select></div></div><label>Update Assign To</label><input type="text" id="ctAssigned" style="margin-bottom:8px;"><button class="btn btn-ct" onclick="ctSaveUpdate()">UPDATE CALL</button></div></div>
+  <div id="ct-pending" class="content ct-content">
+      <div id="ctList">Loading...</div>
+      
+      <!-- ================= UPDATE TICKET PANEL (WITH CALL TIME LOGS & CHAT HISTORY) ================= -->
+      <div id="ctUpdatePanel" class="panel" style="display:none; border-color:var(--brand2);">
+          <h4 id="ctTargetCust" style="color:var(--brand2); margin-top:0;"></h4>
+          <input type="hidden" id="ctRow">
+          <input type="hidden" id="ctTargetId">
+          
+          <!-- Call Time Tracker -->
+          <div style="background:#fbfbfd; border:1px solid #e1e1e1; padding:12px; border-radius:8px; margin-bottom:15px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                  <h5 style="margin:0; color:#2c3e50; font-size:13px;"><i class="fa-solid fa-phone-volume" style="color:#0984e3;"></i> Call Logs & Time Tracking</h5>
+                  <div style="font-size:11px; font-weight:bold; color:#e67e22; background:#fff3e0; padding:4px 8px; border-radius:12px;">
+                      Total: <span id="callCountTxt">0</span> Calls (<span id="callTimeTxt">0</span> mins)
+                  </div>
+              </div>
+              <div id="callLogBadges" style="margin-bottom:10px; display:flex; flex-wrap:wrap; gap:6px;"></div>
+              <div style="display:flex; gap:10px;">
+                  <input type="number" id="newCallMins" placeholder="Add Mins (e.g. 5)" style="width:130px; padding:8px; border:1px solid #dcdde1; border-radius:4px; font-size:12px;" min="1">
+                  <button type="button" class="btn btn-dark" style="margin:0; width:auto; padding:6px 12px; font-size:11px; border-radius:4px;" onclick="addCallLog()">+ Add Call</button>
+              </div>
+          </div>
+
+          <div class="grid">
+              <div><label>Action Taken</label><input type="text" id="ctAction"></div>
+              <div><label>Status</label><select id="ctStatus"><option value="Pending">Pending</option><option value="Closed">Closed</option></select></div>
+          </div>
+          <label>Update Assign To</label><input type="text" id="ctAssigned" style="margin-bottom:15px;">
+          
+          <!-- Chat History -->
+          <div id="ctChatHistoryBox" style="margin-bottom:15px; border:1px solid #dcdde1; border-radius:8px; background:#fff; display:none; overflow:hidden;">
+              <div style="background:#f1f2f6; padding:10px 15px; font-weight:bold; font-size:12px; color:#2f3640; border-bottom:1px solid #dcdde1; display:flex; align-items:center; gap:8px;">
+                  <i class="fa-solid fa-comments" style="color:#ff006e;"></i> Communication History
+              </div>
+              <div id="ctChatHistoryContent" style="padding:15px; height:200px; max-height:200px; overflow-y:auto; font-size:12px; background:#fcfcfc;"></div>
+          </div>
+
+          <button class="btn btn-ct" onclick="ctSaveUpdate()">UPDATE CALL</button>
+      </div>
+  </div>
   
   <div id="ct-reports" class="content ct-content">
     <div class="grid" style="background: #fff0f6; padding: 10px; border-radius: 5px;">
@@ -313,10 +355,11 @@
   let currentRawStates = null; 
   let currentRawCallTypes = null; 
 
-  /* --- GLOBAL VARIABLES FOR NOTIFICATIONS & ASSIGNMENTS --- */
+  /* --- GLOBAL VARIABLES FOR NOTIFICATIONS & CALL LOGS --- */
   let lastChatCount = -1;
   let lastCallCount = -1;
   let globalAssignedCounts = {};
+  window.currentCallLogs = [];
 
   function safeB64(str) { return btoa(unescape(encodeURIComponent(str || ''))); }
   function safeDec(b64) { return decodeURIComponent(escape(atob(b64 || ''))); }
@@ -336,6 +379,20 @@
     str += (nArray[5] != 0) ? ((str != '') ? 'and ' : '') + (a[Number(nArray[5])] || b[nArray[5][0]] + ' ' + a[nArray[5][1]]) : '';
     return str.trim();
   }
+  
+  // Cleanly formats Action Taken to hide Call Logs backend string
+  function formatAction(act) {
+      if(!act) return "";
+      if(act.includes("|| CALLS:")) {
+          let parts = act.split("|| CALLS:");
+          let cleanAct = parts[0].trim();
+          let logs = parts[1].trim().split(",");
+          let totalMins = logs.reduce((a,b)=>parseInt(a)+parseInt(b), 0);
+          return `${cleanAct} <div style="margin-top:4px; padding:4px 6px; background:#fff3e0; color:#e67e22; border-radius:4px; font-size:10px; font-weight:bold; display:inline-block;"><i class="fa-solid fa-phone"></i> ${logs.length} Calls (${totalMins} mins)</div>`;
+      }
+      return act;
+  }
+
   function filterTable(containerId, val) {
       let table = document.querySelector('#' + containerId + ' table');
       if(!table) return;
@@ -688,9 +745,12 @@
                   html+=`<div class="group-wrap ct-group-wrap" data-gname="${g}"><div class="group-header" onclick="toggleGroup('ct-g-${i}')"><span><i class="fa-solid ${gIco[g]}" style="color:${gClr[g]};"></i> ${g}</span><span class="badge" style="background:${gClr[g]}; color:#fff; padding:2px 8px; border-radius:10px; font-size:11px;">${groups[g].length} Calls</span></div><div class="group-body" id="ct-g-${i}" style="display:block;">`;
                   groups[g].forEach(c=>{
                       let assignInfo=c.assigned?`<span class="ct-assign">Assign: ${c.assigned}</span>`:""; let showTask=c.taskId?`${c.taskId} - `:'';
-                      // SERIAL NUMBER IN CARD LOGIC ADDED HERE
                       let snHtml = c.serial && c.serial !== "N/A" && c.serial !== "null" && c.serial !== "" ? ` | SN: <b>${c.serial}</b>` : "";
-                      html+=`<div class="ct-card" style="border-left-color:${gClr[g]};" onclick="ctOpenUpdate(${c.row}, '${safeB64(c.customerName)}', '${safeB64(c.action)}', '${safeB64(c.assigned)}')"><div class="ct-tat" style="color:${gClr[g]}; background:${gClr[g]}15; border-color:${gClr[g]}50;">TAT: ${c.tat}</div><b>${showTask}${c.customerName}</b> ${assignInfo}<div style="color:#1976d2;font-size:12px;margin:2px 0;">📞 ${c.contact}</div><small>Model: ${c.model}${snHtml}<br>Issue: ${c.issue}</small></div>`;
+                      let displayAct = c.action;
+                      if(displayAct.includes("|| CALLS:")) {
+                          displayAct = displayAct.split("|| CALLS:")[0].trim();
+                      }
+                      html+=`<div class="ct-card" style="border-left-color:${gClr[g]};" onclick="ctOpenUpdate(${c.row}, '${safeB64(c.customerName)}', '${safeB64(c.action)}', '${safeB64(c.assigned)}', '${c.taskId}')"><div class="ct-tat" style="color:${gClr[g]}; background:${gClr[g]}15; border-color:${gClr[g]}50;">TAT: ${c.tat}</div><b>${showTask}${c.customerName}</b> ${assignInfo}<div style="color:#1976d2;font-size:12px;margin:2px 0;">📞 ${c.contact}</div><small>Model: ${c.model}${snHtml}<br>Issue: ${c.issue}<br><span style="color:#0984e3;">Action: ${displayAct}</span></small></div>`;
                   }); html+='</div></div>';
               }
           }
@@ -698,14 +758,91 @@
       }).catch(err=>{ document.getElementById('ctList').innerHTML=`<div style="color:red; padding:10px;">Error fetching data</div>`; });
   }
 
-  function ctOpenUpdate(r, encN, encAct, encAss) { document.getElementById('ctUpdatePanel').style.display='block'; document.getElementById('ctTargetCust').innerText="Update: "+safeDec(encN); document.getElementById('ctRow').value=r; document.getElementById('ctAction').value=safeDec(encAct); document.getElementById('ctAssigned').value=safeDec(encAss); window.scrollTo(0, document.body.scrollHeight); }
+  function addCallLog() {
+      let mInput = document.getElementById('newCallMins');
+      let m = parseInt(mInput.value);
+      if(m && m > 0) {
+          window.currentCallLogs.push(m);
+          mInput.value = '';
+          renderCallLogs();
+      }
+  }
+
+  function renderCallLogs() {
+      let container = document.getElementById('callLogBadges');
+      let totalMins = 0;
+      let html = "";
+      window.currentCallLogs.forEach((mins, idx) => {
+          totalMins += mins;
+          html += `<span style="background:#dfe6e9; color:#2d3436; padding:3px 8px; border-radius:12px; font-size:11px; font-weight:bold;">Call ${idx+1}: ${mins}m</span>`;
+      });
+      if(window.currentCallLogs.length === 0) {
+          html = `<span style="color:#a4b0be; font-style:italic; font-size:11px;">No calls logged yet.</span>`;
+      }
+      container.innerHTML = html;
+      document.getElementById('callCountTxt').innerText = window.currentCallLogs.length;
+      document.getElementById('callTimeTxt').innerText = totalMins;
+  }
+
+  function ctOpenUpdate(r, encN, encAct, encAss, taskId) { 
+      document.getElementById('ctUpdatePanel').style.display='block'; 
+      document.getElementById('ctTargetCust').innerText="Update: "+safeDec(encN) + " (" + taskId + ")"; 
+      document.getElementById('ctRow').value=r; 
+      document.getElementById('ctTargetId').value=taskId; 
+      
+      let rawAction = safeDec(encAct);
+      let cleanAction = rawAction;
+      window.currentCallLogs = [];
+      if(rawAction.includes("|| CALLS:")) {
+          let parts = rawAction.split("|| CALLS:");
+          cleanAction = parts[0].trim();
+          let logsStr = parts[1].trim();
+          if(logsStr) window.currentCallLogs = logsStr.split(",").map(Number);
+      }
+      document.getElementById('ctAction').value = cleanAction; 
+      document.getElementById('ctAssigned').value=safeDec(encAss); 
+      renderCallLogs();
+
+      let historyBox = document.getElementById('ctChatHistoryBox');
+      let historyContent = document.getElementById('ctChatHistoryContent');
+      historyBox.style.display = 'block';
+      historyContent.innerHTML = '<div style="text-align:center; color:#888; padding:10px;">Loading history...</div>';
+      
+      apiCall('trackCustomerTask', {taskId: taskId}).then(tickets => {
+          if(tickets && tickets.length > 0 && tickets[0].history && tickets[0].history.length > 0) {
+              let hHtml = "";
+              tickets[0].history.forEach(m => {
+                  let senderClr = m.sender.toLowerCase() === 'customer' ? '#0984e3' : '#ff006e';
+                  let msgText = m.message;
+                  if(msgText.includes("📎 Shared a photo: ")) {
+                      let link = msgText.split("Shared a photo: ")[1];
+                      msgText = `<a href="${link}" target="_blank" style="color:#0984e3; text-decoration:underline;">View Attachment</a>`;
+                  }
+                  hHtml += `<div style="margin-bottom:8px; line-height:1.4;">
+                      <div style="font-size:10px; color:#888;">${m.time}</div>
+                      <div><strong style="color:${senderClr};">${m.sender}:</strong> ${msgText}</div>
+                  </div>`;
+              });
+              historyContent.innerHTML = hHtml;
+          } else {
+              historyBox.style.display = 'none';
+          }
+      }).catch(e => {
+          historyBox.style.display = 'none';
+      });
+      
+      window.scrollTo(0, document.body.scrollHeight); 
+  }
   
-  // HANDLED BY USER LOGIC ADDED HERE
   function ctSaveUpdate() { 
       Swal.fire({title:'Updating...',didOpen:()=>Swal.showLoading()}); 
+      let finalAction = document.getElementById('ctAction').value.trim();
+      if(window.currentCallLogs && window.currentCallLogs.length > 0) {
+          finalAction += " || CALLS:" + window.currentCallLogs.join(",");
+      }
       apiCall('ct_updateCallStatus', {
           row: document.getElementById('ctRow').value, 
-          action: document.getElementById('ctAction').value, 
+          action: finalAction, 
           status: document.getElementById('ctStatus').value, 
           assignedTo: document.getElementById('ctAssigned').value,
           handledBy: loggedInUser
@@ -716,6 +853,18 @@
       }).catch(e=>{Swal.fire('Error',e.message,'error')}); 
   }
   
+  function formatAction(act) {
+      if(!act) return "";
+      if(act.includes("|| CALLS:")) {
+          let parts = act.split("|| CALLS:");
+          let cleanAct = parts[0].trim();
+          let logs = parts[1].trim().split(",");
+          let totalMins = logs.reduce((a,b)=>parseInt(a)+parseInt(b), 0);
+          return `${cleanAct} <div style="margin-top:4px; padding:4px 6px; background:#fff3e0; color:#e67e22; border-radius:4px; font-size:10px; font-weight:bold; display:inline-block;"><i class="fa-solid fa-phone"></i> ${logs.length} Calls (${totalMins} mins)</div>`;
+      }
+      return act;
+  }
+
   function ctFetchReports() { 
       let s=document.getElementById('ctRFrom').value, e=document.getElementById('ctRTo').value, u=document.getElementById('ctRUser').value; 
       document.getElementById('ctReportRes').innerHTML="Loading..."; 
@@ -724,7 +873,7 @@
           let html=`<b>Total: ${data.length}</b><table><tr><th>Date</th><th>Customer, Task & Contact</th><th>Issue/Action</th><th>TAT/By</th></tr>`; 
           data.forEach(c=>{ 
               let showTask=c.taskId?`<span style="color:#e74c3c;">${c.taskId}</span><br>`:''; 
-              html+=`<tr><td>${c.date}</td><td><b>${showTask}${c.name}</b><br><small style="color:#0984e3; font-weight:bold;">📞 ${c.contact}</small><br><small>${c.model}</small></td><td><small>Iss: ${c.issue}</small><br><span style="color:green">Act: ${c.action}</span></td><td>${c.tat}<br>By: ${c.handledBy}</td></tr>`; 
+              html+=`<tr><td>${c.date}</td><td><b>${showTask}${c.name}</b><br><small style="color:#0984e3; font-weight:bold;">📞 ${c.contact}</small><br><small>${c.model}</small></td><td><small>Iss: ${c.issue}</small><br><span style="color:green">Act: ${formatAction(c.action)}</span></td><td>${c.tat}<br>By: ${c.handledBy}</td></tr>`; 
           }); 
           document.getElementById('ctReportRes').innerHTML=html+"</table>"; 
       }).catch(e=>{ document.getElementById('ctReportRes').innerHTML="Error."; }); 
@@ -771,21 +920,21 @@
   function showCallTypeDetails(category) {
       if(!currentRawCallTypes || !currentRawCallTypes[category]) return; let dataList = currentRawCallTypes[category]; if(dataList.length === 0) return Swal.fire('No Data', `No cases in ${category}`, 'info');
       let h = `<table style="width:100%; text-align:left; font-size:12px; border-collapse:collapse;"><tr><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Date</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Customer / Model</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">City</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Issue</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Action</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">TAT</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">By</th></tr>`;
-      dataList.forEach(r => { h += `<tr><td style="border-bottom:1px solid #eee; padding:5px;">${r.date}</td><td style="border-bottom:1px solid #eee; padding:5px; font-weight:bold;">${r.name}<br><small style="color:#0984e3;">${r.model}</small></td><td style="border-bottom:1px solid #eee; padding:5px;">${r.city}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.issue}</td><td style="border-bottom:1px solid #eee; padding:5px; color:green;">${r.action}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.tat}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.handledBy}</td></tr>`; }); h += `</table>`;
+      dataList.forEach(r => { h += `<tr><td style="border-bottom:1px solid #eee; padding:5px;">${r.date}</td><td style="border-bottom:1px solid #eee; padding:5px; font-weight:bold;">${r.name}<br><small style="color:#0984e3;">${r.model}</small></td><td style="border-bottom:1px solid #eee; padding:5px;">${r.city}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.issue}</td><td style="border-bottom:1px solid #eee; padding:5px; color:green;">${formatAction(r.action)}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.tat}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.handledBy}</td></tr>`; }); h += `</table>`;
       Swal.fire({ title: `Category: ${category}`, html: `<div style="max-height: 400px; overflow-y: auto;">${h}</div>`, width: '90%', showCloseButton: true, showConfirmButton: false });
   }
 
   function showProblemDetails(category) {
       if(!currentRawProblems || !currentRawProblems[category]) return; let dataList = currentRawProblems[category]; if(dataList.length === 0) return Swal.fire('No Data', `No cases in ${category}`, 'info');
       let h = `<table style="width:100%; text-align:left; font-size:12px; border-collapse:collapse;"><tr><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Date</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Customer</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">City</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Issue</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Action</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">TAT</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">By</th></tr>`;
-      dataList.forEach(r => { h += `<tr><td style="border-bottom:1px solid #eee; padding:5px;">${r.date}</td><td style="border-bottom:1px solid #eee; padding:5px; font-weight:bold;">${r.name}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.city}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.issue}</td><td style="border-bottom:1px solid #eee; padding:5px; color:green;">${r.action}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.tat}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.handledBy}</td></tr>`; }); h += `</table>`;
+      dataList.forEach(r => { h += `<tr><td style="border-bottom:1px solid #eee; padding:5px;">${r.date}</td><td style="border-bottom:1px solid #eee; padding:5px; font-weight:bold;">${r.name}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.city}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.issue}</td><td style="border-bottom:1px solid #eee; padding:5px; color:green;">${formatAction(r.action)}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.tat}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.handledBy}</td></tr>`; }); h += `</table>`;
       Swal.fire({ title: `Category: ${category}`, html: `<div style="max-height: 400px; overflow-y: auto;">${h}</div>`, width: '90%', showCloseButton: true, showConfirmButton: false });
   }
 
   function showStateDetails(state) {
       if(!currentRawStates || !currentRawStates[state]) return; let dataList = currentRawStates[state]; if(dataList.length === 0) return Swal.fire('No Data', `No cases in ${state}`, 'info');
       let h = `<table style="width:100%; text-align:left; font-size:12px; border-collapse:collapse;"><tr><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Date</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Customer</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">City</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Issue</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">Action</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">TAT</th><th style="border-bottom:1px solid #ddd; padding:5px; background:#f9f9f9;">By</th></tr>`;
-      dataList.forEach(r => { h += `<tr><td style="border-bottom:1px solid #eee; padding:5px;">${r.date}</td><td style="border-bottom:1px solid #eee; padding:5px; font-weight:bold;">${r.name}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.city}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.issue}</td><td style="border-bottom:1px solid #eee; padding:5px; color:green;">${r.action}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.tat}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.handledBy}</td></tr>`; }); h += `</table>`;
+      dataList.forEach(r => { h += `<tr><td style="border-bottom:1px solid #eee; padding:5px;">${r.date}</td><td style="border-bottom:1px solid #eee; padding:5px; font-weight:bold;">${r.name}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.city}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.issue}</td><td style="border-bottom:1px solid #eee; padding:5px; color:green;">${formatAction(r.action)}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.tat}</td><td style="border-bottom:1px solid #eee; padding:5px;">${r.handledBy}</td></tr>`; }); h += `</table>`;
       Swal.fire({ title: `State: ${state}`, html: `<div style="max-height: 400px; overflow-y: auto;">${h}</div>`, width: '90%', showCloseButton: true, showConfirmButton: false });
   }
   
