@@ -1090,6 +1090,8 @@
 
   function openActiveChat(chatId, encName, phone, encIssue) { currentActiveChatId = chatId; adminMsgCount = 0; document.getElementById('chatListView').style.display = 'none'; document.getElementById('activeChatView').style.display = 'flex'; document.getElementById('chatCustName').innerHTML = `<b>${safeDec(encName)}</b> (${phone})<br><small style="color:#ff006e;">Issue: ${safeDec(encIssue)}</small>`; document.getElementById('chatMessages').innerHTML = "Loading..."; document.querySelector('.chat-input-area').style.display = 'flex'; document.querySelector('.end-chat-btn').style.display = 'block'; apiCall('markChatReadAdmin', {chatId: chatId}).then(r=>{}).catch(e=>{}); refreshChatMessages(); }
   function closeActiveChat() { currentActiveChatId = null; document.getElementById('activeChatView').style.display = 'none'; document.getElementById('chatListView').style.display = 'block'; fetchAdminChats(); }
+  
+  // FIX: Unhide reply box and end chat button if status is open again
   function refreshChatMessages() { 
       if(!currentActiveChatId) return; 
       apiCall('getChatHistory', {chatId: currentActiveChatId}).then(res => { 
@@ -1119,6 +1121,7 @@
                   document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; 
               } 
           } else {
+              // REACTIVATE LOGIC FIX
               document.querySelector('.chat-input-area').style.display = 'flex'; 
               document.querySelector('.end-chat-btn').style.display = 'block'; 
               let closedMsg = document.getElementById('chat-closed-msg');
@@ -1126,6 +1129,7 @@
           }
       }).catch(e=>{}); 
   }
+  
   function handleEnter(e) { if(e.key === 'Enter') sendAdminReply(); }
   function sendAdminReply() { const input = document.getElementById('adminReplyText'); const msg = input.value.trim(); if(!msg || !currentActiveChatId) return; input.value = ''; document.getElementById('chatMessages').innerHTML += `<div class="msg-box msg-admin temp-msg">${msg}<span class="msg-time">Sending...</span></div>`; document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; apiCall('sendChatMessage', {chatId: currentActiveChatId, name: "Admin", phone: "", sender: "Admin", message: msg}).then(r=>{}).catch(e=>{}); }
   function sendCallFormRequest() { if(!currentActiveChatId) return; document.getElementById('chatMessages').innerHTML += `<div class="msg-box msg-admin temp-msg"><i>📋 Sending Form...</i></div>`; document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; apiCall('sendChatMessage', {chatId: currentActiveChatId, name: "Admin", phone: "", sender: "Admin", message: "[CMD:REQUEST_FORM]"}).then(r=>{}).catch(e=>{}); }
