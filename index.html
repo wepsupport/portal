@@ -47,10 +47,10 @@
     @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes contentEntrance { from { opacity: 0; transform: translateY(30px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-    /* Frosted Glass Enterprise Header - CORRECTED HEIGHT */
+    /* Frosted Glass Enterprise Header */
     .corporate-nav { background: var(--glass-bg); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); padding: 12px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light); position: fixed; width: 100%; top: 0; box-sizing: border-box; z-index: 1000; }
     .corporate-logo { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.5px; }
-    .corporate-logo img { height: 70px; object-fit: contain; transition: transform 0.3s ease; }
+    .corporate-logo img { height: 32px; object-fit: contain; transition: transform 0.3s ease; }
     .corporate-logo:hover img { transform: scale(1.05); }
     .corporate-nav-actions { display: flex; gap: 15px; align-items: center; }
     .lang-toggle { background: transparent; color: var(--text-primary); border: 1px solid #d2d2d7; border-radius: 8px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; outline:none; font-family: var(--font-stack); }
@@ -198,7 +198,7 @@
         .action-card { padding: 20px 18px; border-radius: 16px; }
         .form-container { padding: 30px 24px; border-radius: 24px; }
         .chat-container { height: calc(100vh - 100px); max-height: none; border-radius: 20px; }
-        #intro-screen .intro-logo-img { height: 70px; }
+        #intro-screen .intro-logo-img { height: 50px; }
         #intro-screen .typewriter-text { font-size: 32px; }
     }
   </style>
@@ -360,7 +360,7 @@
   <script>
     // ===================== GITHUB API CONFIGURATION =====================
     // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-    const API_URL = "https://script.google.com/macros/s/AKfycby63Mo2lXXgFw3Fra3wVTbl0O38joO6LpPXhg__RcVWdL74uHE8DPEXoDRwEmjvANS2/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbzojTJgPQzy_FhYMa-Do7Np6BkZ1dfOvqdlRDmwY9iYdPdfmd-WADi9WnwOh4GQWMNk/exec";
 
     async function apiCall(action, params = {}) {
         try {
@@ -396,7 +396,7 @@
           c3t: "वारंटी शिकायत", c3d: "अपने वारंटी वाले उत्पादों के लिए सेवा शिकायत दर्ज करें।",
           c4t: "सपोर्ट असिस्टेंट", c4d: "तुरंत स्वचालित समस्या निवारण प्राप्त करें या लाइव एक्जीक्यूटिव से जुड़ें।",
           track: "अपना टिकट ट्रैक करें",
-          greeting: "नमस्ते! मैं wepsol सर्विस बॉट हूँ। कृपया शुरू करने के लिए अपना प्रिंटर मॉडल चुनें।", loading: "लोड हो रहा है...", selectNext: "कृपया नीचे से एक विकल्प चुनें:", selectModel: "प्रिंटर मॉडल चुनें:", drpDefault: "-- चुनें --", nextStep: "आगे बढ़ें", modelWait: "मॉडल चुनना आवश्यक है।", watchVideo: "वीडियो देखें", downloadFile: "रिसोर्स डाउनलोड करें", needExecutive: "एक्जीक्यूटिव से बात करें", resolved: "समस्या हल हो गई", or: "या", formTitle: "लाइव एजेंट संपर्क", namePlaceholder: "पूरा नाम", phonePlaceholder: "10-अंकों का मोबाइल नंबर", startChatBtn: "सत्र शुरू करें", chatInputPlaceholder: "मैसेज टाइप करें...", endBtn: "चैट बंद करें", rateExperience: "सत्र समाप्त! कृपया रेट करें:", agentConnected: "लाइव चैट कनेक्ट हो गया है। एक एजेंट जल्द ही आपसे जुड़ेगा।", formError: "कृपया अपना नाम और सही 10-अंकों का मोबाइल नंबर दर्ज करें।", userEnded: "आपने चैट समाप्त कर दी है। कृपया अपना अनुभव रेट करें।", ratedMsg: "धन्यवाद! आपने {count} स्टार दिए हैं।", formCity: "शहर (City)", formState: "राज्य (State)", formSerial: "सीरियल नंबर (Opt)", formNext: "जमा करें", trackTitle: "टिकट स्थिति ट्रैक करें", invalidPhone: "मोबाइल नंबर ठीक 10 अंकों का होना चाहिए।" 
+          greeting: "नमस्ते! मैं wepsol सर्विस बॉट हूँ। कृपया शुरू करने के लिए अपना प्रिंटर मॉडल चुनें।", loading: "लोड हो रहा है...", selectNext: "कृपया नीचे से एक विकल्प चुनें:", selectModel: "प्रिंटर मॉडल चुनें:", drpDefault: "-- चुनें --", nextStep: "आगे बढ़ें", modelWait: "मॉडल चुनना आवश्यक है।", watchVideo: "वीडियो देखें", downloadFile: "रिसोर्स डाउनलोड करें", needExecutive: "एक्जीक्यूटिव से बात करें", resolved: "समस्या हल हो गई", or: "या", formTitle: "लाइव एजेंट संपर्क", namePlaceholder: "पूरा नाम", phonePlaceholder: "10-अंकों का मोबाइल नंबर", startChatBtn: "सत्र शुरू करें", chatInputPlaceholder: "मैसेज टाइप करें...", endBtn: "चैट बंद करें", rateExperience: "सत्र समाप्त! कृपया रेट करें:", agentConnected: "लाइव चैट कनेक्ट हो गया है। एक एजेंट जल्द ही आपसे जुड़ेगा।", formError: "कृपया अपना नाम और सही 10-अंकों का मोबाइल नंबर दर्ज करें।", userEnded: "आपने चैट समाप्त कर दी ক্ষমতায়। कृपया अपना अनुभव रेट करें।", ratedMsg: "धन्यवाद! आपने {count} स्टार दिए हैं।", formCity: "शहर (City)", formState: "राज्य (State)", formSerial: "सीरियल नंबर (Opt)", formNext: "जमा करें", trackTitle: "टिकट स्थिति ट्रैक करें", invalidPhone: "मोबाइल नंबर ठीक 10 अंकों का होना चाहिए।" 
       }
     };
 
@@ -606,18 +606,28 @@
 
     function openTicketIdx(idx) { if(globalTickets && globalTickets[idx]) { showSingleTicket(globalTickets[idx]); } }
 
+    function escapeQuotes(str) { return String(str||"").replace(/'/g, "\\'").replace(/"/g, '&quot;'); }
+
     function showSingleTicket(d) {
-        let stClr = d.status.toLowerCase() === 'closed' ? 'var(--success)' : (d.status.toLowerCase() === 'pending' ? 'var(--warning)' : 'var(--danger)');
+        let stClr = d.status.toLowerCase() === 'closed' ? '#16a34a' : (d.status.toLowerCase() === 'pending' ? '#ca8a04' : '#e74c3c');
+        let assignedBadge = (d.assigned && d.assigned !== "Unassigned" && d.assigned !== "undefined") ? `<span class="status-badge" style="background-color:#e0f2fe; color:#0284c7; border:1px solid #bae6fd; margin-left:8px; text-transform:none;"><i class="fa-solid fa-user-check"></i> ${d.assigned}</span>` : '';
+        
         let html = `
         <div class="detail-view">
-            <div class="dv-header">
-                <h3>${d.taskId}</h3>
-                <span class="status-badge" style="background-color:${stClr}15; color:${stClr}; border:1px solid ${stClr}40;">${d.status}</span>
+            <div class="dv-header" style="align-items:flex-start;">
+                <div>
+                    <h3 style="margin-bottom:6px;">${d.taskId}</h3>
+                    <span class="status-badge" style="background-color:${stClr}15; color:${stClr}; border:1px solid ${stClr}40;">${d.status}</span>
+                    ${assignedBadge}
+                </div>
             </div>
             <div class="dv-grid">
                 <div class="dv-item"><label>Date</label><span>${d.date}</span></div>
                 <div class="dv-item"><label>Model</label><span>${d.model}</span></div>
+                <div class="dv-item"><label>Serial No</label><span>${d.serial || 'N/A'}</span></div>
+                <div class="dv-item"><label>Status</label><span style="color:${stClr}">${d.status}</span></div>
                 <div class="dv-item dv-issue"><label>Reported Issue</label><span>${d.issue}</span></div>
+                <div class="dv-item dv-issue"><label>Action Taken</label><span style="color:var(--accent-blue)">${d.action || 'Pending'}</span></div>
             </div>
             <div class="dv-history-title">Communication History</div>
             <div class="dv-history-box">`;
@@ -638,8 +648,42 @@
         } else { 
             html += `<div style="text-align:center; color:var(--text-secondary); padding:20px; font-size:13px;"><i>No communication history available.</i></div>`; 
         } 
-        html += `</div></div>`; 
-        Swal.fire({ html: html, width: '500px', confirmButtonText: 'Close', confirmButtonColor: '#1d1d1f' });
+        
+        let cName = escapeQuotes(d.customerName);
+        let cModel = escapeQuotes(d.model);
+
+        html += `</div>
+            <button class="submit-btn" style="margin-top:20px; background:#1d1d1f; box-shadow:none; border-radius:12px; display:flex; align-items:center; justify-content:center; gap:8px;" onclick="startTrackedChat('${d.taskId}', '${cName}', '${d.phone}', '${cModel}')">
+                <i class="fa-solid fa-headset"></i> Connect to Executive
+            </button>
+        </div>`; 
+        Swal.fire({ html: html, width: '550px', showConfirmButton: false, showCloseButton: true });
+    }
+
+    window.startTrackedChat = function(taskId, cName, cPhone, cModel) {
+        Swal.close();
+        myName = cName || "Customer";
+        myPhone = cPhone || "";
+        selectedModelText = cModel || "Unknown";
+        currentPath = ["Follow up: " + taskId];
+        
+        document.getElementById('landingPage').style.display = 'none';
+        document.getElementById('chatPage').style.display = 'flex';
+        document.getElementById('modelSelectArea').style.display = 'none';
+        document.getElementById('videoOrAgentArea').style.display = 'none';
+        document.getElementById('optionsContainer').style.display = 'none';
+        
+        Swal.fire({title: 'Connecting...', allowOutsideClick: false, didOpen: () => Swal.showLoading()}); 
+        apiCall('startLiveChatSession', {data: { name: myName, phone: myPhone, contextPath: currentPath.join(" > "), model: selectedModelText }}).then(chatId => {
+            Swal.close(); 
+            myChatId = chatId; 
+            document.getElementById('leadForm').style.display = 'none'; 
+            document.getElementById('liveChatInput').style.display = 'flex'; 
+            document.getElementById('endChatBtn').style.display = 'block'; 
+            document.getElementById('chatBox').innerHTML = `<div class="msg bot"><div class="bubble" style="background:#e3fcef; color:#00875a; border-color:#00875a;"><i class="fa-solid fa-circle-check"></i> Connected regarding <b>${taskId}</b>. An agent will be with you shortly.</div></div>`; 
+            myMsgCount = 0; 
+            setInterval(fetchMyMessages, 4000); 
+        }).catch(err => { Swal.fire('Error', err.message, 'error'); }); 
     }
     
     // ----------- CHATBOT LOGIC -----------
