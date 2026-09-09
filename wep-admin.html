@@ -355,7 +355,7 @@
   let currentRawStates = null; 
   let currentRawCallTypes = null; 
 
-  /* --- GLOBAL VARIABLES FOR NOTIFICATIONS & CALL LOGS --- */
+  /* --- GLOBAL VARIABLES FOR NOTIFICATIONS & ASSIGNMENTS --- */
   let lastChatCount = -1;
   let lastCallCount = -1;
   let globalAssignedCounts = {};
@@ -745,6 +745,7 @@
                   html+=`<div class="group-wrap ct-group-wrap" data-gname="${g}"><div class="group-header" onclick="toggleGroup('ct-g-${i}')"><span><i class="fa-solid ${gIco[g]}" style="color:${gClr[g]};"></i> ${g}</span><span class="badge" style="background:${gClr[g]}; color:#fff; padding:2px 8px; border-radius:10px; font-size:11px;">${groups[g].length} Calls</span></div><div class="group-body" id="ct-g-${i}" style="display:block;">`;
                   groups[g].forEach(c=>{
                       let assignInfo=c.assigned?`<span class="ct-assign">Assign: ${c.assigned}</span>`:""; let showTask=c.taskId?`${c.taskId} - `:'';
+                      // SERIAL NUMBER IN CARD LOGIC ADDED HERE
                       let snHtml = c.serial && c.serial !== "N/A" && c.serial !== "null" && c.serial !== "" ? ` | SN: <b>${c.serial}</b>` : "";
                       let displayAct = c.action;
                       if(displayAct.includes("|| CALLS:")) {
@@ -834,6 +835,7 @@
       window.scrollTo(0, document.body.scrollHeight); 
   }
   
+  // HANDLED BY USER LOGIC ADDED HERE
   function ctSaveUpdate() { 
       Swal.fire({title:'Updating...',didOpen:()=>Swal.showLoading()}); 
       let finalAction = document.getElementById('ctAction').value.trim();
@@ -1088,7 +1090,42 @@
 
   function openActiveChat(chatId, encName, phone, encIssue) { currentActiveChatId = chatId; adminMsgCount = 0; document.getElementById('chatListView').style.display = 'none'; document.getElementById('activeChatView').style.display = 'flex'; document.getElementById('chatCustName').innerHTML = `<b>${safeDec(encName)}</b> (${phone})<br><small style="color:#ff006e;">Issue: ${safeDec(encIssue)}</small>`; document.getElementById('chatMessages').innerHTML = "Loading..."; document.querySelector('.chat-input-area').style.display = 'flex'; document.querySelector('.end-chat-btn').style.display = 'block'; apiCall('markChatReadAdmin', {chatId: chatId}).then(r=>{}).catch(e=>{}); refreshChatMessages(); }
   function closeActiveChat() { currentActiveChatId = null; document.getElementById('activeChatView').style.display = 'none'; document.getElementById('chatListView').style.display = 'block'; fetchAdminChats(); }
-  function refreshChatMessages() { if(!currentActiveChatId) return; apiCall('getChatHistory', {chatId: currentActiveChatId}).then(res => { let history = res.messages; if (history.length > adminMsgCount) { const box = document.getElementById('chatMessages'); document.querySelectorAll('.temp-msg').forEach(el => el.remove()); for (let i = adminMsgCount; i < history.length; i++) { let m = history[i]; let type = m.sender === "Admin" ? "msg-admin" : "msg-cust"; let displayMsg = m.message; if(displayMsg === "[CMD:REQUEST_FORM]") displayMsg = "<i>📋 Sent Call Registration Form</i>"; else if(displayMsg.indexOf("📎 Shared a photo:") !== -1) { let link = displayMsg.split("Shared a photo: ")[1]; displayMsg = `📎 <a href="${link}" target="_blank" style="color:white; text-decoration:underline;">View Photo</a>`; } box.innerHTML += `<div class="msg-box ${type}">${displayMsg}<span class="msg-time">${m.time}</span></div>`; } box.scrollTop = box.scrollHeight; adminMsgCount = history.length; } if (res.status === "Closed") { document.querySelector('.chat-input-area').style.display = 'none'; document.querySelector('.end-chat-btn').style.display = 'none'; if(!document.getElementById('chat-closed-msg')) { document.getElementById('chatMessages').innerHTML += `<div id="chat-closed-msg" style="text-align:center; color:#888; font-size:12px; margin-top:10px;">This chat is closed.</div>`; document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; } } }).catch(e=>{}); }
+  function refreshChatMessages() { 
+      if(!currentActiveChatId) return; 
+      apiCall('getChatHistory', {chatId: currentActiveChatId}).then(res => { 
+          let history = res.messages; 
+          if (history.length > adminMsgCount) { 
+              const box = document.getElementById('chatMessages'); 
+              document.querySelectorAll('.temp-msg').forEach(el => el.remove()); 
+              for (let i = adminMsgCount; i < history.length; i++) { 
+                  let m = history[i]; 
+                  let type = m.sender === "Admin" ? "msg-admin" : "msg-cust"; 
+                  let displayMsg = m.message; 
+                  if(displayMsg === "[CMD:REQUEST_FORM]") displayMsg = "<i>📋 Sent Call Registration Form</i>"; 
+                  else if(displayMsg.indexOf("📎 Shared a photo:") !== -1) { 
+                      let link = displayMsg.split("Shared a photo: ")[1]; 
+                      displayMsg = `📎 <a href="${link}" target="_blank" style="color:white; text-decoration:underline;">View Photo</a>`; 
+                  } 
+                  box.innerHTML += `<div class="msg-box ${type}">${displayMsg}<span class="msg-time">${m.time}</span></div>`; 
+              } 
+              box.scrollTop = box.scrollHeight; 
+              adminMsgCount = history.length; 
+          } 
+          if (res.status === "Closed") { 
+              document.querySelector('.chat-input-area').style.display = 'none'; 
+              document.querySelector('.end-chat-btn').style.display = 'none'; 
+              if(!document.getElementById('chat-closed-msg')) { 
+                  document.getElementById('chatMessages').innerHTML += `<div id="chat-closed-msg" style="text-align:center; color:#888; font-size:12px; margin-top:10px;">This chat is closed.</div>`; 
+                  document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; 
+              } 
+          } else {
+              document.querySelector('.chat-input-area').style.display = 'flex'; 
+              document.querySelector('.end-chat-btn').style.display = 'block'; 
+              let closedMsg = document.getElementById('chat-closed-msg');
+              if(closedMsg) closedMsg.remove();
+          }
+      }).catch(e=>{}); 
+  }
   function handleEnter(e) { if(e.key === 'Enter') sendAdminReply(); }
   function sendAdminReply() { const input = document.getElementById('adminReplyText'); const msg = input.value.trim(); if(!msg || !currentActiveChatId) return; input.value = ''; document.getElementById('chatMessages').innerHTML += `<div class="msg-box msg-admin temp-msg">${msg}<span class="msg-time">Sending...</span></div>`; document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; apiCall('sendChatMessage', {chatId: currentActiveChatId, name: "Admin", phone: "", sender: "Admin", message: msg}).then(r=>{}).catch(e=>{}); }
   function sendCallFormRequest() { if(!currentActiveChatId) return; document.getElementById('chatMessages').innerHTML += `<div class="msg-box msg-admin temp-msg"><i>📋 Sending Form...</i></div>`; document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; apiCall('sendChatMessage', {chatId: currentActiveChatId, name: "Admin", phone: "", sender: "Admin", message: "[CMD:REQUEST_FORM]"}).then(r=>{}).catch(e=>{}); }
