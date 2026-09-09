@@ -47,10 +47,10 @@
     @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes contentEntrance { from { opacity: 0; transform: translateY(30px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-    /* Frosted Glass Enterprise Header */
+    /* Frosted Glass Enterprise Header - CORRECTED HEIGHT */
     .corporate-nav { background: var(--glass-bg); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); padding: 12px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light); position: fixed; width: 100%; top: 0; box-sizing: border-box; z-index: 1000; }
     .corporate-logo { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.5px; }
-    .corporate-logo img { height: 32px; object-fit: contain; transition: transform 0.3s ease; }
+    .corporate-logo img { height: 60px; object-fit: contain; transition: transform 0.3s ease; }
     .corporate-logo:hover img { transform: scale(1.05); }
     .corporate-nav-actions { display: flex; gap: 15px; align-items: center; }
     .lang-toggle { background: transparent; color: var(--text-primary); border: 1px solid #d2d2d7; border-radius: 8px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; outline:none; font-family: var(--font-stack); }
@@ -120,7 +120,12 @@
     .dv-item span { font-size: 15px; color: var(--text-primary); font-weight: 600; }
     .dv-issue { grid-column: 1 / -1; }
     .dv-history-title { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 14px; }
+    
+    /* ADDED CUSTOM SCROLLBAR FOR HISTORY BOX */
     .dv-history-box { max-height: 280px; overflow-y: auto; background: #fff; border: 1px solid var(--border-light); border-radius: 16px; padding: 20px; }
+    .dv-history-box::-webkit-scrollbar { width: 6px; }
+    .dv-history-box::-webkit-scrollbar-thumb { background: #d2d2d7; border-radius: 10px; }
+    
     .hist-msg { margin-bottom: 20px; }
     .hist-msg:last-child { margin-bottom: 0; }
     .hist-sender { font-size: 13px; font-weight: 700; margin-bottom: 6px; display: flex; justify-content: space-between; }
@@ -190,7 +195,7 @@
     /* Mobile Responsive */
     @media (max-width: 768px) {
         .corporate-nav { padding: 12px 20px; }
-        .corporate-logo img { height: 26px !important; }
+        .corporate-logo img { height: 35px !important; }
         .view-wrapper { padding-top: 90px; padding-left: 15px; padding-right: 15px; }
         .landing-header h1 { font-size: 28px; letter-spacing: -0.02em; margin-bottom: 8px; }
         .landing-header p { font-size: 15px; }
@@ -294,7 +299,7 @@
       <div class="header">
         <div class="header-title"><i class="fa-solid fa-arrow-left" onclick="goHome()"></i> <i class="fa-solid fa-headset" style="color:var(--accent-blue)"></i> wepsol Assistant</div>
         <div class="top-actions">
-          <button id="endChatBtn" class="lang-toggle" style="color:var(--danger); border:none; background:transparent; display:none; padding:4px;" onclick="endLiveChatCustomer()">End Chat</button>
+          <button id="endChatBtn" style="background:#e74c3c; color:#fff; border:none; display:none; padding:6px 14px; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;" onclick="endLiveChatCustomer()">End Chat</button>
         </div>
       </div>
      
@@ -396,7 +401,7 @@
           c3t: "वारंटी शिकायत", c3d: "अपने वारंटी वाले उत्पादों के लिए सेवा शिकायत दर्ज करें।",
           c4t: "सपोर्ट असिस्टेंट", c4d: "तुरंत स्वचालित समस्या निवारण प्राप्त करें या लाइव एक्जीक्यूटिव से जुड़ें।",
           track: "अपना टिकट ट्रैक करें",
-          greeting: "नमस्ते! मैं wepsol सर्विस बॉट हूँ। कृपया शुरू करने के लिए अपना प्रिंटर मॉडल चुनें।", loading: "लोड हो रहा है...", selectNext: "कृपया नीचे से एक विकल्प चुनें:", selectModel: "प्रिंटर मॉडल चुनें:", drpDefault: "-- चुनें --", nextStep: "आगे बढ़ें", modelWait: "मॉडल चुनना आवश्यक है।", watchVideo: "वीडियो देखें", downloadFile: "रिसोर्स डाउनलोड करें", needExecutive: "एक्जीक्यूटिव से बात करें", resolved: "समस्या हल हो गई", or: "या", formTitle: "लाइव एजेंट संपर्क", namePlaceholder: "पूरा नाम", phonePlaceholder: "10-अंकों का मोबाइल नंबर", startChatBtn: "सत्र शुरू करें", chatInputPlaceholder: "मैसेज टाइप करें...", endBtn: "चैट बंद करें", rateExperience: "सत्र समाप्त! कृपया रेट करें:", agentConnected: "लाइव चैट कनेक्ट हो गया है। एक एजेंट जल्द ही आपसे जुड़ेगा।", formError: "कृपया अपना नाम और सही 10-अंकों का मोबाइल नंबर दर्ज करें।", userEnded: "आपने चैट समाप्त कर दी ক্ষমতায়। कृपया अपना अनुभव रेट करें।", ratedMsg: "धन्यवाद! आपने {count} स्टार दिए हैं।", formCity: "शहर (City)", formState: "राज्य (State)", formSerial: "सीरियल नंबर (Opt)", formNext: "जमा करें", trackTitle: "टिकट स्थिति ट्रैक करें", invalidPhone: "मोबाइल नंबर ठीक 10 अंकों का होना चाहिए।" 
+          greeting: "नमस्ते! मैं wepsol सर्विस बॉट हूँ। कृपया शुरू करने के लिए अपना प्रिंटर मॉडल चुनें।", loading: "लोड हो रहा है...", selectNext: "कृपया नीचे से एक विकल्प चुनें:", selectModel: "प्रिंटर मॉडल चुनें:", drpDefault: "-- चुनें --", nextStep: "आगे बढ़ें", modelWait: "मॉडल चुनना आवश्यक है।", watchVideo: "वीडियो देखें", downloadFile: "रिसोर्स डाउनलोड करें", needExecutive: "एक्जीक्यूटिव से बात करें", resolved: "समस्या हल हो गई", or: "या", formTitle: "लाइव एजेंट संपर्क", namePlaceholder: "पूरा नाम", phonePlaceholder: "10-अंकों का मोबाइल नंबर", startChatBtn: "सत्र शुरू करें", chatInputPlaceholder: "मैसेज टाइप करें...", endBtn: "चैट बंद करें", rateExperience: "सत्र समाप्त! कृपया रेट करें:", agentConnected: "लाइव चैट कनेक्ट हो गया है। एक एजेंट जल्द ही आपसे जुड़ेगा।", formError: "कृपया अपना नाम और सही 10-अंकों का मोबाइल नंबर दर्ज करें।", userEnded: "आपने चैट समाप्त कर दी है। कृपया अपना अनुभव रेट करें।", ratedMsg: "धन्यवाद! आपने {count} स्टार दिए हैं।", formCity: "शहर (City)", formState: "राज्य (State)", formSerial: "सीरियल नंबर (Opt)", formNext: "जमा करें", trackTitle: "टिकट स्थिति ट्रैक करें", invalidPhone: "मोबाइल नंबर ठीक 10 अंकों का होना चाहिए।" 
       }
     };
 
