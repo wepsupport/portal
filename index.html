@@ -195,7 +195,7 @@
     /* Mobile Responsive */
     @media (max-width: 768px) {
         .corporate-nav { padding: 12px 20px; }
-        .corporate-logo img { height: 35px !important; }
+        .corporate-logo img { height: 26px !important; }
         .view-wrapper { padding-top: 90px; padding-left: 15px; padding-right: 15px; }
         .landing-header h1 { font-size: 28px; letter-spacing: -0.02em; margin-bottom: 8px; }
         .landing-header p { font-size: 15px; }
@@ -365,7 +365,7 @@
   <script>
     // ===================== GITHUB API CONFIGURATION =====================
     // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-    const API_URL = "https://script.google.com/macros/s/AKfycbzojTJgPQzy_FhYMa-Do7Np6BkZ1dfOvqdlRDmwY9iYdPdfmd-WADi9WnwOh4GQWMNk/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwpqPhwLdDjUL8iJ4FF0IuavB-QlbhiQ7McvnBQQIvegqbuXxbw7tnEFpxrR0lw7Tt3/exec";
 
     async function apiCall(action, params = {}) {
         try {
@@ -679,7 +679,7 @@
         document.getElementById('optionsContainer').style.display = 'none';
         
         Swal.fire({title: 'Connecting...', allowOutsideClick: false, didOpen: () => Swal.showLoading()}); 
-        apiCall('startLiveChatSession', {data: { name: myName, phone: myPhone, contextPath: currentPath.join(" > "), model: selectedModelText }}).then(chatId => {
+        apiCall('startLiveChatSession', {data: { name: myName, phone: myPhone, contextPath: currentPath.join(" > "), model: selectedModelText, taskId: taskId }}).then(chatId => {
             Swal.close(); 
             myChatId = chatId; 
             document.getElementById('leadForm').style.display = 'none'; 
@@ -806,3 +806,4 @@
   </script>
 </body>
 </html>
+"]
