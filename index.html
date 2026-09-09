@@ -47,24 +47,24 @@
     @keyframes fadeSlideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes contentEntrance { from { opacity: 0; transform: translateY(30px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
 
-    /* Frosted Glass Enterprise Header - CORRECTED HEIGHT */
+    /* Frosted Glass Enterprise Header */
     .corporate-nav { background: var(--glass-bg); backdrop-filter: saturate(180%) blur(20px); -webkit-backdrop-filter: saturate(180%) blur(20px); padding: 12px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-light); position: fixed; width: 100%; top: 0; box-sizing: border-box; z-index: 1000; }
     .corporate-logo { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; color: var(--text-primary); letter-spacing: -0.5px; }
-    .corporate-logo img { height: 60px; object-fit: contain; transition: transform 0.3s ease; }
+    .corporate-logo img { height: 32px; object-fit: contain; transition: transform 0.3s ease; }
     .corporate-logo:hover img { transform: scale(1.05); }
     .corporate-nav-actions { display: flex; gap: 15px; align-items: center; }
     .lang-toggle { background: transparent; color: var(--text-primary); border: 1px solid #d2d2d7; border-radius: 8px; padding: 6px 14px; font-size: 13px; font-weight: 600; cursor: pointer; transition: 0.2s; outline:none; font-family: var(--font-stack); }
     .lang-toggle:hover { background: #f5f5f7; border-color: var(--text-secondary); }
     
-    /* Global Wrappers - REDUCED TOP PADDING */
+    /* Global Wrappers */
     .view-wrapper { display: none; flex-direction: column; align-items: center; min-height: 100vh; padding: 100px 20px 40px 20px; box-sizing: border-box; justify-content: flex-start; }
     
-    /* Minimalist Landing Page Header - COMPACT SPACING */
+    /* Minimalist Landing Page Header */
     .landing-header { text-align: center; margin-bottom: 35px; max-width: 650px; }
     .landing-header h1 { color: var(--text-primary); font-size: 36px; margin: 0 0 8px 0; font-weight: 800; letter-spacing: -0.04em; }
     .landing-header p { color: var(--text-secondary); margin: 0; font-size: 16px; line-height: 1.5; font-weight: 400; }
     
-    /* Modern Grid & Cards - COMPACT SIZE TO FIT ONE SCREEN */
+    /* Modern Grid & Cards */
     .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; width: 100%; max-width: 950px; margin-bottom: 30px; }
     .action-card { background: var(--card-bg); padding: 25px 22px; border-radius: 20px; text-align: left; box-shadow: var(--shadow-soft); cursor: pointer; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid var(--border-light); display: flex; flex-direction: column; align-items: flex-start; position: relative; overflow: hidden; }
     .action-card:hover { transform: translateY(-4px) scale(1.02); box-shadow: var(--shadow-hover); border-color: transparent; }
@@ -80,7 +80,7 @@
     .card-arrow { margin-top: 15px; color: var(--accent-blue); font-size: 13.5px; font-weight: 600; display: flex; align-items: center; gap: 4px; transition: 0.3s; }
     .action-card:hover .card-arrow { gap: 8px; }
     
-    /* Minimalist Primary Button - COMPACT */
+    /* Minimalist Primary Button */
     .track-btn-main { background: transparent; color: var(--accent-blue); border: none; padding: 14px 28px; border-radius: 980px; font-weight: 600; font-size: 15px; cursor: pointer; transition: 0.3s; display: flex; align-items: center; gap: 8px; font-family: var(--font-stack); }
     .track-btn-main:hover { background: #f0f4f9; transform: scale(1.02); }
     
@@ -122,7 +122,7 @@
     .dv-history-title { font-size: 16px; font-weight: 700; color: var(--text-primary); margin-bottom: 14px; }
     
     /* ADDED CUSTOM SCROLLBAR FOR HISTORY BOX */
-    .dv-history-box { max-height: 280px; overflow-y: auto; background: #fff; border: 1px solid var(--border-light); border-radius: 16px; padding: 20px; }
+    .dv-history-box { max-height: 200px; height: 200px; overflow-y: auto; background: #fff; border: 1px solid var(--border-light); border-radius: 16px; padding: 15px; }
     .dv-history-box::-webkit-scrollbar { width: 6px; }
     .dv-history-box::-webkit-scrollbar-thumb { background: #d2d2d7; border-radius: 10px; }
     
@@ -365,7 +365,7 @@
   <script>
     // ===================== GITHUB API CONFIGURATION =====================
     // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-    const API_URL = "https://script.google.com/macros/s/AKfycbwpqPhwLdDjUL8iJ4FF0IuavB-QlbhiQ7McvnBQQIvegqbuXxbw7tnEFpxrR0lw7Tt3/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbySn-CsTk-XrlRXY-A1AMgYEay479-4U8aCba7JNvtCBBRN_4LHyRWBPOf_HYP3z3ST/exec";
 
     async function apiCall(action, params = {}) {
         try {
@@ -685,9 +685,14 @@
             document.getElementById('leadForm').style.display = 'none'; 
             document.getElementById('liveChatInput').style.display = 'flex'; 
             document.getElementById('endChatBtn').style.display = 'block'; 
-            document.getElementById('chatBox').innerHTML = `<div class="msg bot"><div class="bubble" style="background:#e3fcef; color:#00875a; border-color:#00875a;"><i class="fa-solid fa-circle-check"></i> Connected regarding <b>${taskId}</b>. An agent will be with you shortly.</div></div>`; 
+            
+            document.getElementById('chatBox').innerHTML = `<div class="msg bot temp-msg"><div class="bubble">Loading chat history...</div></div>`; 
             myMsgCount = 0; 
-            setInterval(fetchMyMessages, 4000); 
+            fetchMyMessages();
+            
+            if(!window.chatIntervalTimer) {
+                window.chatIntervalTimer = setInterval(fetchMyMessages, 4000); 
+            }
         }).catch(err => { Swal.fire('Error', err.message, 'error'); }); 
     }
     
@@ -747,7 +752,10 @@
         if(!myName || !myPhone || myPhone.length !== 10 || isNaN(myPhone)) return Swal.fire('Error', uiText[currentLang].invalidPhone, 'error'); 
         Swal.fire({title: 'Connecting...', allowOutsideClick: false, didOpen: () => Swal.showLoading()}); 
         apiCall('startLiveChatSession', {data: { name: myName, phone: myPhone, contextPath: currentPath.join(" > "), model: selectedModelText }}).then(chatId => {
-            Swal.close(); myChatId = chatId; document.getElementById('leadForm').style.display = 'none'; document.getElementById('liveChatInput').style.display = 'flex'; document.getElementById('endChatBtn').style.display = 'block'; document.getElementById('chatBox').innerHTML = `<div class="msg bot"><div class="bubble" style="background:#e3fcef; color:#00875a; border-color:#00875a;"><i class="fa-solid fa-circle-check"></i> ${uiText[currentLang].agentConnected}</div></div>`; myMsgCount = 0; setInterval(fetchMyMessages, 4000); 
+            Swal.close(); myChatId = chatId; document.getElementById('leadForm').style.display = 'none'; document.getElementById('liveChatInput').style.display = 'flex'; document.getElementById('endChatBtn').style.display = 'block'; document.getElementById('chatBox').innerHTML = `<div class="msg bot"><div class="bubble" style="background:#e3fcef; color:#00875a; border-color:#00875a;"><i class="fa-solid fa-circle-check"></i> ${uiText[currentLang].agentConnected}</div></div>`; myMsgCount = 0; 
+            if(!window.chatIntervalTimer) {
+                window.chatIntervalTimer = setInterval(fetchMyMessages, 4000); 
+            }
         }).catch(err => { Swal.fire('Error', err.message, 'error'); }); 
     }
     
@@ -806,4 +814,3 @@
   </script>
 </body>
 </html>
-"]
