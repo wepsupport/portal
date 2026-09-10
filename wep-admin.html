@@ -94,10 +94,10 @@
         <div class="dash-row">
           <div class="stat-card" style="text-align:left; flex: 1; border-top: 4px solid #8e44ad;">
             <h4 style="margin:0 0 5px 0; color:#2c3e50;">🖼️ Customer Portal Promo Banner</h4>
-            <p style="text-transform:none; font-weight:normal; margin-bottom:15px; font-size:12px;">Upload a marketing banner to show on the Customer Portal startup.</p>
-            <input type="file" id="adminBannerUpload" accept="image/*" style="display:none;" onchange="handleBannerUpload(this)">
-            <button class="btn" style="background:#8e44ad; width:auto; padding:8px 15px; margin-right:10px;" onclick="document.getElementById('adminBannerUpload').click()">Upload Banner</button>
-            <button class="btn btn-dark" style="width:auto; padding:8px 15px;" onclick="removeBanner()">Remove Banner</button>
+            <p style="text-transform:none; font-weight:normal; margin-bottom:15px; font-size:12px;">Paste the Base64 code of your promotional image below to show it as a popup on the Customer Portal.</p>
+            <textarea id="adminBannerBase64" rows="3" placeholder="Paste Base64 code here (e.g., data:image/png;base64,...)" style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc; margin-bottom:10px; font-size:11px;"></textarea>
+            <button class="btn" style="background:#8e44ad; width:auto; padding:8px 15px; margin-right:10px;" onclick="savePromoBanner()">Save Banner</button>
+            <button class="btn btn-dark" style="width:auto; padding:8px 15px;" onclick="removePromoBanner()">Remove Banner</button>
           </div>
         </div>
         <div class="dash-row"><div class="chart-container" style="flex:1;"><canvas id="empChart"></canvas></div><div class="chart-container" style="flex:1;"><canvas id="mainChart"></canvas></div></div>
@@ -329,7 +329,7 @@
 <script>
   // ===================== GITHUB API CONFIGURATION =====================
   // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-  const API_URL = "https://script.google.com/macros/s/AKfycbxzXjtVj8jwkO68E0Jg1So9_1XzqrbdBWGL0hLae8XUMpj6fcCnexaQ7XW7wEaVB2gr/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbySn-CsTk-XrlRXY-A1AMgYEay479-4U8aCba7JNvtCBBRN_4LHyRWBPOf_HYP3z3ST/exec";
 
   async function apiCall(action, params = {}) {
       try {
