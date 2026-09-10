@@ -95,7 +95,7 @@
           <div class="stat-card" style="text-align:left; flex: 1; border-top: 4px solid #8e44ad;">
             <h4 style="margin:0 0 5px 0; color:#2c3e50;">🖼️ Customer Portal Promo Banner</h4>
             <p style="text-transform:none; font-weight:normal; margin-bottom:15px; font-size:12px;">Paste the Base64 code of your promotional image below to show it as a popup on the Customer Portal.</p>
-            <textarea id="adminBannerBase64" rows="3" placeholder="Paste Base64 code here (e.g., data:image/png;base64,...)" style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc; margin-bottom:10px; font-size:11px;"></textarea>
+           <input type="file" id="adminBannerFile" accept="image/*" style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc; margin-bottom:10px; font-size:11px;">
             <button class="btn" style="background:#8e44ad; width:auto; padding:8px 15px; margin-right:10px;" onclick="savePromoBanner()">Save Banner</button>
             <button class="btn btn-dark" style="width:auto; padding:8px 15px;" onclick="removePromoBanner()">Remove Banner</button>
           </div>
@@ -329,7 +329,7 @@
 <script>
   // ===================== GITHUB API CONFIGURATION =====================
   // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-  const API_URL = "https://script.google.com/macros/s/AKfycbzg6v1cNTwmA9ORz69gcLDOBuTaBvI-7MpEWVToOxjdR-IPTGOb-v1tkMtqHuo3YT-f/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbwxCOKglmGei-1FEkRCSkt8QiyXe0_QQ_PPNT9t9WNbQiZfY4Jrz4leb0yIzq42yNut/exec";
 
   async function apiCall(action, params = {}) {
       try {
