@@ -91,16 +91,16 @@
             <div class="stat-card" style="border-top: 4px solid #2ecc71;"><h3 id="d-clo">0</h3><p>Resolved Cases</p></div>
             <div class="stat-card" style="border-top: 4px solid #f1c40f;"><h3 id="d-cha">0</h3><p>Active Chats</p></div>
         </div>
+        <div class="dash-row">
+          <div class="stat-card" style="text-align:left; flex: 1; border-top: 4px solid #8e44ad;">
+            <h4 style="margin:0 0 5px 0; color:#2c3e50;">🖼️ Customer Portal Promo Banner</h4>
+            <p style="text-transform:none; font-weight:normal; margin-bottom:15px; font-size:12px;">Upload a marketing banner to show on the Customer Portal startup.</p>
+            <input type="file" id="adminBannerUpload" accept="image/*" style="display:none;" onchange="handleBannerUpload(this)">
+            <button class="btn" style="background:#8e44ad; width:auto; padding:8px 15px; margin-right:10px;" onclick="document.getElementById('adminBannerUpload').click()">Upload Banner</button>
+            <button class="btn btn-dark" style="width:auto; padding:8px 15px;" onclick="removeBanner()">Remove Banner</button>
+          </div>
+        </div>
         <div class="dash-row"><div class="chart-container" style="flex:1;"><canvas id="empChart"></canvas></div><div class="chart-container" style="flex:1;"><canvas id="mainChart"></canvas></div></div>
-      <div class="dash-row">
-      <div class="stat-card" style="text-align:left; flex: 1; border-top: 4px solid #8e44ad;">
-        <h4 style="margin:0 0 5px 0; color:#2c3e50;">🖼️ Customer Portal Promo Banner</h4>
-        <p style="text-transform:none; font-weight:normal; margin-bottom:15px; font-size:12px;">Upload a marketing banner to show on the Customer Portal startup.</p>
-        <input type="file" id="adminBannerUpload" accept="image/*" style="display:none;" onchange="handleBannerUpload(this)">
-        <button class="btn" style="background:#8e44ad; width:auto; padding:8px 15px; margin-right:10px;" onclick="document.getElementById('adminBannerUpload').click()">Upload Banner</button>
-        <button class="btn btn-dark" style="width:auto; padding:8px 15px;" onclick="removeBanner()">Remove Banner</button>
-      </div>
-    </div>
     </div>
   </div>
 </div>
@@ -1153,32 +1153,6 @@
   function sendAdminReply() { const input = document.getElementById('adminReplyText'); const msg = input.value.trim(); if(!msg || !currentActiveChatId) return; input.value = ''; document.getElementById('chatMessages').innerHTML += `<div class="msg-box msg-admin temp-msg">${msg}<span class="msg-time">Sending...</span></div>`; document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; apiCall('sendChatMessage', {chatId: currentActiveChatId, name: "Admin", phone: "", sender: "Admin", message: msg}).then(r=>{}).catch(e=>{}); }
   function sendCallFormRequest() { if(!currentActiveChatId) return; document.getElementById('chatMessages').innerHTML += `<div class="msg-box msg-admin temp-msg"><i>📋 Sending Form...</i></div>`; document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; apiCall('sendChatMessage', {chatId: currentActiveChatId, name: "Admin", phone: "", sender: "Admin", message: "[CMD:REQUEST_FORM]"}).then(r=>{}).catch(e=>{}); }
   function endLiveChatAdmin() { if(!currentActiveChatId) return; Swal.fire({ title: "End Chat", input: 'text', inputLabel: 'Enter closing remark for customer:', inputPlaceholder: 'e.g., Issue resolved. Thank you.', showCancelButton: true, confirmButtonText: "Close Chat" }).then((result) => { if (result.isConfirmed) { let remark = result.value || "Chat closed by Agent."; Swal.fire({title:'Closing...', didOpen:()=>Swal.showLoading()}); apiCall('closeLiveChat', {chatId: currentActiveChatId, remark: remark}).then(() => { Swal.close(); closeActiveChat(); }).catch(e=>{Swal.fire('Error',e.message,'error')}); } }); }
-function handleBannerUpload(input) {
-    if (!input.files[0]) return;
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const img = new Image();
-      img.onload = function() {
-        const canvas = document.createElement('canvas');
-        const scale = 800 / img.width;
-        canvas.width = 800; canvas.height = img.height * scale;
-        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-        const b64 = canvas.toDataURL('image/jpeg', 0.8).split(',')[1];
-        Swal.fire({ title: 'Uploading Banner...', didOpen: () => Swal.showLoading() });
-        apiCall('uploadBanner', {base64Data: b64, contentType: "image/jpeg", fileName: "banner.jpg"})
-          .then(res => { Swal.fire('Success', 'Promo Banner Live!', 'success'); input.value = ''; })
-          .catch(err => { Swal.fire('Error', err.message, 'error'); input.value = ''; });
-      }; img.src = e.target.result;
-    }; reader.readAsDataURL(input.files[0]);
-  }
-
-  function removeBanner() {
-    Swal.fire({title: 'Remove banner from portal?', showCancelButton: true, confirmButtonText: 'Yes'})
-      .then((r) => { if (r.isConfirmed) {
-        Swal.fire({ title: 'Removing...', didOpen: () => Swal.showLoading() });
-        apiCall('removeBanner').then(() => Swal.fire('Removed!', 'Banner cleared.', 'success'));
-      }});
-  }
 </script>
 </body>
 </html>
