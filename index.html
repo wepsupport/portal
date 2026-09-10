@@ -210,6 +210,12 @@
   </style>
 </head>
 <body>
+  <div id="bannerPopupOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:999999; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; backdrop-filter:blur(5px);">
+    <div style="position:relative; max-width:450px; width:100%; animation: contentEntrance 0.5s ease;">
+      <button onclick="document.getElementById('bannerPopupOverlay').style.display='none'" style="position:absolute; top:-15px; right:-15px; background:var(--pink-brand); color:#fff; border:none; width:35px; height:35px; border-radius:50%; font-size:18px; cursor:pointer; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.3); z-index:100000;">&times;</button>
+      <img id="bannerPopupImg" src="" style="width:100%; height:auto; border-radius:15px; box-shadow:0 10px 30px rgba(0,0,0,0.3); display:block;">
+    </div>
+  </div>
 
   <!-- ===============================
        INTRO TYPING SCREEN (JS ANIMATED)
@@ -366,7 +372,7 @@
   <script>
     // ===================== GITHUB API CONFIGURATION =====================
     // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-    const API_URL = "https://script.google.com/macros/s/AKfycbySn-CsTk-XrlRXY-A1AMgYEay479-4U8aCba7JNvtCBBRN_4LHyRWBPOf_HYP3z3ST/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxzXjtVj8jwkO68E0Jg1So9_1XzqrbdBWGL0hLae8XUMpj6fcCnexaQ7XW7wEaVB2gr/exec";
 
     async function apiCall(action, params = {}) {
         try {
@@ -402,13 +408,14 @@
           c3t: "वारंटी शिकायत", c3d: "अपने वारंटी वाले उत्पादों के लिए सेवा शिकायत दर्ज करें।",
           c4t: "सपोर्ट असिस्टेंट", c4d: "तुरंत स्वचालित समस्या निवारण प्राप्त करें या लाइव एक्जीक्यूटिव से जुड़ें।",
           track: "अपना टिकट ट्रैक करें",
-          greeting: "नमस्ते! मैं wepsol सर्विस बॉट हूँ। कृपया शुरू करने के लिए अपना प्रिंटर मॉडल चुनें।", loading: "लोड हो रहा है...", selectNext: "कृपया नीचे से एक विकल्प चुनें:", selectModel: "प्रिंटर मॉडल चुनें:", drpDefault: "-- चुनें --", nextStep: "आगे बढ़ें", modelWait: "मॉडल चुनना आवश्यक है।", watchVideo: "वीडियो देखें", downloadFile: "रिसोर्स डाउनलोड करें", needExecutive: "एक्जीक्यूटिव से बात करें", resolved: "समस्या हल हो गई", or: "या", formTitle: "लाइव एजेंट संपर्क", namePlaceholder: "पूरा नाम", phonePlaceholder: "10-अंकों का मोबाइल नंबर", startChatBtn: "सत्र शुरू करें", chatInputPlaceholder: "मैसेज टाइप करें...", endBtn: "चैट बंद करें", rateExperience: "सत्र समाप्त! कृपया रेट करें:", agentConnected: "लाइव चैट कनेक्ट हो गया है। एक एजेंट जल्द ही आपसे जुड़ेगा।", formError: "कृपया अपना नाम और सही 10-अंकों का मोबाइल नंबर दर्ज करें।", userEnded: "आपने चैट समाप्त कर दी है। कृपया अपना अनुभव रेट करें।", ratedMsg: "धन्यवाद! आपने {count} स्टार दिए हैं।", formCity: "शहर (City)", formState: "राज्य (State)", formSerial: "सीरियल नंबर (Opt)", formNext: "जमा करें", trackTitle: "टिकट स्थिति ट्रैक करें", invalidPhone: "मोबाइल नंबर ठीक 10 अंकों का होना चाहिए।" 
+          greeting: "नमस्ते! मैं wepsol सर्विस बॉट हूँ। कृपया शुरू करने के लिए अपना प्रिंटर मॉडल चुनें।", loading: "लोड हो रहा है...", selectNext: "कृपया नीचे से एक विकल्प चुनें:", selectModel: "प्रिंटर मॉडल चुनें:", drpDefault: "-- चुनें --", nextStep: "आगे बढ़ें", modelWait: "मॉडल चुनना आवश्यक है।", watchVideo: "वीडियो देखें", downloadFile: "रिसोर्स डाउनलोड करें", needExecutive: "एक्जीक्यूटिव से बात करें", resolved: "समस्या हल हो गई", or: "या", formTitle: "लाइव एजेंट संपर्क", namePlaceholder: "पूरा नाम", phonePlaceholder: "10-अंकों का मोबाइल नंबर", startChatBtn: "सत्र शुरू करें", chatInputPlaceholder: "मैसेज टाइप करें...", endBtn: "चैट बंद करें", rateExperience: "सत्र समाप्त! कृपया रेट करें:", agentConnected: "लाइव चैट कनेक्ट हो गया है। एक एजेंट जल्द ही आपसे जुड़ेगा।", formError: " कृपया अपना नाम और सही 10-अंकों का मोबाइल नंबर दर्ज करें।", userEnded: "आपने चैट समाप्त कर दी है। कृपया अपना अनुभव रेट करें।", ratedMsg: "धन्यवाद! आपने {count} स्टार दिए हैं।", formCity: "शहर (City)", formState: "राज्य (State)", formSerial: "सीरियल नंबर (Opt)", formNext: "जमा करें", trackTitle: "टिकट स्थिति ट्रैक करें", invalidPhone: "मोबाइल नंबर ठीक 10 अंकों का होना चाहिए।" 
       }
     };
 
     let currentLang='en', treeNodes=[], globalModels=[], selectedModelText="", currentPath=[], myChatId=null, lastChatId=null, myName="", myPhone="", myMsgCount=0, formTriggeredIds={}, callFormActive=false;
     let finalSelectedNode = null;
     let globalTickets = [];
+    let fetchedBannerUrl = "";
     
     let isDataLoaded = false;
     let isTypingDone = false;
@@ -429,6 +436,14 @@
                 if(lp) {
                     lp.style.display = 'flex';
                     lp.style.animation = 'contentEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards';
+                    
+                    if(fetchedBannerUrl) {
+                        let imgUrl = fetchedBannerUrl;
+                        let match = fetchedBannerUrl.match(/\/d\/(.+?)\//);
+                        if(match && match[1]) imgUrl = "https://drive.google.com/uc?id=" + match[1];
+                        document.getElementById('bannerPopupImg').src = imgUrl;
+                        document.getElementById('bannerPopupOverlay').style.display = 'flex';
+                    }
                 }
             }, 600); 
         }
@@ -464,6 +479,7 @@
             globalModels = data.models;
             const drp = document.getElementById('printerModelDropdown');
             globalModels.forEach(m => { let opt = document.createElement('option'); opt.value = m; opt.innerText = m; drp.appendChild(opt); });
+            if(data.bannerUrl) fetchedBannerUrl = data.bannerUrl;
             isDataLoaded = true;
             checkIntroComplete();
         }).catch(e => {
