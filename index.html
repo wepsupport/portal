@@ -211,13 +211,6 @@
 </head>
 <body>
 
-<div id="bannerPopupOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:999999; align-items:center; justify-content:center; padding:20px; box-sizing:border-box; backdrop-filter:blur(5px);">
-  <div style="position:relative; max-width:450px; width:100%; animation: contentEntrance 0.5s ease;">
-    <button onclick="document.getElementById('bannerPopupOverlay').style.display='none'" style="position:absolute; top:-15px; right:-15px; background:var(--pink-brand); color:#fff; border:none; width:35px; height:35px; border-radius:50%; font-size:18px; cursor:pointer; font-weight:bold; box-shadow:0 4px 10px rgba(0,0,0,0.3); z-index:100000;">&times;</button>
-    <img id="bannerPopupImg" src="" style="width:100%; height:auto; border-radius:15px; box-shadow:0 10px 30px rgba(0,0,0,0.3); display:block;">
-  </div>
-</div>
-
   <!-- ===============================
        INTRO TYPING SCREEN (JS ANIMATED)
        =============================== -->
@@ -373,7 +366,7 @@
   <script>
     // ===================== GITHUB API CONFIGURATION =====================
     // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-    const API_URL = "https://script.google.com/macros/s/AKfycbxkRmTOAmnW5SvUOHq1M6Y46Sh-VtpkFsh1Ksc-t9SZZBFPMA1XJ83YYorXsstJLl8B/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwRPu043N5h6jb9eSgi-DUuJU6wmeoWDSsYO3brwkN0BR1jgb9l1xBtR3fkOp595BnR/exec";
 
     async function apiCall(action, params = {}) {
         try {
@@ -416,7 +409,6 @@
     let currentLang='en', treeNodes=[], globalModels=[], selectedModelText="", currentPath=[], myChatId=null, lastChatId=null, myName="", myPhone="", myMsgCount=0, formTriggeredIds={}, callFormActive=false;
     let finalSelectedNode = null;
     let globalTickets = [];
-    let fetchedBannerBase64 = "";
     
     let isDataLoaded = false;
     let isTypingDone = false;
@@ -437,10 +429,6 @@
                 if(lp) {
                     lp.style.display = 'flex';
                     lp.style.animation = 'contentEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards';
-                    if(fetchedBannerBase64) {
-                        document.getElementById('bannerPopupImg').src = fetchedBannerBase64;
-                        document.getElementById('bannerPopupOverlay').style.display = 'flex';
-                    }
                 }
             }, 600); 
         }
@@ -476,7 +464,6 @@
             globalModels = data.models;
             const drp = document.getElementById('printerModelDropdown');
             globalModels.forEach(m => { let opt = document.createElement('option'); opt.value = m; opt.innerText = m; drp.appendChild(opt); });
-            if(data.bannerBase64) fetchedBannerBase64 = data.bannerBase64;
             isDataLoaded = true;
             checkIntroComplete();
         }).catch(e => {
