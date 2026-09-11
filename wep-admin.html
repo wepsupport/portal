@@ -75,13 +75,13 @@
 
 <div id="landingScreen" style="display:none;">
   <div class="wepsol-logo">WEPSOL</div><div class="wepsol-sub">SERVICE MANAGEMENT PORTAL</div>
-  <div class="landing-card card-dash" onclick="openPortal('dash'); loadDashboard();"><h3 style="color: #2c3e50; margin: 0;">ЁЯУК Main Dashboard</h3></div>
-  <div class="landing-card card-pw" onclick="openPortal('pw')"><h3 style="color: var(--brand); margin: 0;">ЁЯФз 1. Post Warranty</h3></div>
-  <div class="landing-card card-ct" onclick="openPortal('ct')"><h3 style="color: var(--brand2); margin: 0;">ЁЯУЮ 2. Call Tracking</h3></div>
-  <div class="landing-card card-wcr" onclick="openPortal('wcr')"><h3 style="color: var(--brand3); margin: 0;">тЩ╗я╕П 3. WCR Defective</h3></div>
+  <div class="landing-card card-dash" onclick="openPortal('dash'); loadDashboard();"><h3 style="color: #2c3e50; margin: 0;">📊 Main Dashboard</h3></div>
+  <div class="landing-card card-pw" onclick="openPortal('pw')"><h3 style="color: var(--brand); margin: 0;">🔧 1. Post Warranty</h3></div>
+  <div class="landing-card card-ct" onclick="openPortal('ct')"><h3 style="color: var(--brand2); margin: 0;">📞 2. Call Tracking</h3></div>
+  <div class="landing-card card-wcr" onclick="openPortal('wcr')"><h3 style="color: var(--brand3); margin: 0;">♻️ 3. WCR Defective</h3></div>
 </div>
 <div id="dashPortal" style="display:none;" class="container container-dash">
-  <div class="header-nav" style="background: #2c3e50;"><h3 style="margin:0; color:white;">ЁЯУК Global Dashboard</h3><button class="back-btn" onclick="openPortal('home')">тмЕя╕П Main Menu</button></div>
+  <div class="header-nav" style="background: #2c3e50;"><h3 style="margin:0; color:white;">📊 Global Dashboard</h3><button class="back-btn" onclick="openPortal('home')">⬅️ Main Menu</button></div>
   <div class="content active" style="background: #f4f7f6;">
     <div id="dashLoader" style="text-align:center; padding: 40px; font-weight:bold; color:#7f8fa6;">Fetching Live Enterprise Data...</div>
     <div id="dashContent" style="display:none;">
@@ -93,7 +93,7 @@
         </div>
         <div class="dash-row">
           <div class="stat-card" style="text-align:left; flex: 1; border-top: 4px solid #8e44ad;">
-            <h4 style="margin:0 0 5px 0; color:#2c3e50;">ЁЯЦ╝я╕П Customer Portal Promo Banner</h4>
+            <h4 style="margin:0 0 5px 0; color:#2c3e50;">🖼️ Customer Portal Promo Banner</h4>
             <p style="text-transform:none; font-weight:normal; margin-bottom:15px; font-size:12px;">Paste the Base64 code of your promotional image below to show it as a popup on the Customer Portal.</p>
             <textarea id="adminBannerBase64" rows="3" placeholder="Paste Base64 code here (e.g., data:image/png;base64,...)" style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc; margin-bottom:10px; font-size:11px;"></textarea>
             <button class="btn" style="background:#8e44ad; width:auto; padding:8px 15px; margin-right:10px;" onclick="savePromoBanner()">Save Banner</button>
@@ -105,7 +105,7 @@
   </div>
 </div>
 <div id="pwPortal" style="display:none;" class="container">
-  <div class="header-nav" style="background: #e3f2fd;"><h3 style="margin:0; color:var(--brand);">Post Warranty Portal</h3><button class="back-btn" onclick="openPortal('home')">тмЕя╕П Main Menu</button></div>
+  <div class="header-nav" style="background: #e3f2fd;"><h3 style="margin:0; color:var(--brand);">Post Warranty Portal</h3><button class="back-btn" onclick="openPortal('home')">⬅️ Main Menu</button></div>
   <div class="tabs"><div class="tab pw-tab active" onclick="showPwTab('pw-entry', this)">New Entry</div><div class="tab pw-tab" onclick="showPwTab('pw-repair', this); loadPwRepairs();">Repair Pending</div><div class="tab pw-tab" onclick="showPwTab('pw-pay', this); loadPwPayments();">Payment/Quote</div><div class="tab pw-tab" onclick="showPwTab('pw-reports', this)">Detailed Reports</div></div>
   <div id="pw-entry" class="content pw-content active">
     <form id="pwEntryForm" onsubmit="event.preventDefault(); submitPwEntry();">
@@ -115,7 +115,7 @@
     </form>
   </div>
   <div id="pw-repair" class="content pw-content"><div id="pwRepairList">Loading...</div><div id="pwRepairPanel" class="panel" style="display:none;"><h4 id="pwRepTitle" style="color:var(--brand)"></h4><form onsubmit="event.preventDefault(); submitPwRepair(this);"><input type="hidden" name="row" id="pwRepRow"><label>Action Taken *</label><textarea name="actionTaken" rows="2" required style="margin-bottom:10px;"></textarea><label>Part Failure *</label><input list="pwFailureList" name="partFailure" id="pwFailureInput" required style="margin-bottom:10px;"><datalist id="pwFailureList"></datalist><label>Status</label><select name="repairStatus" required style="margin-bottom:10px;"><option value="Done">Repair Done</option><option value="Not Repairable">Not Repairable</option></select><button class="btn btn-dark" type="submit">Update Repair</button></form></div></div>
-  <div id="pw-pay" class="content pw-content"><div id="pwPayList">Loading...</div><div id="pwPayPanel" class="panel" style="display:none; background:#f9f9f9;"><h4 id="pwPayTitle" style="color:#44bd32;"></h4><div style="background:#fff; padding:15px; border:1px solid #ccc; border-radius:4px; margin-bottom:15px;"><div style="display:flex; justify-content:space-between;"><h4 style="margin:0;">ЁЯУЭ Generate / Edit Quotation</h4><button class="btn" type="button" style="width:auto; padding:5px 10px; background:#00b894; margin:0;" onclick="pwMarkSent()">тЬФя╕П Mark as Sent</button></div><hr><p style="font-size:11px; color:#555;"><i>Note: Generating will overwrite any previously saved quotation for this task.</i></p><label>Select Quotation Rate</label><select id="pwQuotePart" onchange="pwCalcQuote()"></select><div class="grid" style="margin-top:10px;"><div><label>Base (тВ╣)</label><input type="number" id="pwQBase" readonly></div><div><label>IGST (тВ╣)</label><input type="number" id="pwQTax" readonly></div></div><label>Total (тВ╣)</label><input type="number" id="pwQTotal" readonly style="font-weight:bold; color:red;"><button class="btn" type="button" style="background:#e1b12c; color:#000;" onclick="pwGenPrint()">ЁЯТ╛ Save & Print PDF</button></div><div style="background:#fff; padding:15px; border:1px solid #ccc; border-radius:4px;"><h4 style="margin-top:0;">тЬЕ Close Payment</h4><form onsubmit="event.preventDefault(); submitPwPayment(this);"><input type="hidden" name="row" id="pwPayRow"><div class="grid"><div><label id="lblInvoice">Invoice No *</label><input type="text" name="docNo" id="pwPayDocNo" required></div><div><label>Tracking No *</label><input type="text" name="trackNo" id="pwPayTrackNo" required></div></div><button class="btn" style="background:#44bd32;" type="submit">Payment Done & Close</button></form></div></div><div id="pwMultiPanel" class="panel" style="display:none; background:#fffdf5; border-color:#e1b12c;"><div style="background:#fff; padding:15px; border:1px solid #ccc; border-radius:4px; margin-bottom:15px;"><div style="display:flex; justify-content:space-between;"><h4 style="margin:0; color:#e1b12c;" id="pwMultiTitle">ЁЯз╛ Master Quotation</h4><button class="btn" type="button" style="width:auto; padding:5px 10px; background:#00b894; margin:0;" onclick="pwMarkMultiSent()">тЬФя╕П Mark All Sent</button></div><hr><div id="pwMultiContainer"></div><hr><div class="grid"><div><label>Grand Base (тВ╣)</label><input type="number" id="pwMBase" readonly></div><div><label>Grand IGST (тВ╣)</label><input type="number" id="pwMTax" readonly></div></div><label>Grand Total (тВ╣)</label><input type="number" id="pwMTotal" readonly style="font-weight:bold; color:red; font-size:16px;"><div style="display:flex; gap:10px;"><button class="btn" type="button" style="background:#e1b12c; color:#000;" onclick="pwGenMultiPrint()">ЁЯТ╛ Print Master PDF</button><button class="btn btn-dark" type="button" onclick="document.getElementById('pwMultiPanel').style.display='none'">Cancel</button></div></div><div style="background:#fff; padding:15px; border:1px solid #ccc; border-radius:4px;"><h4 style="margin-top:0;">тЬЕ Master Close</h4><form onsubmit="event.preventDefault(); pwSubmitMultiPayment();"><div class="grid"><div><label>Master Invoice *</label><input type="text" id="pwMDoc" required></div><div><label>Master Tracking *</label><input type="text" id="pwMTrack" required></div></div><button class="btn" style="background:#44bd32;" type="submit">Close All Items</button></form></div></div></div>
+  <div id="pw-pay" class="content pw-content"><div id="pwPayList">Loading...</div><div id="pwPayPanel" class="panel" style="display:none; background:#f9f9f9;"><h4 id="pwPayTitle" style="color:#44bd32;"></h4><div style="background:#fff; padding:15px; border:1px solid #ccc; border-radius:4px; margin-bottom:15px;"><div style="display:flex; justify-content:space-between;"><h4 style="margin:0;">📝 Generate / Edit Quotation</h4><button class="btn" type="button" style="width:auto; padding:5px 10px; background:#00b894; margin:0;" onclick="pwMarkSent()">✔️ Mark as Sent</button></div><hr><p style="font-size:11px; color:#555;"><i>Note: Generating will overwrite any previously saved quotation for this task.</i></p><label>Select Quotation Rate</label><select id="pwQuotePart" onchange="pwCalcQuote()"></select><div class="grid" style="margin-top:10px;"><div><label>Base (₹)</label><input type="number" id="pwQBase" readonly></div><div><label>IGST (₹)</label><input type="number" id="pwQTax" readonly></div></div><label>Total (₹)</label><input type="number" id="pwQTotal" readonly style="font-weight:bold; color:red;"><button class="btn" type="button" style="background:#e1b12c; color:#000;" onclick="pwGenPrint()">💾 Save & Print PDF</button></div><div style="background:#fff; padding:15px; border:1px solid #ccc; border-radius:4px;"><h4 style="margin-top:0;">✅ Close Payment</h4><form onsubmit="event.preventDefault(); submitPwPayment(this);"><input type="hidden" name="row" id="pwPayRow"><div class="grid"><div><label id="lblInvoice">Invoice No *</label><input type="text" name="docNo" id="pwPayDocNo" required></div><div><label>Tracking No *</label><input type="text" name="trackNo" id="pwPayTrackNo" required></div></div><button class="btn" style="background:#44bd32;" type="submit">Payment Done & Close</button></form></div></div><div id="pwMultiPanel" class="panel" style="display:none; background:#fffdf5; border-color:#e1b12c;"><div style="background:#fff; padding:15px; border:1px solid #ccc; border-radius:4px; margin-bottom:15px;"><div style="display:flex; justify-content:space-between;"><h4 style="margin:0; color:#e1b12c;" id="pwMultiTitle">🧾 Master Quotation</h4><button class="btn" type="button" style="width:auto; padding:5px 10px; background:#00b894; margin:0;" onclick="pwMarkMultiSent()">✔️ Mark All Sent</button></div><hr><div id="pwMultiContainer"></div><hr><div class="grid"><div><label>Grand Base (₹)</label><input type="number" id="pwMBase" readonly></div><div><label>Grand IGST (₹)</label><input type="number" id="pwMTax" readonly></div></div><label>Grand Total (₹)</label><input type="number" id="pwMTotal" readonly style="font-weight:bold; color:red; font-size:16px;"><div style="display:flex; gap:10px;"><button class="btn" type="button" style="background:#e1b12c; color:#000;" onclick="pwGenMultiPrint()">💾 Print Master PDF</button><button class="btn btn-dark" type="button" onclick="document.getElementById('pwMultiPanel').style.display='none'">Cancel</button></div></div><div style="background:#fff; padding:15px; border:1px solid #ccc; border-radius:4px;"><h4 style="margin-top:0;">✅ Master Close</h4><form onsubmit="event.preventDefault(); pwSubmitMultiPayment();"><div class="grid"><div><label>Master Invoice *</label><input type="text" id="pwMDoc" required></div><div><label>Master Tracking *</label><input type="text" id="pwMTrack" required></div></div><button class="btn" style="background:#44bd32;" type="submit">Close All Items</button></form></div></div></div>
   <div id="pw-reports" class="content pw-content">
     <div class="grid">
         <div><label>From Date</label><input type="date" id="pwRFrom"></div>
@@ -143,7 +143,7 @@
 
 <!-- ================= CALL TRACKING ================= -->
 <div id="ctPortal" style="display:none;" class="container container-ct">
-  <div class="header-nav" style="background: #ffe0eb;"><h3 style="margin:0; color:var(--brand2);">Call Tracking System</h3><button class="back-btn" onclick="openPortal('home')">тмЕя╕П Main Menu</button></div>
+  <div class="header-nav" style="background: #ffe0eb;"><h3 style="margin:0; color:var(--brand2);">Call Tracking System</h3><button class="back-btn" onclick="openPortal('home')">⬅️ Main Menu</button></div>
   <div class="tabs">
       <div class="tab ct-tab active" onclick="showCtTab('ct-new', this)">New Call</div>
       <div class="tab ct-tab" onclick="showCtTab('ct-pending', this); ctLoadPending();">Pending Calls</div>
@@ -262,7 +262,7 @@
   </div>
 </div>
 <div id="wcrPortal" style="display:none;" class="container container-wcr">
-  <div class="header-nav" style="background: #fbeee6;"><h3 style="margin:0; color:var(--brand3);">WCR Defective Parts</h3><button class="back-btn" onclick="openPortal('home')">тмЕя╕П Main Menu</button></div>
+  <div class="header-nav" style="background: #fbeee6;"><h3 style="margin:0; color:var(--brand3);">WCR Defective Parts</h3><button class="back-btn" onclick="openPortal('home')">⬅️ Main Menu</button></div>
   <div class="tabs"><div class="tab wcr-tab active" onclick="showWcrTab('wcr-entry', this)">New Entry</div><div class="tab wcr-tab" onclick="showWcrTab('wcr-repair', this); wcrLoadPending();">Repair Updates</div><div class="tab wcr-tab" onclick="showWcrTab('wcr-approve', this); wcrLoadApprovals();">Scrap Approval</div><div class="tab wcr-tab" onclick="showWcrTab('wcr-inv', this); wcrLoadInventory();">Inventory</div><div class="tab wcr-tab" onclick="showWcrTab('wcr-reports', this)">Detailed Reports</div></div>
   <div id="wcr-entry" class="content wcr-content active">
     <form onsubmit="event.preventDefault(); wcrSubmitEntry();">
@@ -296,7 +296,7 @@
   
   <div id="wcr-inv" class="content wcr-content">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-      <h4 style="margin:0; color:var(--brand3);">ЁЯУж WCR Part Inventory</h4>
+      <h4 style="margin:0; color:var(--brand3);">📦 WCR Part Inventory</h4>
       <input type="text" id="wcrInvSearch" placeholder="Search Model or Part..." onkeyup="filterTable('wcrInvList', this.value)" style="width:200px; padding:5px; border-radius:4px; border:1px solid #ccc;">
       <button class="btn btn-dark" style="width:auto; padding:5px 15px; margin:0;" onclick="wcrLoadInventory()"><i class="fa-solid fa-rotate-right"></i> Refresh</button>
     </div>
@@ -329,7 +329,7 @@
 <script>
   // ===================== GITHUB API CONFIGURATION =====================
   // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-  const API_URL = "https://script.google.com/macros/s/AKfycbxkRmTOAmnW5SvUOHq1M6Y46Sh-VtpkFsh1Ksc-t9SZZBFPMA1XJ83YYorXsstJLl8B/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbwRPu043N5h6jb9eSgi-DUuJU6wmeoWDSsYO3brwkN0BR1jgb9l1xBtR3fkOp595BnR/exec";
 
   async function apiCall(action, params = {}) {
       try {
@@ -479,20 +479,20 @@
               let iss = (latestCall.issue || "").toUpperCase();
               let act = (latestCall.action || "").toUpperCase();
               
-              let title = "New Service Request! ЁЯЪА";
+              let title = "New Service Request! 🚀";
               let msg = "A new request has been logged.";
               
               if (act.includes("REGISTERED VIA CHAT") || iss.includes("ISSUE: ")) {
-                  title = "ЁЯЪи Priority: New Chatbot Request!";
+                  title = "🚨 Priority: New Chatbot Request!";
                   msg = "Customer registered a request via Chatbot.";
               } else if (iss.includes("INSTALLATION REQUEST")) {
-                  title = "ЁЯЫая╕П New Installation Request!";
+                  title = "🛠️ New Installation Request!";
                   msg = "A new installation request has been logged.";
               } else if (iss.includes("DEMO REQUEST")) {
-                  title = "ЁЯТ╗ New Demo Request!";
+                  title = "💻 New Demo Request!";
                   msg = "A new product demo request has been logged.";
               } else if (iss.includes("WARRANTY COMPLAINT")) {
-                  title = "ЁЯЫбя╕П New Warranty Complaint!";
+                  title = "🛡️ New Warranty Complaint!";
                   msg = "A new warranty complaint has been logged.";
               }
               
@@ -572,7 +572,7 @@
       document.getElementById('loginUserSelect').innerHTML=pHTML; document.getElementById('pwPerson').innerHTML=pHTML; document.getElementById('ctPerson').innerHTML=pHTML; document.getElementById('wcrPerson').innerHTML=pHTML;
       document.getElementById('pwRUser').innerHTML=fHTML; document.getElementById('ctRUser').innerHTML=fHTML; document.getElementById('wcrRUser').innerHTML=fHTML;
       document.getElementById('pwFailureList').innerHTML=''; data.failures.forEach(f => document.getElementById('pwFailureList').innerHTML+=`<option value="${f}">`);
-      document.getElementById('pwQuotePart').innerHTML='<option value="">-- Select --</option>'; pwPartsCat=data.parts; pwPartsCat.forEach((p, i) => document.getElementById('pwQuotePart').innerHTML+=`<option value="${i}">${p.name} - тВ╣${p.price}</option>`);
+      document.getElementById('pwQuotePart').innerHTML='<option value="">-- Select --</option>'; pwPartsCat=data.parts; pwPartsCat.forEach((p, i) => document.getElementById('pwQuotePart').innerHTML+=`<option value="${i}">${p.name} - ₹${p.price}</option>`);
       wcrPartsHtml = '<option value="">-- Select --</option>'; if(data.wcrParts) data.wcrParts.forEach(w => wcrPartsHtml += `<option value="${w}">${w}</option>`); document.querySelectorAll('.wcr-part').forEach(d=>d.innerHTML=wcrPartsHtml);
       globalBankInfo = data.bankDetails || "Bank details not provided in Settings."; globalTermsList = data.termsConditions || [];
       let dl = document.getElementById('wcrSourceList');
@@ -580,7 +580,7 @@
     }).catch(e=>{});
   }
   
-  function addPwItem() { pwItemCount++; var c=document.getElementById('pwItemsContainer'); var b=document.createElement('div'); b.className='item-box'; b.id='pw_item_'+pwItemCount; b.innerHTML=`<button type="button" class="remove-btn" onclick="document.getElementById('pw_item_${pwItemCount}').remove()">├Ч</button><div class="grid"><div><label>Model *</label><select class="i-model" required>${pwModelsHtml}</select></div><div><label>Part *</label><select class="i-part" required><option value="">-- Select --</option><option value="PCB">PCB</option><option value="SMPS">SMPS</option><option value="Printer">Printer</option><option value="Adaptor">Adaptor</option><option value="Other">Other</option></select></div></div><div class="grid"><div><label>SL. No</label><input type="text" class="i-serial"></div><div><label>Issue</label><input type="text" class="i-issue"></div></div>`; c.appendChild(b); }
+  function addPwItem() { pwItemCount++; var c=document.getElementById('pwItemsContainer'); var b=document.createElement('div'); b.className='item-box'; b.id='pw_item_'+pwItemCount; b.innerHTML=`<button type="button" class="remove-btn" onclick="document.getElementById('pw_item_${pwItemCount}').remove()">×</button><div class="grid"><div><label>Model *</label><select class="i-model" required>${pwModelsHtml}</select></div><div><label>Part *</label><select class="i-part" required><option value="">-- Select --</option><option value="PCB">PCB</option><option value="SMPS">SMPS</option><option value="Printer">Printer</option><option value="Adaptor">Adaptor</option><option value="Other">Other</option></select></div></div><div class="grid"><div><label>SL. No</label><input type="text" class="i-serial"></div><div><label>Issue</label><input type="text" class="i-issue"></div></div>`; c.appendChild(b); }
   function submitPwEntry() { 
       var fData={ customerName:document.getElementById('pwCust').value, contactNumber:document.getElementById('pwContact').value, receivingDate:document.getElementById('pwDate').value, receivedDocNo:document.getElementById('pwDoc').value, responsiblePerson:document.getElementById('pwPerson').value }; 
       var iArr=[]; document.querySelectorAll('#pwItemsContainer .item-box').forEach(b=>iArr.push({ model:b.querySelector('.i-model').value, partType:b.querySelector('.i-part').value, serial:b.querySelector('.i-serial').value, issue:b.querySelector('.i-issue').value })); 
@@ -591,7 +591,7 @@
           document.getElementById('pwEntryForm').reset(); document.getElementById('pwPerson').value = loggedInUser;
           document.getElementById('pwItemsContainer').innerHTML=`<div class="item-box" id="pw_item_1"><div class="grid"><div><label>Model *</label><select class="i-model" required>${pwModelsHtml}</select></div><div><label>Part *</label><select class="i-part" required><option value="">-- Select --</option><option value="PCB">PCB</option><option value="SMPS">SMPS</option><option value="Adaptor">Adaptor</option><option value="Other">Other</option></select></div></div><div class="grid"><div><label>SL. No</label><input type="text" class="i-serial"></div><div><label>Issue</label><input type="text" class="i-issue"></div></div></div>`; 
           let generatedIds = bcs.map(b => b.id).join(', ');
-          Swal.fire({ title: 'Saved Successfully!', html: `<b>${bcs.length}</b> entries generated.<br><br><b>Task IDs (Barcodes):</b><br><span style="font-size:16px; color:#e74c3c; font-weight:bold;">${generatedIds}</span><br><br><small>You can print them or write them manually.</small>`, icon: 'success', showCancelButton: true, confirmButtonText: 'ЁЯЦия╕П Print Barcodes', cancelButtonText: 'Close' }).then(r=>{ if(r.isConfirmed) printBarcodes(bcs, fData.customerName); }); loadPwRepairs(); 
+          Swal.fire({ title: 'Saved Successfully!', html: `<b>${bcs.length}</b> entries generated.<br><br><b>Task IDs (Barcodes):</b><br><span style="font-size:16px; color:#e74c3c; font-weight:bold;">${generatedIds}</span><br><br><small>You can print them or write them manually.</small>`, icon: 'success', showCancelButton: true, confirmButtonText: '🖨️ Print Barcodes', cancelButtonText: 'Close' }).then(r=>{ if(r.isConfirmed) printBarcodes(bcs, fData.customerName); }); loadPwRepairs(); 
       }).catch(e=>{ Swal.fire('Error', e.message, 'error'); }); 
   }
   function printBarcodes(bcs, txt) { var win=window.open('','_blank'); var html='<html><head><style>@page{size:50mm 25mm;margin:0;} body{margin:0;display:flex;flex-direction:column;align-items:center;font-family:Arial;} .label{width:50mm;height:25mm;page-break-after:always;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2mm;background:#fff;} .label img{max-width:100%;max-height:14mm;} .sub{font-size:8px;font-weight:bold;white-space:nowrap;overflow:hidden;} .micro{font-size:6px;}</style></head><body>'; bcs.forEach(b=>{ JsBarcode("#barcodeCanvas", b.id, {format:"CODE128", displayValue:true, fontSize:16, height:40, margin:0}); html+=`<div class="label"><img src="${document.getElementById("barcodeCanvas").toDataURL("image/png")}" /><div class="sub">${txt.substring(0,15)} | ${b.partType}</div><div class="micro">SN: ${b.serial||'N/A'}</div></div>`; }); html+='<script>window.onload=function(){window.print();window.close();};<'+'/script></body></html>'; win.document.write(html); win.document.close(); }
@@ -600,7 +600,7 @@
       apiCall('getPendingRepairs').then(d => { 
           if(!d.length){ document.getElementById('pwRepairList').innerHTML="No records."; return; } 
           let h="", g={}; d.forEach(c=>{if(!g[c.customer]) g[c.customer]=[]; g[c.customer].push(c);}); let i=0; 
-          for(let c in g){ i++; h+=`<div class="group-wrap"><div class="group-header" onclick="toggleGroup('pwr-${i}')"><span>ЁЯСд ${c}</span><span class="badge" style="background:#e1b12c;">${g[c].length} Parts</span></div><div class="group-body" id="pwr-${i}">`; g[c].forEach(x=>{ h+=`<div class="card" onclick="openPwRepair(${x.row},'${safeB64(x.serial)}','${safeB64(c)}','${x.taskId}')"><div class="tat-badge">тП▒ TAT: ${x.tat}</div><b>${x.taskId}</b><br><small>${x.model} | ${x.partType}</small><br><small style="color:#d63031; font-weight:bold;">Issue: ${x.issue}</small></div>`; }); h+='</div></div>'; } 
+          for(let c in g){ i++; h+=`<div class="group-wrap"><div class="group-header" onclick="toggleGroup('pwr-${i}')"><span>👤 ${c}</span><span class="badge" style="background:#e1b12c;">${g[c].length} Parts</span></div><div class="group-body" id="pwr-${i}">`; g[c].forEach(x=>{ h+=`<div class="card" onclick="openPwRepair(${x.row},'${safeB64(x.serial)}','${safeB64(c)}','${x.taskId}')"><div class="tat-badge">⏱ TAT: ${x.tat}</div><b>${x.taskId}</b><br><small>${x.model} | ${x.partType}</small><br><small style="color:#d63031; font-weight:bold;">Issue: ${x.issue}</small></div>`; }); h+='</div></div>'; } 
           document.getElementById('pwRepairList').innerHTML=h; 
       }).catch(e=>{ document.getElementById('pwRepairList').innerHTML="Error."; }); 
   }
@@ -614,11 +614,11 @@
       let h="", g={}; d.forEach(c=>{if(!g[c.customer]) g[c.customer]=[]; g[c.customer].push(c);}); let i=0; 
       for(let c in g){ 
         i++; let sg=btoa(unescape(encodeURIComponent(JSON.stringify(g[c])))); 
-        h+=`<div class="group-wrap"><div class="group-header" onclick="toggleGroup('pwp-${i}')"><span>ЁЯСд ${c}</span><div><span class="badge" style="background:#0984e3; cursor:pointer; margin-right:8px;" onclick="event.stopPropagation(); openPwMulti('${safeB64(c)}','${sg}')">ЁЯз╛ Master Quote</span><span class="badge" style="background:#44bd32;">${g[c].length} Ready</span></div></div><div class="group-body" id="pwp-${i}">`; 
+        h+=`<div class="group-wrap"><div class="group-header" onclick="toggleGroup('pwp-${i}')"><span>👤 ${c}</span><div><span class="badge" style="background:#0984e3; cursor:pointer; margin-right:8px;" onclick="event.stopPropagation(); openPwMulti('${safeB64(c)}','${sg}')">🧾 Master Quote</span><span class="badge" style="background:#44bd32;">${g[c].length} Ready</span></div></div><div class="group-body" id="pwp-${i}">`; 
         g[c].forEach(x=>{ 
           let sd=btoa(unescape(encodeURIComponent(JSON.stringify(x)))); let qc=x.quoteStatus==="Generated"?"q-gen":(x.quoteStatus==="Sent"?"q-sent":"q-not"); let titleColor = x.status === "Not Repairable" ? "color:#e74c3c" : "color:#333"; let viewBtn = '';
           if(x.quoteJson && x.quoteJson.length > 10) { viewBtn = `<button class="btn" style="background:#0984e3; padding:4px 8px; font-size:10px; width:auto; position:absolute; right:10px; bottom:10px; z-index:10;" onclick="event.stopPropagation(); viewStoredQuote('${safeB64(x.quoteJson)}')"><i class="fa-solid fa-eye"></i> View PDF</button>`; }
-          h+=`<div class="card card-pay" onclick="openPwPay('${sd}')"><div class="tat-badge">тП▒ TAT: ${x.tat}</div><b style="${titleColor}">${x.taskId} - ${x.model} (${x.status})</b><br><small>Part: ${x.partType}</small><br><small style="color:#d63031; font-weight:bold;">Issue: ${x.issue}</small><br><span class="q-tag ${qc}">${x.quoteStatus}</span> ${viewBtn}</div>`;
+          h+=`<div class="card card-pay" onclick="openPwPay('${sd}')"><div class="tat-badge">⏱ TAT: ${x.tat}</div><b style="${titleColor}">${x.taskId} - ${x.model} (${x.status})</b><br><small>Part: ${x.partType}</small><br><small style="color:#d63031; font-weight:bold;">Issue: ${x.issue}</small><br><span class="q-tag ${qc}">${x.quoteStatus}</span> ${viewBtn}</div>`;
         }); h+='</div></div>'; 
       } document.getElementById('pwPayList').innerHTML=h; 
     }).catch(e=>{ document.getElementById('pwPayList').innerHTML="Error."; }); 
@@ -659,7 +659,7 @@
     }).catch(e=>{Swal.fire('Error',e.message,'error')});
   }
   function viewStoredQuote(encodedJson) { let qData = JSON.parse(safeDec(encodedJson)); let isMulti = qData.items ? true : false; let win = window.open('','_blank'); win.document.write(generatePdfHtml(qData, isMulti)); win.document.close(); }
-  function openPwMulti(c, sd) { document.getElementById('pwPayPanel').style.display='none'; document.getElementById('pwMultiPanel').style.display='block'; document.getElementById('pwMultiTitle').innerText="ЁЯз╛ Master Quotation: "+safeDec(c); pwMultiItems=JSON.parse(safeDec(sd)); let h=''; pwMultiItems.forEach((x,i)=>{ if(x.status === "Not Repairable") { h+=`<div style="border:1px solid #eee;padding:10px;margin-bottom:5px;background:#fffdf5;"><b style="color:#d63031">${x.taskId} (Not Repairable)</b> - ${x.model}<br><small>Remark: ${x.reason}</small><input type="hidden" class="mq-s" data-i="${i}" value="NR"></div>`; } else { h+=`<div style="border:1px solid #eee;padding:10px;margin-bottom:5px;background:#fff;"><b>${x.taskId}</b> - ${x.model}<select class="mq-s" data-i="${i}" onchange="pwCalcMulti()" style="margin-top:5px;"><option value="">-- Select Rate --</option>`; pwPartsCat.forEach((p,j)=>{h+=`<option value="${j}">${p.name} - тВ╣${p.price}</option>`;}); h+='</select></div>'; } }); document.getElementById('pwMultiContainer').innerHTML=h; document.getElementById('pwMBase').value=''; document.getElementById('pwMTax').value=''; document.getElementById('pwMTotal').value=''; window.scrollTo(0, document.body.scrollHeight); }
+  function openPwMulti(c, sd) { document.getElementById('pwPayPanel').style.display='none'; document.getElementById('pwMultiPanel').style.display='block'; document.getElementById('pwMultiTitle').innerText="🧾 Master Quotation: "+safeDec(c); pwMultiItems=JSON.parse(safeDec(sd)); let h=''; pwMultiItems.forEach((x,i)=>{ if(x.status === "Not Repairable") { h+=`<div style="border:1px solid #eee;padding:10px;margin-bottom:5px;background:#fffdf5;"><b style="color:#d63031">${x.taskId} (Not Repairable)</b> - ${x.model}<br><small>Remark: ${x.reason}</small><input type="hidden" class="mq-s" data-i="${i}" value="NR"></div>`; } else { h+=`<div style="border:1px solid #eee;padding:10px;margin-bottom:5px;background:#fff;"><b>${x.taskId}</b> - ${x.model}<select class="mq-s" data-i="${i}" onchange="pwCalcMulti()" style="margin-top:5px;"><option value="">-- Select Rate --</option>`; pwPartsCat.forEach((p,j)=>{h+=`<option value="${j}">${p.name} - ₹${p.price}</option>`;}); h+='</select></div>'; } }); document.getElementById('pwMultiContainer').innerHTML=h; document.getElementById('pwMBase').value=''; document.getElementById('pwMTax').value=''; document.getElementById('pwMTotal').value=''; window.scrollTo(0, document.body.scrollHeight); }
   function pwCalcMulti() { let sels=document.querySelectorAll('.mq-s'); let gb=0, gt=0, gtot=0; sels.forEach((s,i)=>{ if(s.value==="NR") { pwMultiItems[i].partName="Not Repairable"; pwMultiItems[i].basePrice="0.00"; pwMultiItems[i].igst="0.00"; pwMultiItems[i].total="0.00"; pwMultiItems[i].fullDescription=pwMultiItems[i].model+" - Not Repairable (Remark: "+(pwMultiItems[i].reason||"")+")"; return; } if(s.value==="") return; let p=pwPartsCat[s.value]; let b=parseFloat(p.price); let t=b*0.18; let tot=b+t; gb+=b; gt+=t; gtot+=tot; pwMultiItems[i].partName=p.name; pwMultiItems[i].basePrice=b.toFixed(2); pwMultiItems[i].igst=t.toFixed(2); pwMultiItems[i].total=tot.toFixed(2); pwMultiItems[i].fullDescription=pwMultiItems[i].model+' - '+p.name; pwMultiItems[i].hsnDesc=p.hsnDesc||""; pwMultiItems[i].hsnNum=p.hsnNum||"84439959"; }); document.getElementById('pwMBase').value=gb.toFixed(2); document.getElementById('pwMTax').value=gt.toFixed(2); document.getElementById('pwMTotal').value=gtot.toFixed(2); }
   function pwGenMultiPrint() { 
     let s=document.querySelectorAll('.mq-s'); 
@@ -771,7 +771,7 @@
                       if(displayAct.includes("|| CALLS:")) {
                           displayAct = displayAct.split("|| CALLS:")[0].trim();
                       }
-                      html+=`<div class="ct-card" style="border-left-color:${gClr[g]};" onclick="ctOpenUpdate(${c.row}, '${safeB64(c.customerName)}', '${safeB64(c.action)}', '${safeB64(c.assigned)}', '${c.taskId}')"><div class="ct-tat" style="color:${gClr[g]}; background:${gClr[g]}15; border-color:${gClr[g]}50;">TAT: ${c.tat}</div><b>${showTask}${c.customerName}</b> ${assignInfo}<div style="color:#1976d2;font-size:12px;margin:2px 0;">ЁЯУЮ ${c.contact}</div><small>Model: ${c.model}${snHtml}<br>Issue: ${c.issue}<br><span style="color:#0984e3;">Action: ${displayAct}</span></small></div>`;
+                      html+=`<div class="ct-card" style="border-left-color:${gClr[g]};" onclick="ctOpenUpdate(${c.row}, '${safeB64(c.customerName)}', '${safeB64(c.action)}', '${safeB64(c.assigned)}', '${c.taskId}')"><div class="ct-tat" style="color:${gClr[g]}; background:${gClr[g]}15; border-color:${gClr[g]}50;">TAT: ${c.tat}</div><b>${showTask}${c.customerName}</b> ${assignInfo}<div style="color:#1976d2;font-size:12px;margin:2px 0;">📞 ${c.contact}</div><small>Model: ${c.model}${snHtml}<br>Issue: ${c.issue}<br><span style="color:#0984e3;">Action: ${displayAct}</span></small></div>`;
                   }); html+='</div></div>';
               }
           }
@@ -835,7 +835,7 @@
               tickets[0].history.forEach(m => {
                   let senderClr = m.sender.toLowerCase() === 'customer' ? '#0984e3' : '#ff006e';
                   let msgText = m.message;
-                  if(msgText.includes("ЁЯУО Shared a photo: ")) {
+                  if(msgText.includes("📎 Shared a photo: ")) {
                       let link = msgText.split("Shared a photo: ")[1];
                       msgText = `<a href="${link}" target="_blank" style="color:#0984e3; text-decoration:underline;">View Attachment</a>`;
                   }
@@ -894,7 +894,7 @@
           let html=`<b>Total: ${data.length}</b><table><tr><th>Date</th><th>Customer, Task & Contact</th><th>Issue/Action</th><th>TAT/By</th></tr>`; 
           data.forEach(c=>{ 
               let showTask=c.taskId?`<span style="color:#e74c3c;">${c.taskId}</span><br>`:''; 
-              html+=`<tr><td>${c.date}</td><td><b>${showTask}${c.name}</b><br><small style="color:#0984e3; font-weight:bold;">ЁЯУЮ ${c.contact}</small><br><small>${c.model}</small></td><td><small>Iss: ${c.issue}</small><br><span style="color:green">Act: ${formatAction(c.action)}</span></td><td>${c.tat}<br>By: ${c.handledBy}</td></tr>`; 
+              html+=`<tr><td>${c.date}</td><td><b>${showTask}${c.name}</b><br><small style="color:#0984e3; font-weight:bold;">📞 ${c.contact}</small><br><small>${c.model}</small></td><td><small>Iss: ${c.issue}</small><br><span style="color:green">Act: ${formatAction(c.action)}</span></td><td>${c.tat}<br>By: ${c.handledBy}</td></tr>`; 
           }); 
           document.getElementById('ctReportRes').innerHTML=html+"</table>"; 
       }).catch(e=>{ document.getElementById('ctReportRes').innerHTML="Error."; }); 
@@ -959,7 +959,7 @@
       Swal.fire({ title: `State: ${state}`, html: `<div style="max-height: 400px; overflow-y: auto;">${h}</div>`, width: '90%', showCloseButton: true, showConfirmButton: false });
   }
   
-  function addWcrItem() { wcrItemCount++; var c=document.getElementById('wcrItemsContainer'); var b=document.createElement('div'); b.className='item-box'; b.style.borderColor='var(--brand3)'; b.id='wcr_item_'+wcrItemCount; b.innerHTML=`<button type="button" class="remove-btn" onclick="document.getElementById('wcr_item_${wcrItemCount}').remove()">├Ч</button><div class="grid"><div><label>Model *</label><select class="i-model" required>${pwModelsHtml}</select></div><div><label>Part Type *</label><select class="wcr-part" required>${wcrPartsHtml}</select></div></div><div class="grid"><div><label>SL. No</label><input type="text" class="wcr-serial"></div><div><label>Issue</label><input type="text" class="wcr-issue"></div></div>`; c.appendChild(b); }
+  function addWcrItem() { wcrItemCount++; var c=document.getElementById('wcrItemsContainer'); var b=document.createElement('div'); b.className='item-box'; b.style.borderColor='var(--brand3)'; b.id='wcr_item_'+wcrItemCount; b.innerHTML=`<button type="button" class="remove-btn" onclick="document.getElementById('wcr_item_${wcrItemCount}').remove()">×</button><div class="grid"><div><label>Model *</label><select class="i-model" required>${pwModelsHtml}</select></div><div><label>Part Type *</label><select class="wcr-part" required>${wcrPartsHtml}</select></div></div><div class="grid"><div><label>SL. No</label><input type="text" class="wcr-serial"></div><div><label>Issue</label><input type="text" class="wcr-issue"></div></div>`; c.appendChild(b); }
   function wcrSubmitEntry() { 
       var fData={ sourceName:document.getElementById('wcrSource').value, receivingDate:document.getElementById('wcrDate').value, responsiblePerson:document.getElementById('wcrPerson').value, refTask:document.getElementById('wcrRefTask').value, docketNo:document.getElementById('wcrDocket').value }; 
       var iArr=[]; document.querySelectorAll('#wcrItemsContainer .item-box').forEach(b=>iArr.push({ model:b.querySelector('.i-model').value, partType:b.querySelector('.wcr-part').value, serial:b.querySelector('.wcr-serial').value, issue:b.querySelector('.wcr-issue').value })); 
@@ -970,7 +970,7 @@
           document.getElementById('wcrPerson').value = loggedInUser;
           document.getElementById('wcrItemsContainer').innerHTML=`<div class="item-box" id="wcr_item_1" style="border-color:var(--brand3);"><div class="grid"><div><label>Model *</label><select class="i-model" required>${pwModelsHtml}</select></div><div><label>Part *</label><select class="wcr-part" required>${wcrPartsHtml}</select></div></div><div class="grid"><div><label>SL. No</label><input type="text" class="wcr-serial"></div><div><label>Issue</label><input type="text" class="wcr-issue"></div></div></div>`; 
           let generatedIds = bcs.map(b => b.id).join(', ');
-          Swal.fire({ title:'Saved Successfully!', html: `<b>${bcs.length}</b> WCR entries generated.<br><br><b>WCR Task IDs:</b><br><span style="font-size:16px; color:#e74c3c; font-weight:bold;">${generatedIds}</span><br><br><small>You can print them or write them manually.</small>`, icon:'success', showCancelButton:true, confirmButtonText:'ЁЯЦия╕П Print Barcodes', cancelButtonText:'Close' }).then(r=>{ if(r.isConfirmed) printBarcodes(bcs, fData.sourceName); }); wcrLoadPending(); loadDropdowns(); 
+          Swal.fire({ title:'Saved Successfully!', html: `<b>${bcs.length}</b> WCR entries generated.<br><br><b>WCR Task IDs:</b><br><span style="font-size:16px; color:#e74c3c; font-weight:bold;">${generatedIds}</span><br><br><small>You can print them or write them manually.</small>`, icon:'success', showCancelButton:true, confirmButtonText:'🖨️ Print Barcodes', cancelButtonText:'Close' }).then(r=>{ if(r.isConfirmed) printBarcodes(bcs, fData.sourceName); }); wcrLoadPending(); loadDropdowns(); 
       }).catch(e=>{Swal.fire('Error',e.message,'error')}); 
   }
   
@@ -980,10 +980,10 @@
           if(!d.length){ document.getElementById('wcrList').innerHTML="No pending parts."; return; } 
           let h="", g={}; d.forEach(c=>{if(!g[c.source]) g[c.source]=[]; g[c.source].push(c);}); let i=0; 
           for(let c in g){ 
-              i++; h+=`<div class="group-wrap"><div class="group-header" onclick="toggleGroup('wcr-${i}')"><span>ЁЯПв ${c}</span><span class="badge" style="background:var(--brand3);">${g[c].length} Parts</span></div><div class="group-body" id="wcr-${i}">`; 
+              i++; h+=`<div class="group-wrap"><div class="group-header" onclick="toggleGroup('wcr-${i}')"><span>🏢 ${c}</span><span class="badge" style="background:var(--brand3);">${g[c].length} Parts</span></div><div class="group-body" id="wcr-${i}">`; 
               g[c].forEach(x=>{ 
-                  let alertHtml=x.remark&&x.remark.includes("REJECTED")?`<span class="alert-red">тЪая╕П ${x.remark}</span>`:""; let showRef=` <small style="color:#0984e3">[Ref: ${x.taskId}]</small>`; 
-                  h+=`<div class="card card-wcr" onclick="wcrOpenRepair(${x.row}, '${safeB64(c)}', '${x.taskId}')"><div class="tat-badge" style="color:var(--brand3)">тП▒ TAT: ${x.tat}</div><b>${x.refTask || 'N/A'}</b>${showRef} (SN: ${x.serial||'-'})<br><small>${x.model} | ${x.partType}</small><br><small style="color:#d63031; font-weight:bold;">Issue: ${x.issue}</small>${alertHtml}</div>`; 
+                  let alertHtml=x.remark&&x.remark.includes("REJECTED")?`<span class="alert-red">⚠️ ${x.remark}</span>`:""; let showRef=` <small style="color:#0984e3">[Ref: ${x.taskId}]</small>`; 
+                  h+=`<div class="card card-wcr" onclick="wcrOpenRepair(${x.row}, '${safeB64(c)}', '${x.taskId}')"><div class="tat-badge" style="color:var(--brand3)">⏱ TAT: ${x.tat}</div><b>${x.refTask || 'N/A'}</b>${showRef} (SN: ${x.serial||'-'})<br><small>${x.model} | ${x.partType}</small><br><small style="color:#d63031; font-weight:bold;">Issue: ${x.issue}</small>${alertHtml}</div>`; 
               }); h+='</div></div>'; 
           } document.getElementById('wcrList').innerHTML=h; 
       }).catch(e=>{ document.getElementById('wcrList').innerHTML="Error."; }); 
@@ -992,7 +992,7 @@
   function wcrOpenRepair(r, encC, id) { document.getElementById('wcrUpdatePanel').style.display='block'; document.getElementById('wcrTarget').innerText="Repair: "+safeDec(encC)+" ("+id+")"; document.getElementById('wcrRow').value=r; window.scrollTo(0, document.body.scrollHeight); }
   function wcrSaveUpdate(f) { Swal.fire({title:'Updating...',didOpen:()=>Swal.showLoading()}); apiCall('wcr_updateRepairStatus', {form: formToObj(f)}).then(r=>{Swal.fire('Done',r,'success'); document.getElementById('wcrUpdatePanel').style.display='none'; wcrLoadPending(); wcrLoadInventory();}).catch(e=>{Swal.fire('Error',e.message,'error')}); }
   
-  function wcrLoadApprovals() { document.getElementById('wcrApproveList').innerHTML="Fetching..."; apiCall('wcr_getPendingApprovals').then(d=>{ if(!d.length){ document.getElementById('wcrApproveList').innerHTML="No approvals pending."; return; } let h=""; d.forEach(c=>{ h+=`<div class="card card-wcr" onclick="wcrOpenApprove(${c.row}, '${safeB64(c.source)}', '${c.taskId}')"><b>${c.refTask || 'N/A'}</b> <small style="color:#0984e3">[Ref: ${c.taskId}]</small> - ЁЯПв ${c.source}<br><small>${c.model} | Part: ${c.partType}</small><br><span style="color:#e74c3c;font-weight:bold;font-size:11px;">Action: ${c.action} (Req. Scrap)</span></div>`; }); document.getElementById('wcrApproveList').innerHTML=h; }).catch(e=>{}); }
+  function wcrLoadApprovals() { document.getElementById('wcrApproveList').innerHTML="Fetching..."; apiCall('wcr_getPendingApprovals').then(d=>{ if(!d.length){ document.getElementById('wcrApproveList').innerHTML="No approvals pending."; return; } let h=""; d.forEach(c=>{ h+=`<div class="card card-wcr" onclick="wcrOpenApprove(${c.row}, '${safeB64(c.source)}', '${c.taskId}')"><b>${c.refTask || 'N/A'}</b> <small style="color:#0984e3">[Ref: ${c.taskId}]</small> - 🏢 ${c.source}<br><small>${c.model} | Part: ${c.partType}</small><br><span style="color:#e74c3c;font-weight:bold;font-size:11px;">Action: ${c.action} (Req. Scrap)</span></div>`; }); document.getElementById('wcrApproveList').innerHTML=h; }).catch(e=>{}); }
   function wcrOpenApprove(r, encSrc, id) { document.getElementById('wcrApprovePanel').style.display='block'; document.getElementById('wcrAppTarget').innerText="Review Scrap: "+id; document.getElementById('wcrAppRow').value=r; document.getElementById('wcrPwd').value=''; window.scrollTo(0, document.body.scrollHeight); }
   function wcrProcessApprove() { let r=document.getElementById('wcrAppRow').value, dec=document.getElementById('wcrDecision').value, pwd=document.getElementById('wcrPwd').value; if(!pwd) return Swal.fire('Error','Password required!','error'); Swal.fire({title:'Processing...',didOpen:()=>Swal.showLoading()}); apiCall('wcr_processApproval', {row: r, decision: dec, pwd: pwd}).then(res=>{ if(res.includes("ERROR")) Swal.fire('Error', res, 'error'); else { Swal.fire('Success', res, 'success'); document.getElementById('wcrApprovePanel').style.display='none'; wcrLoadApprovals(); wcrLoadInventory(); } }).catch(e=>{Swal.fire('Error',e.message,'error')}); }
   
@@ -1122,10 +1122,10 @@
                   let m = history[i]; 
                   let type = m.sender === "Admin" ? "msg-admin" : "msg-cust"; 
                   let displayMsg = m.message; 
-                  if(displayMsg === "[CMD:REQUEST_FORM]") displayMsg = "<i>ЁЯУЛ Sent Call Registration Form</i>"; 
-                  else if(displayMsg.indexOf("ЁЯУО Shared a photo:") !== -1) { 
+                  if(displayMsg === "[CMD:REQUEST_FORM]") displayMsg = "<i>📋 Sent Call Registration Form</i>"; 
+                  else if(displayMsg.indexOf("📎 Shared a photo:") !== -1) { 
                       let link = displayMsg.split("Shared a photo: ")[1]; 
-                      displayMsg = `ЁЯУО <a href="${link}" target="_blank" style="color:white; text-decoration:underline;">View Photo</a>`; 
+                      displayMsg = `📎 <a href="${link}" target="_blank" style="color:white; text-decoration:underline;">View Photo</a>`; 
                   } 
                   box.innerHTML += `<div class="msg-box ${type}">${displayMsg}<span class="msg-time">${m.time}</span></div>`; 
               } 
@@ -1151,7 +1151,7 @@
   
   function handleEnter(e) { if(e.key === 'Enter') sendAdminReply(); }
   function sendAdminReply() { const input = document.getElementById('adminReplyText'); const msg = input.value.trim(); if(!msg || !currentActiveChatId) return; input.value = ''; document.getElementById('chatMessages').innerHTML += `<div class="msg-box msg-admin temp-msg">${msg}<span class="msg-time">Sending...</span></div>`; document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; apiCall('sendChatMessage', {chatId: currentActiveChatId, name: "Admin", phone: "", sender: "Admin", message: msg}).then(r=>{}).catch(e=>{}); }
-  function sendCallFormRequest() { if(!currentActiveChatId) return; document.getElementById('chatMessages').innerHTML += `<div class="msg-box msg-admin temp-msg"><i>ЁЯУЛ Sending Form...</i></div>`; document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; apiCall('sendChatMessage', {chatId: currentActiveChatId, name: "Admin", phone: "", sender: "Admin", message: "[CMD:REQUEST_FORM]"}).then(r=>{}).catch(e=>{}); }
+  function sendCallFormRequest() { if(!currentActiveChatId) return; document.getElementById('chatMessages').innerHTML += `<div class="msg-box msg-admin temp-msg"><i>📋 Sending Form...</i></div>`; document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight; apiCall('sendChatMessage', {chatId: currentActiveChatId, name: "Admin", phone: "", sender: "Admin", message: "[CMD:REQUEST_FORM]"}).then(r=>{}).catch(e=>{}); }
   function endLiveChatAdmin() { if(!currentActiveChatId) return; Swal.fire({ title: "End Chat", input: 'text', inputLabel: 'Enter closing remark for customer:', inputPlaceholder: 'e.g., Issue resolved. Thank you.', showCancelButton: true, confirmButtonText: "Close Chat" }).then((result) => { if (result.isConfirmed) { let remark = result.value || "Chat closed by Agent."; Swal.fire({title:'Closing...', didOpen:()=>Swal.showLoading()}); apiCall('closeLiveChat', {chatId: currentActiveChatId, remark: remark}).then(() => { Swal.close(); closeActiveChat(); }).catch(e=>{Swal.fire('Error',e.message,'error')}); } }); }
 function savePromoBanner() {
     let val = document.getElementById('adminBannerBase64').value.trim();
@@ -1185,5 +1185,3 @@ function savePromoBanner() {
 </script>
 </body>
 </html>
-
-
