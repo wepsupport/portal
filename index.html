@@ -259,9 +259,9 @@
           </div>
           <div class="action-card" onclick="openFormView('demo')">
               <div class="action-card-icon icon-demo"><i class="fa-solid fa-desktop"></i></div>
-              <h3 id="ui-card2-t">Product Demo</h3>
-              <p id="ui-card2-d">Schedule a product demonstration online.</p>
-              <div class="card-arrow">Book Schedule <i class="fa-solid fa-arrow-right"></i></div>
+              <h3 id="ui-card2-t">Demo Support</h3>
+              <p id="ui-card2-d">Facing an issue during a product demo? Raise it here.</p>
+              <div class="card-arrow">Raise Request <i class="fa-solid fa-arrow-right"></i></div>
           </div>
           <div class="action-card" onclick="openFormView('warranty')">
               <div class="action-card-icon icon-warranty"><i class="fa-solid fa-file-shield"></i></div>
@@ -366,7 +366,7 @@
   <script>
     // ===================== GITHUB API CONFIGURATION =====================
     // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-    const API_URL = "https://script.google.com/macros/s/AKfycbwRPu043N5h6jb9eSgi-DUuJU6wmeoWDSsYO3brwkN0BR1jgb9l1xBtR3fkOp595BnR/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxBzPmc-U2aH7hia2r0WZViA_5FEOVf8bIZYIpNBcgHym4bjPWgfCXrrZPR5Jp4cvRE/exec";
 
     async function apiCall(action, params = {}) {
         try {
@@ -389,7 +389,7 @@
       en: { 
           title: "How can we help you?", sub: "Select an option below to get the right support quickly.",
           c1t: "Installation Support", c1d: "Request to setup and install your new wepsol product.",
-          c2t: "Product Demo", c2d: "Schedule a product demonstration online.",
+          c2t: "Demo Support", c2d: "Facing an issue during a product demo? Raise it here.",
           c3t: "Warranty Complaint", c3d: "Register a complaint for your products.",
           c4t: "Support Assistant", c4d: "Get instant troubleshooting or connect with a executive.",
           track: "Track Existing Request",
@@ -398,7 +398,7 @@
       hi: { 
           title: "हम आपकी कैसे मदद कर सकते हैं?", sub: "शुरू करने के लिए नीचे दी गई सेवा श्रेणी चुनें या हमारी सपोर्ट टीम से जुड़ें।",
           c1t: "इंस्टॉलेशन सपोर्ट", c1d: "अपने नए wepsol उत्पाद को सेट अप और इंस्टॉल करने के लिए इंजीनियर का अनुरोध करें।",
-          c2t: "प्रोडक्ट डेमो", c2d: "हमारी सेल्स टीम के साथ एक व्यक्तिगत उत्पाद प्रदर्शन शेड्यूल करें।",
+          c2t: "डेमो सपोर्ट", c2d: "डेमो के दौरान कोई समस्या आ रही है? यहाँ दर्ज करें।",
           c3t: "वारंटी शिकायत", c3d: "अपने वारंटी वाले उत्पादों के लिए सेवा शिकायत दर्ज करें।",
           c4t: "सपोर्ट असिस्टेंट", c4d: "तुरंत स्वचालित समस्या निवारण प्राप्त करें या लाइव एक्जीक्यूटिव से जुड़ें।",
           track: "अपना टिकट ट्रैक करें",
@@ -412,6 +412,22 @@
     
     let isDataLoaded = false;
     let isTypingDone = false;
+    let promoBanner = "";
+
+    /* The admin dashboard can save a promo image (Settings sheet, column M) and the
+       backend returns it as bannerBase64 — but nothing here ever showed it. */
+    function showPromoBanner() {
+        if(!promoBanner) return;
+        try { if(sessionStorage.getItem('wepPromoSeen')) return; sessionStorage.setItem('wepPromoSeen', '1'); } catch(e) {}
+        let src = String(promoBanner).trim();
+        if(src.indexOf('data:') !== 0 && src.indexOf('http') !== 0) src = 'data:image/png;base64,' + src;
+        Swal.fire({
+            imageUrl: src, imageAlt: 'wepsol', imageWidth: '100%',
+            showConfirmButton: false, showCloseButton: true,
+            width: '540px', padding: '0', background: 'transparent',
+            backdrop: 'rgba(0,0,0,0.55)'
+        });
+    }
 
     function checkIntroComplete() {
         if(isTypingDone && isDataLoaded) {
@@ -430,7 +446,8 @@
                     lp.style.display = 'flex';
                     lp.style.animation = 'contentEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards';
                 }
-            }, 600); 
+                setTimeout(showPromoBanner, 700);
+            }, 600);
         }
     }
 
@@ -460,8 +477,9 @@
 
         applyLanguage();
         apiCall('getChatbotInitialData').then(data => {
-            treeNodes = data.nodes; 
+            treeNodes = data.nodes;
             globalModels = data.models;
+            promoBanner = data.bannerBase64 || "";
             const drp = document.getElementById('printerModelDropdown');
             globalModels.forEach(m => { let opt = document.createElement('option'); opt.value = m; opt.innerText = m; drp.appendChild(opt); });
             isDataLoaded = true;
@@ -542,23 +560,39 @@
             title.innerText = uiText[currentLang].c2t;
             container.innerHTML = `
                 <form onsubmit="event.preventDefault(); submitCustForm('demo')">
+                    <div class="pro-input-group"><label>Request Raised By *</label>
+                        <select id="f_raisedby" required onchange="demoToggleName()">
+                            <option value="Customer">Customer</option>
+                            <option value="Sales Person">Sales Person</option>
+                            <option value="Dealer">Dealer</option>
+                        </select>
+                    </div>
+                    <div class="pro-input-group"><label id="f_namelbl">Customer Name *</label><input type="text" id="f_dealer" required></div>
                     <div class="pro-input-group"><label>Mobile Number *</label><input type="tel" id="f_phone" pattern="[0-9]{10}" maxlength="10" placeholder="10 Digits" required></div>
-                    <div class="pro-input-group"><label>Dealer / Sales Person Name *</label><input type="text" id="f_dealer" required></div>
-                    <div class="pro-input-group"><label>Preferred Model *</label><select id="f_model" required>${mOpts}</select></div>
-                    <div class="pro-input-group"><label>Preferred Date and Time *</label><input type="datetime-local" id="f_datetime" required></div>
+                    <div class="pro-input-group"><label>Product / Model *</label><select id="f_model" required>${mOpts}</select></div>
+                    <div class="pro-input-group"><label>What issue are you facing in the demo? *</label><textarea id="f_demoissue" rows="3" placeholder="e.g. Print not coming during demo / software not installing / paper jam while demonstrating" required></textarea></div>
                     <div class="pro-input-group"><label>Location (Optional)</label><input type="text" id="f_loc" placeholder="City or Address"></div>
-                    <button class="submit-btn" type="submit">Book Schedule</button>
+                    <button class="submit-btn" type="submit">Submit Request</button>
                 </form>
             `;
         } else if (type === 'warranty') {
             title.innerText = uiText[currentLang].c3t;
             container.innerHTML = `
                 <form onsubmit="event.preventDefault(); submitCustForm('warranty')">
+                    <div class="pro-input-group"><label>Complaint Raised By *</label>
+                        <select id="f_wraisedby" required onchange="warrToggleName()">
+                            <option value="Customer">Customer</option>
+                            <option value="Dealer">Dealer</option>
+                            <option value="ASP">ASP</option>
+                        </select>
+                    </div>
+                    <div class="pro-input-group"><label id="f_wnamelbl">Customer Name *</label><input type="text" id="f_wname" required></div>
                     <div class="pro-input-group"><label>Mobile Number *</label><input type="tel" id="f_phone" pattern="[0-9]{10}" maxlength="10" placeholder="10 Digits" required></div>
+                    <div class="pro-input-group"><label>Product / Model (Optional)</label><select id="f_model">${mOpts}</select></div>
                     <div class="pro-input-group"><label>Serial Number *</label><input type="text" id="f_serial" required></div>
                     <div class="pro-input-group"><label>Write Your Issue *</label><textarea id="f_issue" rows="3" required></textarea></div>
                     <div class="pro-input-group"><label>Address *</label><textarea id="f_address" rows="2" required></textarea></div>
-                    <div class="pro-input-group"><label>Dealer/ASP Name (Optional)</label><input type="text" id="f_dealer"></div>
+                    <div class="pro-input-group"><label>Dealer / ASP Name (Optional)</label><input type="text" id="f_dealer" placeholder="If a dealer or ASP is handling this unit"></div>
                     <div class="pro-input-group"><label>Required Parts (Optional)</label><input type="text" id="f_parts" placeholder="e.g. Logic Card"></div>
                     <button class="submit-btn" type="submit">Lodge Issue</button>
                 </form>
@@ -566,11 +600,29 @@
         }
     }
 
+    function demoToggleName() {
+        let sel = document.getElementById('f_raisedby');
+        let lbl = document.getElementById('f_namelbl');
+        if(!sel || !lbl) return;
+        if(sel.value === 'Customer') lbl.innerText = 'Customer Name *';
+        else if(sel.value === 'Dealer') lbl.innerText = 'Dealer Name *';
+        else lbl.innerText = 'Sales Person Name *';
+    }
+
+    function warrToggleName() {
+        let sel = document.getElementById('f_wraisedby');
+        let lbl = document.getElementById('f_wnamelbl');
+        if(!sel || !lbl) return;
+        if(sel.value === 'Customer') lbl.innerText = 'Customer Name *';
+        else if(sel.value === 'Dealer') lbl.innerText = 'Dealer Name *';
+        else lbl.innerText = 'ASP Name *';
+    }
+
     function submitCustForm(type) {
         let fObj = { warrantyStatus: true, actionTaken: "Customer Web Request", callHandledBy: "System", status: "Pending", assignedTo: "Unassigned", location: "", state: "N/A" };
         if(type === 'install') { fObj.customerName = document.getElementById('f_name').value; fObj.contactNumber = document.getElementById('f_phone').value; fObj.model = document.getElementById('f_model').value; fObj.serialNumber = document.getElementById('f_serial').value || "N/A"; fObj.problemDesc = "INSTALLATION REQUEST. Pref Time: " + document.getElementById('f_time').value; } 
-        else if (type === 'demo') { fObj.customerName = document.getElementById('f_dealer').value + " (Dealer/Sales)"; fObj.contactNumber = document.getElementById('f_phone').value; fObj.model = document.getElementById('f_model').value; fObj.serialNumber = "N/A"; fObj.location = document.getElementById('f_loc').value || "N/A"; fObj.problemDesc = "DEMO REQUEST. Pref DateTime: " + document.getElementById('f_datetime').value; } 
-        else if (type === 'warranty') { fObj.customerName = "Warranty Customer"; fObj.contactNumber = document.getElementById('f_phone').value; fObj.model = "Unknown"; fObj.serialNumber = document.getElementById('f_serial').value; fObj.location = document.getElementById('f_address').value + " | Dealer: " + (document.getElementById('f_dealer').value || "N/A"); fObj.problemDesc = "WARRANTY COMPLAINT: " + document.getElementById('f_issue').value + " | Req Parts: " + (document.getElementById('f_parts').value || "None"); }
+        else if (type === 'demo') { let rBy = document.getElementById('f_raisedby').value; let rIssue = document.getElementById('f_demoissue').value.trim(); fObj.customerName = document.getElementById('f_dealer').value + " (" + rBy + ")"; fObj.contactNumber = document.getElementById('f_phone').value; fObj.model = document.getElementById('f_model').value; fObj.serialNumber = "N/A"; fObj.location = document.getElementById('f_loc').value || "N/A"; fObj.problemDesc = "DEMO REQUEST. Raised By: " + rBy + " | Demo Issue: " + rIssue; }
+        else if (type === 'warranty') { let wBy = document.getElementById('f_wraisedby').value; let wName = document.getElementById('f_wname').value.trim(); fObj.customerName = wName + " (" + wBy + ")"; fObj.contactNumber = document.getElementById('f_phone').value; fObj.model = document.getElementById('f_model').value || ""; fObj.serialNumber = document.getElementById('f_serial').value; fObj.location = document.getElementById('f_address').value + " | Dealer/ASP: " + (document.getElementById('f_dealer').value || "N/A"); fObj.problemDesc = "WARRANTY COMPLAINT: " + document.getElementById('f_issue').value + " | Raised By: " + wBy + " | Req Parts: " + (document.getElementById('f_parts').value || "None"); }
 
         Swal.fire({title:'Submitting...', allowOutsideClick: false, didOpen:()=>Swal.showLoading()});
         apiCall('ct_processForm', {formObject: fObj}).then(res => {
