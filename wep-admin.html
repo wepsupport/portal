@@ -91,6 +91,36 @@
     .sec-card h2 { margin:0 0 6px 0; font-size:22px; }
     .sec-card p { margin:0; font-size:12.5px; color:#7f8fa6; line-height:1.5; }
 
+
+    /* --- QUALITY TABLE-STYLE ENTRY --- */
+    .qg-wrap { overflow-x:auto; border:1px solid #e3e7ec; border-radius:10px; background:#fff; }
+    .qg { width:100%; border-collapse:collapse; font-size:12px; min-width:900px; }
+    .qg th { background:#f4f6f8; padding:9px 8px; text-align:left; font-size:10px; text-transform:uppercase; color:#5a6676; border:1px solid #e3e7ec; white-space:nowrap; letter-spacing:.3px; }
+    .qg td { border:1px solid #eef1f4; padding:0; }
+    .qg td input, .qg td select { border:none; border-radius:0; background:transparent; padding:9px 8px; font-size:12.5px; width:100%; }
+    .qg td input:focus, .qg td select:focus { background:#fffbe6; outline:2px solid #1abc9c; outline-offset:-2px; }
+    .qg tr.ready td { background:#f6fffb; }
+    .qg .rn { width:30px; text-align:center; color:#b2bec3; font-weight:700; font-size:10.5px; }
+    .qg-bar { display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:12px; flex-wrap:wrap; }
+    .q-hint { background:#e8f6f3; border:1px solid #a3e4d7; border-radius:8px; padding:9px 13px; font-size:11.5px; color:#117a65; margin-bottom:13px; }
+    .q-match { background:#fffbe6; border:1px solid #f7dc6f; border-radius:8px; padding:10px 13px; font-size:11.5px; margin-top:8px; }
+    .q-match b { color:#9a7d0a; }
+    .q-match .ok { color:#1e8e5a; font-weight:700; }
+    .q-match .no { color:#c0392b; font-weight:700; }
+
+    /* --- TASK BOARD --- */
+    .tb-cols { display:flex; gap:12px; flex-wrap:wrap; }
+    .tb-col { flex:1; min-width:220px; background:#f7f9fa; border:1px solid #e3e7ec; border-radius:11px; padding:11px; }
+    .tb-col h5 { margin:0 0 9px 0; font-size:11px; text-transform:uppercase; letter-spacing:.4px; color:#5a6676; display:flex; justify-content:space-between; }
+    .tb-card { background:#fff; border:1px solid #e8eaed; border-left:3px solid #1abc9c; border-radius:8px; padding:9px 11px; margin-bottom:8px; font-size:12px; }
+    .tb-card.hi { border-left-color:#e74c3c; } .tb-card.lo { border-left-color:#b2bec3; }
+    .tb-card.done { opacity:.55; } .tb-card.done .tt { text-decoration:line-through; }
+    .tb-card .tt { font-weight:700; color:#2c3e50; display:block; margin-bottom:3px; line-height:1.35; }
+    .tb-card .tm { font-size:10.5px; color:#8a94a6; }
+    .tb-card button { border:none; background:#1abc9c; color:#fff; border-radius:5px; padding:3px 9px; font-size:10px; font-weight:700; cursor:pointer; width:auto; margin:6px 4px 0 0; }
+    .tb-card button.sec { background:#dfe4ea; color:#57606f; }
+    .tb-over { background:#fdeceb; color:#c0392b; font-size:9.5px; font-weight:700; padding:1px 6px; border-radius:10px; margin-left:5px; }
+
     /* --- QUALITY --- */
     .q-nav { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:18px; }
     .q-nav button { border:1px solid #dcdde1; background:#fff; color:#5a6676; padding:9px 15px; border-radius:9px; font-size:12.5px; font-weight:700; cursor:pointer; transition:.15s; width:auto; margin:0; text-transform:none; }
@@ -609,7 +639,7 @@
 <script>
   // ===================== GITHUB API CONFIGURATION =====================
   // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-  const API_URL = "https://script.google.com/macros/s/AKfycbzRD4iJGy_tHtPYRwQILGBSFfiJLeGUAomXQIpDiB3lxMkKeFUu8Fpr1xALMNvYopQP/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycby2Q5Rd9siJCg5au-WXdkk0xTCW5Gpazi4vWN1qIXyFmYNkMk3hMG9Ej71PvScinS4i/exec";
 
   async function apiCall(action, params = {}) {
       try {
@@ -2023,16 +2053,22 @@
     DASH: { label:'Dashboard', icon:'fa-gauge-high', color:'#2c3e50' },
     IQC:  { label:'IQC', icon:'fa-truck-ramp-box', color:'#3498db',
             title:'Incoming Quality Control',
-            fields:[ {id:'date',label:'Date',type:'date',req:1},
-                     {id:'mrr',label:'MRR No',type:'text',req:1},
-                     {id:'vendor',label:'Vendor',type:'text',req:1},
-                     {id:'model',label:'Model',type:'model'},
-                     {id:'partCode',label:'Part Code',type:'text',req:1},
-                     {id:'totQty',label:'Total Qty',type:'number',req:1},
-                     {id:'okQty',label:'OK Qty',type:'number'},
-                     {id:'rejQty',label:'Rejected Qty',type:'number'},
-                     {id:'decision',label:'Clearance Decision',type:'select',opts:Q_DEC,req:1},
-                     {id:'remarks',label:'Remarks',type:'text',full:1} ],
+            fields:[ {id:'date',label:'Date',type:'date',req:1,w:'110px'},
+                     {id:'mrr',label:'MRR No',type:'text',req:1,w:'100px'},
+                     {id:'partCode',label:'Part Code',type:'text',req:1,w:'130px',lookup:1},
+                     {id:'mpn',label:'MPN',type:'text',w:'130px'},
+                     {id:'mfg',label:'Manufacturer',type:'text',w:'130px'},
+                     {id:'distributor',label:'Distributor',type:'text',w:'120px'},
+                     {id:'vendor',label:'Vendor',type:'text',req:1,w:'120px'},
+                     {id:'dateCode',label:'Date Code',type:'text',w:'90px'},
+                     {id:'lot',label:'Lot / Batch',type:'text',w:'100px'},
+                     {id:'invoice',label:'Invoice / DC',type:'text',w:'110px'},
+                     {id:'model',label:'Model',type:'model',w:'140px'},
+                     {id:'totQty',label:'Total Qty',type:'number',req:1,w:'80px'},
+                     {id:'okQty',label:'OK Qty',type:'number',w:'80px'},
+                     {id:'rejQty',label:'Rej Qty',type:'number',w:'80px'},
+                     {id:'decision',label:'Decision',type:'select',opts:Q_DEC,req:1,w:'100px'},
+                     {id:'remarks',label:'Remarks',type:'text',w:'150px'} ],
             update:'decision' },
     PPA:  { label:'Process / Final (PPA)', icon:'fa-industry', color:'#e74c3c',
             title:'Process Quality cum Final Quality',
@@ -2082,7 +2118,8 @@
                      {id:'cause',label:'Defect Cause',type:'text',full:1},
                      {id:'remarks',label:'Remarks',type:'text',full:1} ],
             update:'decision' },
-    VQ:   { label:'Vendor Quality', icon:'fa-chart-line', color:'#e67e22' }
+    VQ:   { label:'Vendor Quality', icon:'fa-chart-line', color:'#e67e22' },
+    MAST: { label:'Masters (AVL/BOM/CSL)', icon:'fa-database', color:'#2980b9' }
   };
 
   let qModule = 'DASH', qTab = 'entry', qVendorCache = [];
@@ -2099,6 +2136,7 @@
       Object.keys(Q_MODULES).forEach(k => { let b = document.getElementById('qnav-'+k); if(b) b.className = (k===m?'on':''); });
       if(m === 'DASH') return qRenderDash();
       if(m === 'VQ')   return qRenderVendor();
+      if(m === 'MAST') return qRenderMasters();
       qRenderModule();
   }
 
@@ -2136,29 +2174,161 @@
       return `<div style="${w}"><label>${f.label}${f.req?' *':''}</label>${inner}</div>`;
   }
 
-  function qRenderEntry() {
-      let c = Q_MODULES[qModule];
-      document.getElementById('qPane').innerHTML = `
-        <form onsubmit="event.preventDefault(); qSubmit();">
-          <div class="grid" style="grid-template-columns:1fr 1fr;">${c.fields.map(qFieldHtml).join('')}</div>
-          <button class="btn" type="submit" style="background:${c.color};">SAVE ${qModule} ENTRY</button>
-        </form>`;
-      let d = document.getElementById('qf_date') || document.getElementById('qf_issueDate');
-      if(d && !d.value) { let n = new Date(); d.value = n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0'); }
+  /* ---------- table-style entry: several records at once ---------- */
+  const Q_GRID_ROWS = 6;
+  let qGridRows = Q_GRID_ROWS;
+
+  function qCellHtml(f, i) {
+      let id = `qg_${i}_${f.id}`;
+      if(f.type === 'select')      return `<select id="${id}" onchange="qGridMark(${i})">${f.opts.map(o=>`<option value="${o}">${o}</option>`).join('')}</select>`;
+      if(f.type === 'model')       return `<select id="${id}" class="i-model" onchange="qGridMark(${i})">${pwModelsHtml}</select>`;
+      if(f.type === 'person')      return `<input type="text" id="${id}" list="qlPersonList" autocomplete="off" oninput="qGridMark(${i})">`;
+      let extra = f.lookup ? ` onchange="qLookup(${i},'${f.id}')"` : '';
+      return `<input type="${f.type}" id="${id}" autocomplete="off" oninput="qGridMark(${i})"${extra}>`;
   }
 
-  function qSubmit() {
-      let c = Q_MODULES[qModule], data = {};
-      for(let f of c.fields) {
-          let el = document.getElementById('qf_'+f.id);
-          let v = el ? String(el.value).trim() : '';
-          if(f.req && !v) return Swal.fire('Missing field', f.label + ' is required.', 'warning');
-          data[f.id] = v;
+  function qBuildGrid() {
+      let c = Q_MODULES[qModule];
+      let head = `<tr><th class="rn">#</th>` + c.fields.map(f =>
+          `<th style="${f.w?'width:'+f.w+';':''}">${f.label}${f.req?' *':''}</th>`).join('') + `</tr>`;
+      let body = '';
+      for(let i = 0; i < qGridRows; i++) {
+          body += `<tr id="qgr${i}"><td class="rn">${i+1}</td>` +
+                  c.fields.map(f => `<td>${qCellHtml(f, i)}</td>`).join('') + `</tr>`;
       }
-      Swal.fire({title:'Saving...', allowOutsideClick:false, didOpen:()=>Swal.showLoading()});
-      apiCall('q_submitForm', { module: qModule, data: data }).then(res => {
-          Swal.fire('Saved!', res, 'success'); qRenderEntry();
-      }).catch(e => Swal.fire('Error', e.message, 'error'));
+      qLookupKey = ''; qLastLookup = null;
+      document.getElementById('qGridHead').innerHTML = head;
+      document.getElementById('qGridBody').innerHTML = body;
+      qGridDefaults();
+      qGridMark();
+  }
+
+  function qGridDefaults() {
+      let c = Q_MODULES[qModule];
+      let dateField = c.fields.find(f => f.type === 'date');
+      if(!dateField) return;
+      let n = new Date();
+      let today = n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
+      for(let i = 0; i < qGridRows; i++) {
+          let el = document.getElementById(`qg_${i}_${dateField.id}`);
+          if(el && !el.value) el.value = today;
+      }
+  }
+
+  function qGridVal(i, id) { let e = document.getElementById(`qg_${i}_${id}`); return e ? String(e.value).trim() : ''; }
+
+  function qGridRowFilled(i) {
+      let c = Q_MODULES[qModule];
+      return c.fields.some(f => f.type !== 'date' && f.type !== 'select' && qGridVal(i, f.id) !== '');
+  }
+
+  function qGridMark(i) {
+      let n = 0;
+      for(let r = 0; r < qGridRows; r++) {
+          let tr = document.getElementById('qgr'+r); if(!tr) continue;
+          let ok = qGridRowFilled(r);
+          tr.className = ok ? 'ready' : '';
+          if(ok) n++;
+      }
+      let el = document.getElementById('qGridCount'); if(el) el.innerText = n;
+  }
+
+  function qAddGridRow() { qGridRows++; qBuildGrid(); }
+
+  /* Part code typed in IQC -> pull what the masters know about it. */
+  /* Guards against re-running the same lookup. Clicking the Fill button blurs
+     the part-code input, which fires change again and would otherwise wipe the
+     box - taking the button with it before the click lands. */
+  let qLookupKey = '';
+
+  function qLookup(i, fid) {
+      let code = qGridVal(i, fid);
+      let box = document.getElementById('qLookupBox');
+      if(!box) return;
+      if(!code) { qLookupKey = ''; box.innerHTML = ''; return; }
+      let key = i + '|' + code.toLowerCase();
+      if(key === qLookupKey) return;
+      qLookupKey = key;
+      box.innerHTML = `<div class="q-match">Looking up <b>${code}</b>…</div>`;
+      apiCall('q_lookupPart', { partCode: code }).then(m => {
+          if(!m.found) {
+              box.innerHTML = `<div class="q-match"><span class="no">⚠ ${code} is not in AVL / BOM / CSL.</span> Upload the masters, or check the part code.</div>`;
+              return;
+          }
+          let h = `<div class="q-match"><b>${code}</b>${m.description ? ' — ' + m.description : ''}`;
+          if(m.manufacturers.length) h += `<br>Approved Mfg: <span class="ok">${m.manufacturers.join(', ')}</span>`;
+          if(m.mpns.length)          h += `<br>Approved MPN: <span class="ok">${m.mpns.join(', ')}</span>`;
+          if(m.vendors.length)       h += `<br>Approved Vendor: <span class="ok">${m.vendors.join(', ')}</span>`;
+          if(m.csl.length) { let c0 = m.csl[0]; h += `<br>Spec: ${c0.spec || '-'} | Package: ${c0.pkg || '-'}${/^y/i.test(c0.critical||'') ? ' | <span class="no">CRITICAL PART</span>' : ''}`; }
+          if(m.bom.length)           h += `<br>Used in: ${m.bom.slice(0,6).map(x=>x.model).join(', ')}${m.bom.length>6?' …':''}`;
+          qLastLookup = { row: i, mpn: m.mpns[0] || '', mfg: m.manufacturers[0] || '' };
+          if(qLastLookup.mpn || qLastLookup.mfg)
+            h += `<br><button class="btn" style="width:auto;margin:7px 0 0 0;padding:4px 11px;font-size:11px;background:#1abc9c;" onclick="qApplyMaster(${i})">Fill MPN &amp; Manufacturer</button>`;
+          h += `</div>`;
+          box.innerHTML = h;
+      }).catch(e => { qLookupKey = ''; box.innerHTML = `<div class="q-match"><span class="no">Lookup failed:</span> ${e.message}</div>`; });
+  }
+
+  /* Result of the last part-code lookup, so the fill button needs no payload. */
+  let qLastLookup = null;
+
+  function qApplyMaster(i) {
+      if(!qLastLookup || qLastLookup.row !== i) return;
+      ['mpn','mfg'].forEach(k => {
+          let el = document.getElementById(`qg_${i}_${k}`);
+          if(el && qLastLookup[k] && !el.value) el.value = qLastLookup[k];
+      });
+      qGridMark(i);
+      Swal.fire({toast:true, position:'top-end', icon:'success', title:'Filled from master', showConfirmButton:false, timer:1400});
+  }
+
+  function qRenderEntry() {
+      let c = Q_MODULES[qModule];
+      qGridRows = Q_GRID_ROWS;
+      document.getElementById('qPane').innerHTML = `
+        <div class="q-hint"><i class="fa-solid fa-table-list"></i> Fill one row per record — you can enter several at once.${qModule==='IQC'?' Type a <b>Part Code</b> and the approved details from AVL / BOM / CSL appear below.':''}</div>
+        <div id="qLookupBox"></div>
+        <div class="qg-wrap" style="margin-top:10px;"><table class="qg"><thead id="qGridHead"></thead><tbody id="qGridBody"></tbody></table></div>
+        <div class="qg-bar">
+          <div style="font-size:12.5px; color:#5a6676;"><b id="qGridCount">0</b> row(s) ready</div>
+          <div style="display:flex; gap:9px;">
+            <button class="btn" style="width:auto;margin:0;padding:9px 16px;background:#b2bec3;" onclick="qAddGridRow()">+ Add Row</button>
+            <button class="btn" style="width:auto;margin:0;padding:9px 16px;background:#7f8c8d;" onclick="qRenderEntry()">Clear</button>
+            <button class="btn" style="width:auto;margin:0;padding:9px 22px;background:${c.color};" onclick="qSubmitGrid()"><i class="fa-solid fa-floppy-disk"></i> SAVE ${qModule}</button>
+          </div>
+        </div>`;
+      qBuildGrid();
+  }
+
+  function qSubmitGrid() {
+      let c = Q_MODULES[qModule], recs = [], bad = [];
+      for(let i = 0; i < qGridRows; i++) {
+          if(!qGridRowFilled(i)) continue;
+          let d = {}, miss = [];
+          c.fields.forEach(f => { let v = qGridVal(i, f.id); d[f.id] = v; if(f.req && !v) miss.push(f.label); });
+          if(miss.length) bad.push(`Row ${i+1}: ${miss.join(', ')}`);
+          else recs.push(d);
+      }
+      if(bad.length) return Swal.fire({ title:'Please complete these rows', html: bad.join('<br>'), icon:'warning' });
+      if(!recs.length) return Swal.fire('Nothing to save', 'Fill at least one row.', 'warning');
+
+      Swal.fire({ title:`Save ${recs.length} ${qModule} record(s)?`, icon:'question', showCancelButton:true, confirmButtonText:'Save', confirmButtonColor:c.color }).then(r => {
+          if(!r.isConfirmed) return;
+          Swal.fire({title:'Saving...', allowOutsideClick:false, didOpen:()=>Swal.showLoading()});
+          let done = 0, fail = [];
+          let next = () => {
+              if(done >= recs.length) {
+                  if(fail.length) Swal.fire({title:'Partly saved', html:`${done-fail.length} saved.<br>${fail.join('<br>')}`, icon:'warning'});
+                  else Swal.fire('Saved!', `${done} ${qModule} record(s) saved.`, 'success');
+                  qRenderEntry(); return;
+              }
+              let rec = recs[done];
+              apiCall('q_submitForm', { module: qModule, data: rec })
+                .then(() => { done++; next(); })
+                .catch(e => { fail.push(`Row ${done+1}: ${e.message}`); done++; next(); });
+          };
+          next();
+      });
   }
 
   function qRenderPending() {
@@ -2260,7 +2430,8 @@
             <button class="btn" style="width:auto; margin:0; padding:8px 14px; background:#1abc9c;" onclick="qLoadDash()">Refresh</button>
           </div>
         </div>
-        <div id="qdBody"><div class="pw-empty">Loading…</div></div>`;
+        <div id="qdBody"><div class="pw-empty">Loading…</div></div>
+        ${qTaskBoardHtml()}`;
       let n = new Date();
       document.getElementById('qdDay').value = n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');
       qLoadDash();
@@ -2311,7 +2482,172 @@
             h += '</tbody></table>'; }
 
           document.getElementById('qdBody').innerHTML = h;
+          qLoadTasks();
       }).catch(e => document.getElementById('qdBody').innerHTML = '<div class="pw-empty">Error: '+e.message+'</div>');
+  }
+
+
+  /* ===================== INCOMING MASTERS: AVL / BOM / CSL ===================== */
+  const Q_MASTER_DEF = {
+    AVL: { label:'AVL — Approved Vendor List', color:'#2980b9',
+           cols:['Part Code *','Description','Manufacturer','MPN','Approved Vendor','Status','Remarks'] },
+    BOM: { label:'BOM — Bill of Material', color:'#16a085',
+           cols:['Model *','Part Code','Description','Qty per Unit','Ref Designator','Remarks'] },
+    CSL: { label:'CSL — Component Spec List', color:'#8e44ad',
+           cols:['Part Code *','Description','Spec / Value','Package','Critical (Y/N)','Remarks'] }
+  };
+  let qMaster = 'AVL';
+
+  function qRenderMasters() {
+      document.getElementById('qBody').innerHTML = `
+        <h3 style="margin:0 0 4px 0; color:#2980b9;">Incoming Masters</h3>
+        <div style="font-size:11.5px; color:#8a94a6; margin-bottom:14px;">
+          These feed the part-code lookup on the IQC screen. Stored as AVL / BOM / CSL sheets in Quality_DB.
+        </div>
+        <div id="qMastCounts" class="q-tiles"></div>
+        <div class="q-sub">
+          ${Object.keys(Q_MASTER_DEF).map(k => `<div id="qm-${k}" class="${k===qMaster?'on':''}" onclick="qSetMaster('${k}')">${k}</div>`).join('')}
+        </div>
+        <div id="qMastPane"></div>`;
+      qLoadMasterCounts();
+      qSetMaster(qMaster);
+  }
+
+  function qLoadMasterCounts() {
+      apiCall('q_getMasterCounts').then(c => {
+          document.getElementById('qMastCounts').innerHTML = Object.keys(Q_MASTER_DEF).map(k =>
+            `<div class="q-tile" style="border-top:3px solid ${Q_MASTER_DEF[k].color};"><span>${k} rows</span><b>${c[k]||0}</b></div>`).join('');
+      }).catch(e => { document.getElementById('qMastCounts').innerHTML = `<div class="pw-empty">Could not read masters: ${e.message}</div>`; });
+  }
+
+  function qSetMaster(k) {
+      qMaster = k;
+      Object.keys(Q_MASTER_DEF).forEach(x => { let e = document.getElementById('qm-'+x); if(e) e.className = (x===k?'on':''); });
+      let d = Q_MASTER_DEF[k];
+      document.getElementById('qMastPane').innerHTML = `
+        <div class="q-hint"><b>${d.label}</b> &nbsp;|&nbsp; Column order: <b>${d.cols.join(' , ')}</b></div>
+        <label>Paste from Excel — one row per line, columns separated by Tab or comma</label>
+        <textarea id="qMastPaste" class="bulk-paste" rows="9" placeholder="${d.cols.join('\t')}"></textarea>
+        <div style="display:flex; align-items:center; gap:14px; margin-top:11px; flex-wrap:wrap;">
+          <label style="margin:0;"><input type="radio" name="qmMode" value="append" checked> Add to existing</label>
+          <label style="margin:0;"><input type="radio" name="qmMode" value="replace"> Replace whole list</label>
+          <label style="margin:0;"><input type="checkbox" id="qmHeader" checked> First line is a header</label>
+          <button class="btn" style="width:auto; margin:0; padding:9px 20px; background:${d.color};" onclick="qUploadMaster()"><i class="fa-solid fa-upload"></i> Upload ${k}</button>
+        </div>
+        <div id="qMastPreview" style="margin-top:14px;"></div>`;
+  }
+
+  function qUploadMaster() {
+      let raw = (document.getElementById('qMastPaste').value || '').trim();
+      if(!raw) return Swal.fire('Nothing pasted', 'Paste the list first.', 'warning');
+      let lines = raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+      if(document.getElementById('qmHeader').checked) lines = lines.slice(1);
+      if(!lines.length) return Swal.fire('No data rows', 'Only a header was found.', 'warning');
+
+      let width = Q_MASTER_DEF[qMaster].cols.length;
+      let rows = lines.map(l => {
+          let c = (l.includes('\t') ? l.split('\t') : l.split(',')).map(x => x.trim());
+          while(c.length < width) c.push('');
+          return c.slice(0, width);
+      }).filter(r => r[0] !== '');
+      if(!rows.length) return Swal.fire('No valid rows', 'The first column cannot be empty.', 'warning');
+
+      let mode = document.querySelector('input[name="qmMode"]:checked').value;
+      Swal.fire({ title:`Upload ${rows.length} ${qMaster} row(s)?`,
+                  text: mode === 'replace' ? 'The existing list will be replaced.' : 'They will be added to the existing list.',
+                  icon:'question', showCancelButton:true, confirmButtonText:'Upload', confirmButtonColor:Q_MASTER_DEF[qMaster].color }).then(r => {
+          if(!r.isConfirmed) return;
+          Swal.fire({title:'Uploading...', allowOutsideClick:false, didOpen:()=>Swal.showLoading()});
+          apiCall('q_uploadMaster', { type: qMaster, rows: rows, mode: mode }).then(res => {
+              Swal.fire('Uploaded!', `${res.saved} row(s) saved to ${qMaster}.`, 'success');
+              document.getElementById('qMastPaste').value = '';
+              qLoadMasterCounts();
+          }).catch(e => Swal.fire('Error', e.message, 'error'));
+      });
+  }
+
+  /* ===================== MORNING TASK BOARD ===================== */
+  function qTaskBoardHtml() {
+      return `<div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin:22px 0 12px 0;">
+          <h4 style="margin:0; color:#2c3e50; font-size:14px;"><i class="fa-solid fa-clipboard-list" style="color:#1abc9c;"></i> Morning Task Board</h4>
+          <button class="btn" style="width:auto; margin:0; padding:8px 16px; background:#1abc9c;" onclick="qOpenTaskAdd()"><i class="fa-solid fa-plus"></i> Assign Tasks</button>
+        </div>
+        <div id="qTaskBoard"><div class="pw-empty">Loading…</div></div>`;
+  }
+
+  function qLoadTasks() {
+      let day = document.getElementById('qdDay') ? document.getElementById('qdDay').value : '';
+      apiCall('q_getTasks', { dayStr: day }).then(res => {
+          let box = document.getElementById('qTaskBoard'); if(!box) return;
+          if(!res.tasks.length) { box.innerHTML = '<div class="pw-empty"><i class="fa-regular fa-clipboard"></i>No tasks for this day yet. Use “Assign Tasks” to plan the morning.</div>'; return; }
+          let people = {};
+          res.tasks.forEach(t => { if(!people[t.assignedTo]) people[t.assignedTo] = []; people[t.assignedTo].push(t); });
+          let h = '<div class="tb-cols">';
+          Object.keys(people).sort().forEach(who => {
+              let open = people[who].filter(t => t.status !== 'Done').length;
+              h += `<div class="tb-col"><h5><span>${who}</span><span>${open} open</span></h5>`;
+              people[who].forEach(t => {
+                  let cls = t.status === 'Done' ? 'done' : (t.priority === 'High' ? 'hi' : (t.priority === 'Low' ? 'lo' : ''));
+                  h += `<div class="tb-card ${cls}">
+                          <span class="tt">${t.task}</span>
+                          <span class="tm">${t.module}${t.carriedOver ? '<span class="tb-over">carried over</span>' : ''}${t.notes ? ' · ' + t.notes : ''}</span>`;
+                  if(t.status !== 'Done') h += `<button onclick="qTaskDone(${t.row})">Mark Done</button>`;
+                  else h += `<button class="sec" onclick="qTaskReopen(${t.row})">Reopen</button>`;
+                  h += `</div>`;
+              });
+              h += '</div>';
+          });
+          box.innerHTML = h + '</div>';
+      }).catch(e => { let b = document.getElementById('qTaskBoard'); if(b) b.innerHTML = `<div class="pw-empty">Tasks unavailable: ${e.message}</div>`; });
+  }
+
+  function qTaskDone(row) {
+      Swal.fire({ title:'Mark this task done?', input:'text', inputLabel:'Closing note (optional)', showCancelButton:true, confirmButtonText:'Done', confirmButtonColor:'#2ecc71' }).then(r => {
+          if(!r.isConfirmed) return;
+          apiCall('q_updateTask', { row: row, status:'Done', notes: r.value || '' })
+            .then(() => qLoadTasks()).catch(e => Swal.fire('Error', e.message, 'error'));
+      });
+  }
+  function qTaskReopen(row) {
+      apiCall('q_updateTask', { row: row, status:'Open', notes:'' }).then(() => qLoadTasks()).catch(e => Swal.fire('Error', e.message, 'error'));
+  }
+
+  function qOpenTaskAdd() {
+      let mods = ['General','IQC','PPA','RRT','SQ','LPR','Vendor'];
+      let rows = '';
+      for(let i = 0; i < 5; i++) {
+          rows += `<tr><td class="rn">${i+1}</td>
+            <td><input id="qt_${i}_task" placeholder="What needs doing"></td>
+            <td><input id="qt_${i}_who" list="qlPersonList" placeholder="Person"></td>
+            <td><select id="qt_${i}_mod">${mods.map(m=>`<option>${m}</option>`).join('')}</select></td>
+            <td><select id="qt_${i}_pri"><option>Normal</option><option>High</option><option>Low</option></select></td></tr>`;
+      }
+      Swal.fire({
+        title: 'Assign Today’s Tasks', width: '90%',
+        html: `<div class="qg-wrap"><table class="qg" style="min-width:640px;">
+                 <thead><tr><th class="rn">#</th><th>Task</th><th style="width:150px;">Assign To</th><th style="width:120px;">Module</th><th style="width:110px;">Priority</th></tr></thead>
+                 <tbody>${rows}</tbody></table></div>`,
+        showCancelButton: true, confirmButtonText: 'Assign', confirmButtonColor: '#1abc9c',
+        preConfirm: () => {
+            let out = [];
+            for(let i = 0; i < 5; i++) {
+                let t = (document.getElementById(`qt_${i}_task`).value || '').trim();
+                if(!t) continue;
+                out.push({ task: t,
+                           assignedTo: (document.getElementById(`qt_${i}_who`).value || '').trim() || 'Unassigned',
+                           module: document.getElementById(`qt_${i}_mod`).value,
+                           priority: document.getElementById(`qt_${i}_pri`).value,
+                           date: document.getElementById('qdDay') ? document.getElementById('qdDay').value : '' });
+            }
+            return out;
+        }
+      }).then(r => {
+          if(!r.isConfirmed || !r.value || !r.value.length) return;
+          Swal.fire({title:'Assigning...', allowOutsideClick:false, didOpen:()=>Swal.showLoading()});
+          apiCall('q_addTasks', { tasks: r.value, createdBy: loggedInUser })
+            .then(res => { Swal.fire('Assigned!', `${res.saved} task(s) added.`, 'success'); qLoadTasks(); })
+            .catch(e => Swal.fire('Error', e.message, 'error'));
+      });
   }
 
   /* ---------- Vendor Quality: incoming rejection + production (LPR) rejection ---------- */
