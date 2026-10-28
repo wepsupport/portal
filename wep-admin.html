@@ -11,6 +11,10 @@
     :root { --brand: #0984e3; --brand2: #ff006e; --brand3: #e67e22; --bg: #f5f6fa; } 
     body { font-family: 'Segoe UI', sans-serif; background: var(--bg); margin: 0; padding: 10px; }
     
+    /* the global `input { width:100% }` below also stretched checkboxes,
+       pushing their label text onto the next line */
+    input[type="checkbox"], input[type="radio"] { width: auto !important; margin-right: 6px; vertical-align: middle; }
+
     input[required], select[required], textarea[required] {
         background-color: #f0fdf4 !important;
         border: 1px solid #2ecc71 !important;
@@ -54,6 +58,46 @@
     .ct-sum-card:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
     .ct-sum-card h4 { margin: 0; font-size: 11px; color: #7f8fa6; text-transform: uppercase; font-weight: 700; }
     .ct-sum-card h2 { margin: 6px 0 0 0; font-size: 20px; color: #2c3e50; font-weight: 800; }
+
+    /* --- QUICK CALL LOG (fast entry for rush hours) --- */
+    .ql-step { margin-bottom: 14px; }
+    .ql-step > label { font-size: 12px; font-weight: 700; color: #2f3640; display: block; margin-bottom: 5px; }
+    .ql-big { font-size: 20px !important; padding: 12px !important; letter-spacing: 2px; font-weight: 700; }
+    .ql-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    .ql-chip { background: #fff0f6; border: 1px solid #ffb3d1; color: #c2185b; padding: 6px 11px; border-radius: 14px; font-size: 12px; cursor: pointer; font-weight: 600; transition: 0.15s; }
+    .ql-chip:hover { background: var(--brand2); color: #fff; border-color: var(--brand2); }
+    .ql-chip.on { background: var(--brand2); color: #fff; border-color: var(--brand2); }
+    .ql-counter { display: flex; align-items: center; gap: 10px; }
+    .ql-counter button { width: 40px; height: 40px; border-radius: 8px; border: 1px solid #dcdde1; background: #fff; font-size: 20px; font-weight: 700; cursor: pointer; color: #2f3640; line-height: 1; }
+    .ql-counter button:hover { background: #f1f2f6; }
+    .ql-counter span { font-size: 22px; font-weight: 800; color: var(--brand2); min-width: 34px; text-align: center; }
+    .ql-counter input { width: 120px; }
+    .ql-toggle { display: flex; gap: 10px; }
+    .ql-tg { flex: 1; padding: 13px; border-radius: 8px; border: 2px solid #dcdde1; background: #fff; font-weight: 700; font-size: 13px; cursor: pointer; color: #7f8fa6; transition: 0.15s; }
+    .ql-tg.on-pending { border-color: #e67e22; background: #fff3e0; color: #e67e22; }
+    .ql-tg.on-closed { border-color: #2ecc71; background: #eafaf1; color: #27ae60; }
+    .ql-more { margin-bottom: 14px; border: 1px solid #eee; border-radius: 6px; padding: 8px 12px; background: #fcfcfc; }
+    .ql-more summary { cursor: pointer; font-size: 12px; font-weight: 700; color: #7f8fa6; outline: none; }
+    .ql-more .grid { margin-top: 12px; margin-bottom: 0; }
+    .ql-match { background: #fff8e1; border: 1px solid #f1c40f; border-radius: 8px; padding: 12px; margin-top: 10px; font-size: 13px; }
+    .ql-match b { color: #e67e22; }
+    .ql-match .ql-mbtns { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .ql-match .ql-mbtns button { border: none; border-radius: 6px; padding: 8px 14px; font-size: 12px; font-weight: 700; cursor: pointer; color: #fff; }
+
+    /* --- COPY NUMBER --- */
+    .copy-btn { background: #eaf4fd; border: 1px solid #bcdffb; color: #1976d2; border-radius: 5px; padding: 2px 7px; font-size: 11px; cursor: pointer; line-height: 1.6; transition: 0.15s; }
+    .copy-btn:hover { background: #1976d2; color: #fff; border-color: #1976d2; }
+    .copy-btn.done { background: #2ecc71; border-color: #2ecc71; color: #fff; }
+
+    /* --- BULK UPLOAD --- */
+    .bulk-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .bulk-table th { background: #f1f2f6; padding: 8px 6px; text-align: left; font-size: 11px; text-transform: uppercase; color: #57606f; border: 1px solid #dcdde1; }
+    .bulk-table td { border: 1px solid #dcdde1; padding: 0; }
+    .bulk-table td input { border: none; border-radius: 0; background: transparent; padding: 9px 8px; font-size: 13px; }
+    .bulk-table td input:focus { background: #fffbe6; outline: 2px solid var(--brand2); outline-offset: -2px; }
+    .bulk-table tr.filled td { background: #f6fff9; }
+    .bulk-rownum { width: 32px; text-align: center; color: #b2bec3; font-weight: 700; font-size: 11px; padding: 0 !important; }
+    .bulk-paste { width: 100%; font-family: monospace; font-size: 12px; padding: 10px; border: 1px dashed #b2bec3; border-radius: 6px; background: #fcfcfc; }
   </style>
 </head>
 <body onload="initApp()">
@@ -110,11 +154,11 @@
   <div id="pw-entry" class="content pw-content active">
     <form id="pwEntryForm" onsubmit="event.preventDefault(); submitPwEntry();">
       <div style="background: #f1f2f6; padding: 15px; border-radius: 6px; margin-bottom: 15px;"><div class="grid"><div><label>Customer Name *</label><input type="text" id="pwCust" required></div><div><label>Contact (Opt)</label><input type="text" id="pwContact"></div></div><div class="grid"><div><label>Receiving Date *</label><input type="date" id="pwDate" required></div><div><label>Doc No (Opt)</label><input type="text" id="pwDoc"></div></div><div><label>Responsible Person *</label><select id="pwPerson" required></select></div></div>
-      <div id="pwItemsContainer"><div class="item-box" id="pw_item_1"><div class="grid"><div><label>Model *</label><select class="i-model" required></select></div><div><label>Received Part *</label><select class="i-part" required><option value="">-- Select --</option><option value="PCB">PCB</option><option value="SMPS">SMPS</option><option value="Printer">Printer</option><option value="Adaptor">Adaptor</option><option value="Other">Other</option></select></div></div><div class="grid"><div><label>SL. No</label><input type="text" class="i-serial"></div><div><label>Issue</label><input type="text" class="i-issue"></div></div></div></div>
+      <div id="pwItemsContainer"><div class="item-box" id="pw_item_1"><div class="grid"><div><label>Model *</label><select class="i-model" required></select></div><div><label>Received Part *</label><select class="i-part" required><option value="">-- Select --</option><option value="PCB">PCB</option><option value="SMPS">SMPS</option><option value="Printer">Printer</option><option value="Adaptor">Adaptor</option><option value="Others">Others</option></select></div></div><div class="grid"><div><label>SL. No</label><input type="text" class="i-serial"></div><div><label>Issue</label><input type="text" class="i-issue"></div></div><div><label>Other Parts Received with it (Optional)</label><input type="text" class="i-other" placeholder="e.g. received along with Adaptor + Paper cover assy"></div></div></div>
       <button type="button" class="btn btn-outline" onclick="addPwItem()">+ Add Another Part</button><button class="btn" type="submit">Submit Entry & Gen Barcode</button>
     </form>
   </div>
-  <div id="pw-repair" class="content pw-content"><div id="pwRepairList">Loading...</div><div id="pwRepairPanel" class="panel" style="display:none;"><h4 id="pwRepTitle" style="color:var(--brand)"></h4><form onsubmit="event.preventDefault(); submitPwRepair(this);"><input type="hidden" name="row" id="pwRepRow"><label>Action Taken *</label><textarea name="actionTaken" rows="2" required style="margin-bottom:10px;"></textarea><label>Part Failure *</label><input list="pwFailureList" name="partFailure" id="pwFailureInput" required style="margin-bottom:10px;"><datalist id="pwFailureList"></datalist><label>Status</label><select name="repairStatus" required style="margin-bottom:10px;"><option value="Done">Repair Done</option><option value="Not Repairable">Not Repairable</option></select><button class="btn btn-dark" type="submit">Update Repair</button></form></div></div>
+  <div id="pw-repair" class="content pw-content"><div id="pwRepairList">Loading...</div><div id="pwRepairPanel" class="panel" style="display:none;"><h4 id="pwRepTitle" style="color:var(--brand)"></h4><form id="pwRepairForm" onsubmit="event.preventDefault(); submitPwRepair(this);"><input type="hidden" name="row" id="pwRepRow"><label>Action Taken *</label><textarea name="actionTaken" id="pwRepAction" rows="2" required style="margin-bottom:10px;"></textarea><label>Part Failure *</label><input list="pwFailureList" name="partFailure" id="pwFailureInput" required style="margin-bottom:10px;"><datalist id="pwFailureList"></datalist><label>Status</label><select name="repairStatus" id="pwRepStatus" required style="margin-bottom:10px;" onchange="pwToggleReason()"><option value="Done">Repair Done</option><option value="Not Repairable">Not Repairable</option></select><div id="pwReasonBox" style="display:none; margin-bottom:10px;"><label style="color:#e74c3c;">Reason &mdash; why is it not repairable? *</label><textarea name="reason" id="pwRepReason" rows="2" placeholder="e.g. Burnt track on logic card, component obsolete. This reason is printed on the customer's return document."></textarea></div><button class="btn btn-dark" type="submit">Update Repair</button></form></div></div>
   <div id="pw-pay" class="content pw-content"><div id="pwPayList">Loading...</div><div id="pwPayPanel" class="panel" style="display:none; background:#f9f9f9;"><h4 id="pwPayTitle" style="color:#44bd32;"></h4><div style="background:#fff; padding:15px; border:1px solid #ccc; border-radius:4px; margin-bottom:15px;"><div style="display:flex; justify-content:space-between;"><h4 style="margin:0;">📝 Generate / Edit Quotation</h4><button class="btn" type="button" style="width:auto; padding:5px 10px; background:#00b894; margin:0;" onclick="pwMarkSent()">✔️ Mark as Sent</button></div><hr><p style="font-size:11px; color:#555;"><i>Note: Generating will overwrite any previously saved quotation for this task.</i></p><label>Select Quotation Rate</label><select id="pwQuotePart" onchange="pwCalcQuote()"></select><div class="grid" style="margin-top:10px;"><div><label>Base (₹)</label><input type="number" id="pwQBase" readonly></div><div><label>IGST (₹)</label><input type="number" id="pwQTax" readonly></div></div><label>Total (₹)</label><input type="number" id="pwQTotal" readonly style="font-weight:bold; color:red;"><button class="btn" type="button" style="background:#e1b12c; color:#000;" onclick="pwGenPrint()">💾 Save & Print PDF</button></div><div style="background:#fff; padding:15px; border:1px solid #ccc; border-radius:4px;"><h4 style="margin-top:0;">✅ Close Payment</h4><form onsubmit="event.preventDefault(); submitPwPayment(this);"><input type="hidden" name="row" id="pwPayRow"><div class="grid"><div><label id="lblInvoice">Invoice No *</label><input type="text" name="docNo" id="pwPayDocNo" required></div><div><label>Tracking No *</label><input type="text" name="trackNo" id="pwPayTrackNo" required></div></div><button class="btn" style="background:#44bd32;" type="submit">Payment Done & Close</button></form></div></div><div id="pwMultiPanel" class="panel" style="display:none; background:#fffdf5; border-color:#e1b12c;"><div style="background:#fff; padding:15px; border:1px solid #ccc; border-radius:4px; margin-bottom:15px;"><div style="display:flex; justify-content:space-between;"><h4 style="margin:0; color:#e1b12c;" id="pwMultiTitle">🧾 Master Quotation</h4><button class="btn" type="button" style="width:auto; padding:5px 10px; background:#00b894; margin:0;" onclick="pwMarkMultiSent()">✔️ Mark All Sent</button></div><hr><div id="pwMultiContainer"></div><hr><div class="grid"><div><label>Grand Base (₹)</label><input type="number" id="pwMBase" readonly></div><div><label>Grand IGST (₹)</label><input type="number" id="pwMTax" readonly></div></div><label>Grand Total (₹)</label><input type="number" id="pwMTotal" readonly style="font-weight:bold; color:red; font-size:16px;"><div style="display:flex; gap:10px;"><button class="btn" type="button" style="background:#e1b12c; color:#000;" onclick="pwGenMultiPrint()">💾 Print Master PDF</button><button class="btn btn-dark" type="button" onclick="document.getElementById('pwMultiPanel').style.display='none'">Cancel</button></div></div><div style="background:#fff; padding:15px; border:1px solid #ccc; border-radius:4px;"><h4 style="margin-top:0;">✅ Master Close</h4><form onsubmit="event.preventDefault(); pwSubmitMultiPayment();"><div class="grid"><div><label>Master Invoice *</label><input type="text" id="pwMDoc" required></div><div><label>Master Tracking *</label><input type="text" id="pwMTrack" required></div></div><button class="btn" style="background:#44bd32;" type="submit">Close All Items</button></form></div></div></div>
   <div id="pw-reports" class="content pw-content">
     <div class="grid">
@@ -145,13 +189,126 @@
 <div id="ctPortal" style="display:none;" class="container container-ct">
   <div class="header-nav" style="background: #ffe0eb;"><h3 style="margin:0; color:var(--brand2);">Call Tracking System</h3><button class="back-btn" onclick="openPortal('home')">⬅️ Main Menu</button></div>
   <div class="tabs">
-      <div class="tab ct-tab active" onclick="showCtTab('ct-new', this)">New Call</div>
+      <div class="tab ct-tab active" onclick="showCtTab('ct-quick', this); qlOpen();">⚡ Quick Log</div>
+      <div class="tab ct-tab" onclick="showCtTab('ct-new', this)">Detailed Entry</div>
+      <div class="tab ct-tab" onclick="showCtTab('ct-bulk', this); bulkInit();">📋 Bulk Upload</div>
       <div class="tab ct-tab" onclick="showCtTab('ct-pending', this); ctLoadPending();">Pending Calls</div>
       <div class="tab ct-tab" onclick="showCtTab('ct-reports', this)">Reports</div>
       <div class="tab ct-tab" onclick="showCtTab('ct-dash', this); ctLoadDashboard();">Dashboard</div>
   </div>
   
-  <div id="ct-new" class="content ct-content active">
+  <!-- ========= QUICK CALL LOG: minimum fields, maximum speed ========= -->
+  <div id="ct-quick" class="content ct-content active">
+    <div style="background:#fff0f6; border:1px solid #ffb3d1; border-radius:8px; padding:10px 14px; margin-bottom:18px; font-size:12px; color:#c2185b;">
+      <b><i class="fa-solid fa-bolt"></i> Rush-hour entry.</b> Only <b>Mobile Number</b> and <b>Issue</b> are required. Everything else is optional — fill it later from <b>Pending Calls</b>.
+    </div>
+
+    <div class="ql-step">
+      <label><i class="fa-solid fa-phone" style="color:var(--brand2);"></i> Mobile Number *</label>
+      <input type="tel" id="qlPhone" class="ql-big" maxlength="10" placeholder="10 digit number" oninput="qlLookup()" autocomplete="off">
+      <div id="qlMatchBox"></div>
+    </div>
+
+    <div class="ql-step">
+      <label><i class="fa-solid fa-triangle-exclamation" style="color:var(--brand2);"></i> Issue *</label>
+      <input type="text" id="qlIssue" placeholder="Type the issue, or tap a quick option below" autocomplete="off">
+      <div id="qlChips" class="ql-chips"></div>
+    </div>
+
+    <div class="ql-step">
+      <label><i class="fa-solid fa-phone-volume" style="color:var(--brand2);"></i> How many calls so far?</label>
+      <div class="ql-counter">
+        <button type="button" onclick="qlCalls(-1)">&minus;</button>
+        <span id="qlCallCount">1</span>
+        <button type="button" onclick="qlCalls(1)">+</button>
+        <input type="number" id="qlMins" min="0" placeholder="Total mins (opt)">
+      </div>
+    </div>
+
+    <div class="ql-step">
+      <label><i class="fa-solid fa-flag" style="color:var(--brand2);"></i> Status *</label>
+      <div class="ql-toggle">
+        <button type="button" id="qlBtnPending" class="ql-tg on-pending" onclick="qlSetStatus('Pending')">⏳ Pending / Open</button>
+        <button type="button" id="qlBtnClosed" class="ql-tg" onclick="qlSetStatus('Closed')">✅ Resolved / Close</button>
+      </div>
+    </div>
+
+    <div class="ql-step" id="qlRemarkBox" style="display:none;">
+      <label><i class="fa-solid fa-pen" style="color:#27ae60;"></i> Closing Remarks * <small style="font-weight:400; color:#7f8fa6;">(what fixed it)</small></label>
+      <input type="text" id="qlRemark" placeholder="e.g. Guided customer to reset the printer — issue resolved" autocomplete="off">
+    </div>
+
+    <div class="ql-step" id="qlAssignBox">
+      <label><i class="fa-solid fa-user-check" style="color:#7f8fa6;"></i> Assign To <small style="font-weight:400; color:#7f8fa6;">(optional)</small></label>
+      <input type="text" id="qlAssign" list="qlPersonList" placeholder="Blank = Unassigned" autocomplete="off">
+      <datalist id="qlPersonList"></datalist>
+    </div>
+
+    <details class="ql-more">
+      <summary>+ Optional details (name, model, serial, city, warranty)</summary>
+      <div class="grid">
+        <div><label>Customer Name</label><input type="text" id="qlName" placeholder="Leave blank if not known"></div>
+        <div><label>Model</label><select id="qlModel" class="i-model"></select></div>
+      </div>
+      <div class="grid">
+        <div><label>Serial Number</label><input type="text" id="qlSerial"></div>
+        <div><label>City</label><input type="text" id="qlCity"></div>
+      </div>
+      <div class="grid">
+        <div><label>State</label><select id="qlState"></select></div>
+        <div><label style="margin-top:22px;"><input type="checkbox" id="qlWarranty" checked> In Warranty?</label></div>
+      </div>
+    </details>
+
+    <button class="btn btn-ct" type="button" onclick="qlSubmit()" style="font-size:15px; padding:15px;"><i class="fa-solid fa-bolt"></i> SAVE CALL LOG</button>
+  </div>
+
+  <!-- ========= BULK COMPLAINT UPLOAD: up to 10 calls in one go ========= -->
+  <div id="ct-bulk" class="content ct-content">
+    <div style="background:#fff0f6; border:1px solid #ffb3d1; border-radius:8px; padding:10px 14px; margin-bottom:16px; font-size:12px; color:#c2185b;">
+      <b><i class="fa-solid fa-layer-group"></i> Up to 10 complaints at once.</b> Fill the table below, or paste straight from Excel. All rows are saved as <b>Pending</b> in a single request.
+    </div>
+
+    <details class="ql-more" style="margin-bottom:16px;">
+      <summary><i class="fa-solid fa-paste"></i> Paste from Excel / WhatsApp list</summary>
+      <p style="font-size:11px; color:#7f8fa6; margin:10px 0 6px 0;">One complaint per line, columns separated by Tab or comma: <b>Number, Issue, TAT(hrs)</b>. TAT is optional.</p>
+      <textarea id="bulkPaste" class="bulk-paste" rows="5" placeholder="9876543210&#9;Paper jam&#9;4&#10;9123456789&#9;Not powering ON&#9;26&#10;9000011111&#9;Driver issue"></textarea>
+      <button type="button" class="btn btn-dark" style="width:auto; padding:7px 16px; margin-top:8px; font-size:12px;" onclick="bulkParsePaste()">Fill Table from Paste</button>
+    </details>
+
+    <div style="background:#f8f9fa; border:1px solid #dcdde1; border-radius:8px; padding:14px; margin-bottom:16px;">
+      <div style="font-size:11px; font-weight:700; color:#57606f; text-transform:uppercase; margin-bottom:10px;">Applies to all rows below</div>
+      <div class="grid">
+        <div><label>Model (optional)</label><select id="bulkModel" class="i-model"></select></div>
+        <div><label>Assign To (optional)</label><input type="text" id="bulkAssign" list="qlPersonList" placeholder="Blank = Unassigned"></div>
+      </div>
+      <div class="grid">
+        <div><label>State (optional)</label><select id="bulkState"></select></div>
+        <div><label style="margin-top:22px;"><input type="checkbox" id="bulkWarranty" checked> In Warranty?</label></div>
+      </div>
+    </div>
+
+    <table class="bulk-table">
+      <thead><tr>
+        <th class="bulk-rownum">#</th>
+        <th style="width:26%;">Mobile Number *</th>
+        <th>Issue *</th>
+        <th style="width:16%;">TAT (hrs) <span title="How many hours ago the complaint came in. Leave blank to count from now." style="cursor:help; color:#b2bec3;">&#9432;</span></th>
+        <th style="width:22%;">Customer Name</th>
+      </tr></thead>
+      <tbody id="bulkBody"></tbody>
+    </table>
+
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; flex-wrap:wrap; gap:10px;">
+      <div style="font-size:13px; color:#57606f;"><b id="bulkReady">0</b> of 10 rows ready</div>
+      <div style="display:flex; gap:10px;">
+        <button type="button" class="btn" style="width:auto; padding:9px 18px; margin:0; background:#b2bec3;" onclick="bulkClear()">Clear</button>
+        <button type="button" class="btn btn-ct" style="width:auto; padding:9px 24px; margin:0;" onclick="bulkSubmit()"><i class="fa-solid fa-cloud-arrow-up"></i> UPLOAD ALL</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="ct-new" class="content ct-content">
     <form id="ctEntryForm" onsubmit="event.preventDefault(); ctSubmitEntry(this);">
       <div class="grid"><div><label>Customer Name *</label><input type="text" name="customerName" required></div><div><label>Contact Number *</label><input type="tel" name="contactNumber" required></div></div><div class="grid"><div><label>Model Name *</label><select name="model" class="i-model" required></select></div><div><label>Serial Number (Opt)</label><input type="text" name="serialNumber"></div></div><div class="grid"><div><label>City</label><input type="text" name="location"></div><div><label>State *</label><select name="state" id="ctState" required></select></div></div><div class="grid"><div><label>Call Status *</label><select name="status" required><option value="Pending">Pending</option><option value="Closed">Closed</option></select></div><div><label style="margin-top: 15px;"><input type="checkbox" name="warrantyStatus" checked> In Warranty?</label></div></div><div class="grid"><div><label>Handled By *</label><select name="callHandledBy" id="ctPerson" required></select></div><div><label>Assign To</label><input type="text" name="assignedTo"></div></div><label>Problem *</label><input type="text" name="problemDesc" required style="margin-bottom:5px;"><label>Action Taken</label><input type="text" name="actionTaken" style="margin-bottom:8px;"><button class="btn btn-ct" type="submit">LOG CALL</button>
     </form>
@@ -175,9 +332,12 @@
                   </div>
               </div>
               <div id="callLogBadges" style="margin-bottom:10px; display:flex; flex-wrap:wrap; gap:6px;"></div>
-              <div style="display:flex; gap:10px;">
-                  <input type="number" id="newCallMins" placeholder="Add Mins (e.g. 5)" style="width:130px; padding:8px; border:1px solid #dcdde1; border-radius:4px; font-size:12px;" min="1">
+              <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                  <button type="button" class="btn btn-ct" style="margin:0; width:auto; padding:7px 14px; font-size:11px; border-radius:4px;" onclick="addCallLog(0)">+ 1 Call</button>
+                  <span style="color:#b2bec3; font-size:11px;">or with time:</span>
+                  <input type="number" id="newCallMins" placeholder="Mins (e.g. 5)" style="width:120px; padding:8px; border:1px solid #dcdde1; border-radius:4px; font-size:12px;" min="1">
                   <button type="button" class="btn btn-dark" style="margin:0; width:auto; padding:6px 12px; font-size:11px; border-radius:4px;" onclick="addCallLog()">+ Add Call</button>
+                  <button type="button" class="btn" style="margin:0; width:auto; padding:6px 12px; font-size:11px; border-radius:4px; background:#b2bec3;" onclick="undoCallLog()">Undo</button>
               </div>
           </div>
 
@@ -329,7 +489,7 @@
 <script>
   // ===================== GITHUB API CONFIGURATION =====================
   // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-  const API_URL = "https://script.google.com/macros/s/AKfycbwRPu043N5h6jb9eSgi-DUuJU6wmeoWDSsYO3brwkN0BR1jgb9l1xBtR3fkOp595BnR/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbxBzPmc-U2aH7hia2r0WZViA_5FEOVf8bIZYIpNBcgHym4bjPWgfCXrrZPR5Jp4cvRE/exec";
 
   async function apiCall(action, params = {}) {
       try {
@@ -407,9 +567,10 @@
       if(act.includes("|| CALLS:")) {
           let parts = act.split("|| CALLS:");
           let cleanAct = parts[0].trim();
-          let logs = parts[1].trim().split(",");
-          let totalMins = logs.reduce((a,b)=>parseInt(a)+parseInt(b), 0);
-          return `${cleanAct} <div style="margin-top:4px; padding:4px 6px; background:#fff3e0; color:#e67e22; border-radius:4px; font-size:10px; font-weight:bold; display:inline-block;"><i class="fa-solid fa-phone"></i> ${logs.length} Calls (${totalMins} mins)</div>`;
+          let logs = parts[1].trim().split(",").filter(String);
+          let totalMins = logs.reduce((a,b)=>a + (parseInt(b) || 0), 0);
+          let minTxt = totalMins > 0 ? ` (${totalMins} mins)` : '';
+          return `${cleanAct} <div style="margin-top:4px; padding:4px 6px; background:#fff3e0; color:#e67e22; border-radius:4px; font-size:10px; font-weight:bold; display:inline-block;"><i class="fa-solid fa-phone"></i> ${logs.length} Calls${minTxt}</div>`;
       }
       return act;
   }
@@ -472,8 +633,9 @@
 
   /* --- CHECK NEW CALLS FUNCTION --- */
   function checkNewCallsAlert() { 
-      apiCall('ct_getPendingCalls').then(data => { 
-          if (lastCallCount !== -1 && data.length > lastCallCount) { 
+      apiCall('ct_getPendingCalls').then(data => {
+          qlPendingCache = data || [];
+          if (lastCallCount !== -1 && data.length > lastCallCount) {
               let latestCall = data[data.length - 1]; 
               
               let iss = (latestCall.issue || "").toUpperCase();
@@ -542,7 +704,7 @@
       setInterval(checkNewCallsAlert, 10000);
   }
 
-  function openPortal(portal) { ['landingScreen','dashPortal','pwPortal','ctPortal','wcrPortal'].forEach(id=>document.getElementById(id).style.display='none'); if(portal==='home') document.getElementById('landingScreen').style.display='flex'; else document.getElementById(portal+'Portal').style.display='block'; }
+  function openPortal(portal) { ['landingScreen','dashPortal','pwPortal','ctPortal','wcrPortal'].forEach(id=>document.getElementById(id).style.display='none'); if(portal==='home') document.getElementById('landingScreen').style.display='flex'; else document.getElementById(portal+'Portal').style.display='block'; if(portal==='ct') qlOpen(); if(portal==='pw' || portal==='wcr') pwSetToday(); }
   
   function loadDashboard() {
      document.getElementById('dashLoader').style.display = 'block'; document.getElementById('dashContent').style.display = 'none';
@@ -571,8 +733,16 @@
       data.persons.forEach(p => { pHTML += `<option value="${p}">${p}</option>`; fHTML += `<option value="${p}">${p}</option>`; }); 
       document.getElementById('loginUserSelect').innerHTML=pHTML; document.getElementById('pwPerson').innerHTML=pHTML; document.getElementById('ctPerson').innerHTML=pHTML; document.getElementById('wcrPerson').innerHTML=pHTML;
       document.getElementById('pwRUser').innerHTML=fHTML; document.getElementById('ctRUser').innerHTML=fHTML; document.getElementById('wcrRUser').innerHTML=fHTML;
+      let qlDl = document.getElementById('qlPersonList'); if(qlDl) qlDl.innerHTML = data.persons.map(p => `<option value="${p}">`).join('');
       document.getElementById('pwFailureList').innerHTML=''; data.failures.forEach(f => document.getElementById('pwFailureList').innerHTML+=`<option value="${f}">`);
-      document.getElementById('pwQuotePart').innerHTML='<option value="">-- Select --</option>'; pwPartsCat=data.parts; pwPartsCat.forEach((p, i) => document.getElementById('pwQuotePart').innerHTML+=`<option value="${i}">${p.name} - ₹${p.price}</option>`);
+      document.getElementById('pwQuotePart').innerHTML='<option value="">-- Select --</option>'; pwPartsCat=data.parts;
+      /* In the Settings sheet, HSN / HSN No are filled only on row 2 and act as the
+         global value for all repair rates. Without this, R1 printed 998713 while
+         R2 and R3 fell back to the hard-coded 84439959 on the same quotation. */
+      let gHsnDesc = (pwPartsCat.find(p => p.hsnDesc) || {}).hsnDesc || "";
+      let gHsnNum  = (pwPartsCat.find(p => p.hsnNum && p.hsnNum !== "84439959") || {}).hsnNum || "";
+      pwPartsCat.forEach(p => { if(!p.hsnDesc && gHsnDesc) p.hsnDesc = gHsnDesc; if(gHsnNum && (!p.hsnNum || p.hsnNum === "84439959")) p.hsnNum = gHsnNum; });
+      pwPartsCat.forEach((p, i) => document.getElementById('pwQuotePart').innerHTML+=`<option value="${i}">${p.name} - ₹${p.price}</option>`);
       wcrPartsHtml = '<option value="">-- Select --</option>'; if(data.wcrParts) data.wcrParts.forEach(w => wcrPartsHtml += `<option value="${w}">${w}</option>`); document.querySelectorAll('.wcr-part').forEach(d=>d.innerHTML=wcrPartsHtml);
       globalBankInfo = data.bankDetails || "Bank details not provided in Settings."; globalTermsList = data.termsConditions || [];
       let dl = document.getElementById('wcrSourceList');
@@ -580,16 +750,26 @@
     }).catch(e=>{});
   }
   
-  function addPwItem() { pwItemCount++; var c=document.getElementById('pwItemsContainer'); var b=document.createElement('div'); b.className='item-box'; b.id='pw_item_'+pwItemCount; b.innerHTML=`<button type="button" class="remove-btn" onclick="document.getElementById('pw_item_${pwItemCount}').remove()">×</button><div class="grid"><div><label>Model *</label><select class="i-model" required>${pwModelsHtml}</select></div><div><label>Part *</label><select class="i-part" required><option value="">-- Select --</option><option value="PCB">PCB</option><option value="SMPS">SMPS</option><option value="Printer">Printer</option><option value="Adaptor">Adaptor</option><option value="Other">Other</option></select></div></div><div class="grid"><div><label>SL. No</label><input type="text" class="i-serial"></div><div><label>Issue</label><input type="text" class="i-issue"></div></div>`; c.appendChild(b); }
+  /* Receiving Date defaults to today — it was blank on every new entry. */
+  function pwSetToday() {
+      let d = document.getElementById('pwDate');
+      if(d && !d.value) { let n = new Date(); d.value = n.getFullYear() + '-' + String(n.getMonth()+1).padStart(2,'0') + '-' + String(n.getDate()).padStart(2,'0'); }
+      let w = document.getElementById('wcrDate');
+      if(w && !w.value) { let n2 = new Date(); w.value = n2.getFullYear() + '-' + String(n2.getMonth()+1).padStart(2,'0') + '-' + String(n2.getDate()).padStart(2,'0'); }
+  }
+
+  function addPwItem() { pwItemCount++; var c=document.getElementById('pwItemsContainer'); var b=document.createElement('div'); b.className='item-box'; b.id='pw_item_'+pwItemCount; b.innerHTML=`<button type="button" class="remove-btn" onclick="document.getElementById('pw_item_${pwItemCount}').remove()">×</button><div class="grid"><div><label>Model *</label><select class="i-model" required>${pwModelsHtml}</select></div><div><label>Part *</label><select class="i-part" required><option value="">-- Select --</option><option value="PCB">PCB</option><option value="SMPS">SMPS</option><option value="Printer">Printer</option><option value="Adaptor">Adaptor</option><option value="Others">Others</option></select></div></div><div class="grid"><div><label>SL. No</label><input type="text" class="i-serial"></div><div><label>Issue</label><input type="text" class="i-issue"></div></div><div><label>Other Parts Received with it (Optional)</label><input type="text" class="i-other" placeholder="e.g. received along with Adaptor + Paper cover assy"></div>`; c.appendChild(b); }
   function submitPwEntry() { 
       var fData={ customerName:document.getElementById('pwCust').value, contactNumber:document.getElementById('pwContact').value, receivingDate:document.getElementById('pwDate').value, receivedDocNo:document.getElementById('pwDoc').value, responsiblePerson:document.getElementById('pwPerson').value }; 
-      var iArr=[]; document.querySelectorAll('#pwItemsContainer .item-box').forEach(b=>iArr.push({ model:b.querySelector('.i-model').value, partType:b.querySelector('.i-part').value, serial:b.querySelector('.i-serial').value, issue:b.querySelector('.i-issue').value })); 
+      var iArr=[]; document.querySelectorAll('#pwItemsContainer .item-box').forEach(b=>iArr.push({ model:b.querySelector('.i-model').value, partType:b.querySelector('.i-part').value, serial:b.querySelector('.i-serial').value, issue:b.querySelector('.i-issue').value, otherParts:(b.querySelector('.i-other') ? b.querySelector('.i-other').value.trim() : "") }));
       if(!iArr.length) return; 
       
       Swal.fire({title:'Processing...', didOpen:()=>Swal.showLoading()}); 
       apiCall('processForm', {formData: fData, itemsArray: iArr}).then(bcs => { 
           document.getElementById('pwEntryForm').reset(); document.getElementById('pwPerson').value = loggedInUser;
-          document.getElementById('pwItemsContainer').innerHTML=`<div class="item-box" id="pw_item_1"><div class="grid"><div><label>Model *</label><select class="i-model" required>${pwModelsHtml}</select></div><div><label>Part *</label><select class="i-part" required><option value="">-- Select --</option><option value="PCB">PCB</option><option value="SMPS">SMPS</option><option value="Adaptor">Adaptor</option><option value="Other">Other</option></select></div></div><div class="grid"><div><label>SL. No</label><input type="text" class="i-serial"></div><div><label>Issue</label><input type="text" class="i-issue"></div></div></div>`; 
+          /* "Printer" was missing from this reset copy of the Received Part list. */
+          document.getElementById('pwItemsContainer').innerHTML=`<div class="item-box" id="pw_item_1"><div class="grid"><div><label>Model *</label><select class="i-model" required>${pwModelsHtml}</select></div><div><label>Received Part *</label><select class="i-part" required><option value="">-- Select --</option><option value="PCB">PCB</option><option value="SMPS">SMPS</option><option value="Printer">Printer</option><option value="Adaptor">Adaptor</option><option value="Others">Others</option></select></div></div><div class="grid"><div><label>SL. No</label><input type="text" class="i-serial"></div><div><label>Issue</label><input type="text" class="i-issue"></div></div><div><label>Other Parts Received with it (Optional)</label><input type="text" class="i-other" placeholder="e.g. received along with Adaptor + Paper cover assy"></div></div>`;
+          pwItemCount = 1; pwSetToday();
           let generatedIds = bcs.map(b => b.id).join(', ');
           Swal.fire({ title: 'Saved Successfully!', html: `<b>${bcs.length}</b> entries generated.<br><br><b>Task IDs (Barcodes):</b><br><span style="font-size:16px; color:#e74c3c; font-weight:bold;">${generatedIds}</span><br><br><small>You can print them or write them manually.</small>`, icon: 'success', showCancelButton: true, confirmButtonText: '🖨️ Print Barcodes', cancelButtonText: 'Close' }).then(r=>{ if(r.isConfirmed) printBarcodes(bcs, fData.customerName); }); loadPwRepairs(); 
       }).catch(e=>{ Swal.fire('Error', e.message, 'error'); }); 
@@ -600,40 +780,119 @@
       apiCall('getPendingRepairs').then(d => { 
           if(!d.length){ document.getElementById('pwRepairList').innerHTML="No records."; return; } 
           let h="", g={}; d.forEach(c=>{if(!g[c.customer]) g[c.customer]=[]; g[c.customer].push(c);}); let i=0; 
-          for(let c in g){ i++; h+=`<div class="group-wrap"><div class="group-header" onclick="toggleGroup('pwr-${i}')"><span>👤 ${c}</span><span class="badge" style="background:#e1b12c;">${g[c].length} Parts</span></div><div class="group-body" id="pwr-${i}">`; g[c].forEach(x=>{ h+=`<div class="card" onclick="openPwRepair(${x.row},'${safeB64(x.serial)}','${safeB64(c)}','${x.taskId}')"><div class="tat-badge">⏱ TAT: ${x.tat}</div><b>${x.taskId}</b><br><small>${x.model} | ${x.partType}</small><br><small style="color:#d63031; font-weight:bold;">Issue: ${x.issue}</small></div>`; }); h+='</div></div>'; } 
+          for(let c in g){ i++; h+=`<div class="group-wrap"><div class="group-header" onclick="toggleGroup('pwr-${i}')"><span>👤 ${c}</span><span class="badge" style="background:#e1b12c;">${g[c].length} Parts</span></div><div class="group-body" id="pwr-${i}">`; g[c].forEach(x=>{ let op = x.otherParts ? `<br><small style="color:#e67e22; font-weight:bold;"><i class="fa-solid fa-box-open"></i> Also received: ${x.otherParts}</small>` : ''; h+=`<div class="card" onclick="openPwRepair(${x.row},'${safeB64(x.serial)}','${safeB64(c)}','${x.taskId}')"><div class="tat-badge">⏱ TAT: ${x.tat}</div><b>${x.taskId}</b><br><small>${x.model} | ${x.partType}</small><br><small style="color:#d63031; font-weight:bold;">Issue: ${x.issue}</small>${op}</div>`; }); h+='</div></div>'; }
           document.getElementById('pwRepairList').innerHTML=h; 
       }).catch(e=>{ document.getElementById('pwRepairList').innerHTML="Error."; }); 
   }
-  function openPwRepair(r,s,c,id){ document.getElementById('pwRepairPanel').style.display='block'; document.getElementById('pwRepTitle').innerText=safeDec(c)+' ('+id+')'; document.getElementById('pwRepRow').value=r; document.getElementById('pwFailureInput').value=''; window.scrollTo(0, document.body.scrollHeight);}
-  function submitPwRepair(f){ Swal.fire({title:'Processing...',didOpen:()=>Swal.showLoading()}); apiCall('updateRepairStatus', {form: formToObj(f)}).then(r=>{Swal.fire('Updated',r,'success'); document.getElementById('pwRepairPanel').style.display='none'; loadPwRepairs(); loadDropdowns();}).catch(e=>{Swal.fire('Error',e.message,'error')}); }
+  /* "Not Repairable" needs a reason — it is written to the sheet and printed
+     on the customer's return document. Only required when that status is picked. */
+  function pwToggleReason() {
+      let sel = document.getElementById('pwRepStatus');
+      if(!sel) return;
+      let isNR = sel.value === 'Not Repairable';
+      document.getElementById('pwReasonBox').style.display = isNR ? 'block' : 'none';
+      document.getElementById('pwRepReason').required = isNR;
+      if(!isNR) document.getElementById('pwRepReason').value = '';
+  }
+
+  /* Clear the whole panel on every open — leftovers from the previously
+     opened part used to get saved against the new one. */
+  function openPwRepair(r,s,c,id){
+      document.getElementById('pwRepairPanel').style.display='block';
+      document.getElementById('pwRepTitle').innerText=safeDec(c)+' ('+id+')';
+      document.getElementById('pwRepairForm').reset();
+      document.getElementById('pwRepRow').value=r;
+      document.getElementById('pwRepAction').value='';
+      document.getElementById('pwFailureInput').value='';
+      document.getElementById('pwRepStatus').value='Done';
+      document.getElementById('pwRepReason').value='';
+      pwToggleReason();
+      window.scrollTo(0, document.body.scrollHeight);
+  }
+
+  function submitPwRepair(f){
+      let obj = formToObj(f);
+      if(obj.repairStatus === 'Not Repairable' && !String(obj.reason || '').trim()) {
+          return Swal.fire('Reason Required', 'Please write why this part is not repairable.', 'warning');
+      }
+      Swal.fire({title:'Processing...', allowOutsideClick:false, didOpen:()=>Swal.showLoading()});
+      apiCall('updateRepairStatus', {form: obj}).then(r=>{
+          Swal.fire('Updated',r,'success');
+          document.getElementById('pwRepairPanel').style.display='none';
+          document.getElementById('pwRepairForm').reset();
+          pwToggleReason();
+          loadPwRepairs(); loadDropdowns();
+      }).catch(e=>{Swal.fire('Error',e.message,'error')});
+  }
   
-  function loadPwPayments() { 
-    document.getElementById('pwPayList').innerHTML="Fetching..."; 
-    apiCall('getPendingPayments').then(d=>{ 
-      if(!d.length){ document.getElementById('pwPayList').innerHTML="No records."; return; } 
-      let h="", g={}; d.forEach(c=>{if(!g[c.customer]) g[c.customer]=[]; g[c.customer].push(c);}); let i=0; 
-      for(let c in g){ 
-        i++; let sg=btoa(unescape(encodeURIComponent(JSON.stringify(g[c])))); 
-        h+=`<div class="group-wrap"><div class="group-header" onclick="toggleGroup('pwp-${i}')"><span>👤 ${c}</span><div><span class="badge" style="background:#0984e3; cursor:pointer; margin-right:8px;" onclick="event.stopPropagation(); openPwMulti('${safeB64(c)}','${sg}')">🧾 Master Quote</span><span class="badge" style="background:#44bd32;">${g[c].length} Ready</span></div></div><div class="group-body" id="pwp-${i}">`; 
-        g[c].forEach(x=>{ 
-          let sd=btoa(unescape(encodeURIComponent(JSON.stringify(x)))); let qc=x.quoteStatus==="Generated"?"q-gen":(x.quoteStatus==="Sent"?"q-sent":"q-not"); let titleColor = x.status === "Not Repairable" ? "color:#e74c3c" : "color:#333"; let viewBtn = '';
-          if(x.quoteJson && x.quoteJson.length > 10) { viewBtn = `<button class="btn" style="background:#0984e3; padding:4px 8px; font-size:10px; width:auto; position:absolute; right:10px; bottom:10px; z-index:10;" onclick="event.stopPropagation(); viewStoredQuote('${safeB64(x.quoteJson)}')"><i class="fa-solid fa-eye"></i> View PDF</button>`; }
-          h+=`<div class="card card-pay" onclick="openPwPay('${sd}')"><div class="tat-badge">⏱ TAT: ${x.tat}</div><b style="${titleColor}">${x.taskId} - ${x.model} (${x.status})</b><br><small>Part: ${x.partType}</small><br><small style="color:#d63031; font-weight:bold;">Issue: ${x.issue}</small><br><span class="q-tag ${qc}">${x.quoteStatus}</span> ${viewBtn}</div>`;
-        }); h+='</div></div>'; 
-      } document.getElementById('pwPayList').innerHTML=h; 
-    }).catch(e=>{ document.getElementById('pwPayList').innerHTML="Error."; }); 
+  /* Builds the customer-wise groups for the Payment/Quote tab.
+     `prefix` keeps the collapsible ids unique between the current and legacy sections. */
+  function pwBuildPayGroups(list, prefix, isLegacy) {
+      let h = "", g = {};
+      list.forEach(c => { if(!g[c.customer]) g[c.customer] = []; g[c.customer].push(c); });
+      let i = 0;
+      for(let c in g) {
+          i++;
+          let sg = btoa(unescape(encodeURIComponent(JSON.stringify(g[c]))));
+          let gid = prefix + '-' + i;
+          h += `<div class="group-wrap"${isLegacy ? ' style="border-color:#b2bec3;"' : ''}><div class="group-header"${isLegacy ? ' style="background:#ecf0f1;"' : ''} onclick="toggleGroup('${gid}')"><span>👤 ${c}</span><div><span class="badge" style="background:#0984e3; cursor:pointer; margin-right:8px;" onclick="event.stopPropagation(); openPwMulti('${safeB64(c)}','${sg}')">🧾 Master Quote</span><span class="badge" style="background:${isLegacy ? '#7f8c8d' : '#44bd32'};">${g[c].length} Ready</span></div></div><div class="group-body" id="${gid}">`;
+          g[c].forEach(x => {
+              let sd = btoa(unescape(encodeURIComponent(JSON.stringify(x))));
+              let qc = x.quoteStatus === "Generated" ? "q-gen" : (x.quoteStatus === "Sent" ? "q-sent" : "q-not");
+              let titleColor = x.status === "Not Repairable" ? "color:#e74c3c" : "color:#333";
+              let viewBtn = '';
+              if(x.quoteJson && x.quoteJson.length > 10) { viewBtn = `<button class="btn" style="background:#0984e3; padding:4px 8px; font-size:10px; width:auto; position:absolute; right:10px; bottom:10px; z-index:10;" onclick="event.stopPropagation(); viewStoredQuote('${safeB64(x.quoteJson)}')"><i class="fa-solid fa-eye"></i> View PDF</button>`; }
+              /* legacy rows are 1-2 years old, so an hour-count TAT is meaningless there */
+              let tatBadge = isLegacy ? `<div class="tat-badge" style="color:#7f8c8d;">Old record</div>` : `<div class="tat-badge">⏱ TAT: ${x.tat}</div>`;
+              let op = x.otherParts ? `<br><small style="color:#e67e22; font-weight:bold;"><i class="fa-solid fa-box-open"></i> Also received: ${x.otherParts}</small>` : '';
+              h += `<div class="card card-pay"${isLegacy ? ' style="border-left-color:#95a5a6;"' : ''} onclick="openPwPay('${sd}')">${tatBadge}<b style="${titleColor}">${x.taskId || '(no task id)'} - ${x.model} (${x.status})</b><br><small>Part: ${x.partType}</small><br><small style="color:#d63031; font-weight:bold;">Issue: ${x.issue}</small>${op}<br><span class="q-tag ${qc}">${x.quoteStatus}</span> ${viewBtn}</div>`;
+          });
+          h += '</div></div>';
+      }
+      return h;
+  }
+
+  function loadPwPayments() {
+    document.getElementById('pwPayList').innerHTML="Fetching...";
+    apiCall('getPendingPayments').then(d=>{
+      if(!d.length){ document.getElementById('pwPayList').innerHTML="No records."; return; }
+      /* "Repair Done" is the old status wording (Jan-2025 to Apr-2026). Those rows are
+         kept in their own section so they don't mix with today's working list. */
+      let dCur = d.filter(x => String(x.status) !== "Repair Done");
+      let dOld = d.filter(x => String(x.status) === "Repair Done");
+
+      let h = "";
+      if(dCur.length) h += pwBuildPayGroups(dCur, 'pwp', false);
+      else h += `<div style="padding:12px; color:#7f8fa6;">No current records ready for payment.</div>`;
+
+      if(dOld.length) {
+          h += `<div style="margin-top:22px; border-top:2px dashed #dcdde1; padding-top:16px;">
+                  <div style="background:#f1f2f6; border-left:4px solid #95a5a6; padding:10px 14px; border-radius:6px; margin-bottom:12px;">
+                    <b style="color:#57606f;">📁 Old Records (Status: "Repair Done") — ${dOld.length}</b>
+                    <div style="font-size:11px; color:#7f8fa6; margin-top:4px;">Repaired between Jan 2025 and Apr 2026 using the old status wording, so they never appeared in this tab. Quote and close them the same way whenever you need to.</div>
+                  </div>`;
+          h += pwBuildPayGroups(dOld, 'pwpold', true);
+          h += `</div>`;
+      }
+      document.getElementById('pwPayList').innerHTML=h;
+    }).catch(e=>{ document.getElementById('pwPayList').innerHTML="Error."; });
   }
   
   function openPwPay(sd) { 
     let d=JSON.parse(safeDec(sd)); document.getElementById('pwPayPanel').style.display='block'; document.getElementById('pwMultiPanel').style.display='none';
-    document.getElementById('pwPayTitle').innerText=d.customer+' ('+d.taskId+')'; document.getElementById('pwPayRow').value=d.row; pwQuoteData={row:d.row, customer:d.customer, contact:d.contact, model:d.model, receivedPart:d.partType, serial:d.serial, salesperson:d.person, partFailure:d.partFailure, taskId:d.taskId, status:d.status, reason:d.reason};
+    document.getElementById('pwPayTitle').innerText=d.customer+' ('+d.taskId+')'; document.getElementById('pwPayRow').value=d.row; pwQuoteData={row:d.row, customer:d.customer, contact:d.contact, model:d.model, receivedPart:d.partType, serial:d.serial, salesperson:d.person, partFailure:d.partFailure, taskId:d.taskId, status:d.status, reason:d.reason, otherParts:d.otherParts||""};
     if(d.status === "Not Repairable") { 
         document.getElementById('pwQuotePart').style.display = 'none'; document.getElementById('pwQBase').value="0.00"; document.getElementById('pwQTax').value="0.00"; document.getElementById('pwQTotal').value="0.00"; pwQuoteData.partName = "Not Repairable"; pwQuoteData.basePrice = "0.00"; pwQuoteData.igst = "0.00"; pwQuoteData.total = "0.00"; pwQuoteData.fullDescription = d.model + " - Not Repairable (Remark: " + d.reason + ")";
         document.getElementById('lblInvoice').innerText = "Return Invoice / Doc No *";
     } else { 
         document.getElementById('pwQuotePart').style.display = 'block'; document.getElementById('pwQuotePart').value=""; document.getElementById('pwQBase').value=""; document.getElementById('pwQTax').value=""; document.getElementById('pwQTotal').value=""; 
         document.getElementById('lblInvoice').innerText = "Invoice No *";
-    } window.scrollTo(0, document.body.scrollHeight);
+    }
+    /* Clear the close-payment fields so the previous task's invoice /
+       tracking number cannot be submitted against this one. */
+    document.getElementById('pwPayDocNo').value = '';
+    document.getElementById('pwPayTrackNo').value = '';
+    window.scrollTo(0, document.body.scrollHeight);
   }
   function pwCalcQuote() { 
     if(pwQuoteData.status === "Not Repairable") return; let i=document.getElementById('pwQuotePart').value; if(i==="") return; let p=pwPartsCat[i]; let b=parseFloat(p.price); let t=b*0.18; let tot=b+t; 
@@ -643,9 +902,9 @@
   function generatePdfHtml(q, isMulti) {
       let isNR = q.status === "Not Repairable" || q.partName === "Not Repairable"; let qtyStr = isNR ? "-" : "1"; let taxStr = isNR ? "-" : "18%"; let priceStr = isNR ? "-" : q.basePrice; let amtWords = isNR ? "Zero" : numToWords(q.total); let tcHtml = globalTermsList.length > 0 ? "<ol style='margin:5px 0; padding-left:15px;'>" + globalTermsList.map(item => `<li>${item}</li>`).join("") + "</ol>" : "Terms and conditions not specified."; let itemsHtml = "";
       if(!isMulti) {
-         itemsHtml = `<tr><td class="tc">1</td><td><b>${q.fullDescription}</b>${q.hsnDesc ? '<br><span style="color:#555;font-size:10px;">HSN Desc: '+q.hsnDesc+'</span>' : ''}${isNR ? `<br><span style="color:#d63031; font-weight:bold; font-size:10px;">[NOT REPAIRABLE]</span>` : ''}<br><span style="font-size:10px; color:#555;">Task: ${q.taskId} | Rec: ${q.receivedPart} | Fail: ${q.partFailure}</span></td><td class="tc">Nos</td><td class="tc">${isNR ? '-' : (q.hsnNum || '84439959')}</td><td class="tc">${qtyStr}</td><td class="tr">${priceStr}</td><td class="tr">${isNR ? '-' : q.basePrice}</td></tr><tr><td colspan="7" style="border-top:none; color:#333; font-size:10px; padding-top:0;">Tax Type: IGST &nbsp;&nbsp;|&nbsp;&nbsp; Tax Rate: 18% &nbsp;&nbsp;|&nbsp;&nbsp; Tax Amount: ${isNR ? '-' : q.igst}</td></tr>`;
+         itemsHtml = `<tr><td class="tc">1</td><td><b>${q.fullDescription}</b>${q.hsnDesc ? '<br><span style="color:#555;font-size:10px;">HSN Desc: '+q.hsnDesc+'</span>' : ''}${isNR ? `<br><span style="color:#d63031; font-weight:bold; font-size:10px;">[NOT REPAIRABLE]</span>` : ''}<br><span style="font-size:10px; color:#555;">Task: ${q.taskId} | Rec: ${q.receivedPart} | Fail: ${q.partFailure}</span>${q.otherParts ? `<br><span style="font-size:10px; color:#555;">Also received: ${q.otherParts}</span>` : ''}</td><td class="tc">Nos</td><td class="tc">${isNR ? '-' : (q.hsnNum || '84439959')}</td><td class="tc">${qtyStr}</td><td class="tr">${priceStr}</td><td class="tr">${isNR ? '-' : q.basePrice}</td></tr><tr><td colspan="7" style="border-top:none; color:#333; font-size:10px; padding-top:0;">Tax Type: IGST &nbsp;&nbsp;|&nbsp;&nbsp; Tax Rate: 18% &nbsp;&nbsp;|&nbsp;&nbsp; Tax Amount: ${isNR ? '-' : q.igst}</td></tr>`;
       } else {
-         q.items.forEach((x, i) => { let nIsNR = x.status === "Not Repairable" || x.partName === "Not Repairable"; itemsHtml += `<tr><td class="tc">${i+1}</td><td><b>${x.fullDescription}</b>${x.hsnDesc ? '<br><span style="color:#555;font-size:10px;">HSN Desc: '+x.hsnDesc+'</span>' : ''}${nIsNR ? `<br><span style="color:#d63031; font-weight:bold; font-size:10px;">[NOT REPAIRABLE]</span>` : ''}<br><span style="font-size:10px; color:#555;">Task: ${x.taskId} | Rec: ${x.partType} | Fail: ${x.partFailure}</span></td><td class="tc">Nos</td><td class="tc">${nIsNR?'-':(x.hsnNum || '84439959')}</td><td class="tc">${nIsNR?'-':'1'}</td><td class="tr">${nIsNR?'-':x.basePrice}</td><td class="tr">${nIsNR?'-':x.basePrice}</td></tr><tr><td colspan="7" style="border-top:none; color:#333; font-size:10px; padding-top:0;">Tax Type: IGST &nbsp;&nbsp;|&nbsp;&nbsp; Tax Rate: 18% &nbsp;&nbsp;|&nbsp;&nbsp; Tax Amount: ${nIsNR?'-':x.igst}</td></tr>`; });
+         q.items.forEach((x, i) => { let nIsNR = x.status === "Not Repairable" || x.partName === "Not Repairable"; itemsHtml += `<tr><td class="tc">${i+1}</td><td><b>${x.fullDescription}</b>${x.hsnDesc ? '<br><span style="color:#555;font-size:10px;">HSN Desc: '+x.hsnDesc+'</span>' : ''}${nIsNR ? `<br><span style="color:#d63031; font-weight:bold; font-size:10px;">[NOT REPAIRABLE]</span>` : ''}<br><span style="font-size:10px; color:#555;">Task: ${x.taskId} | Rec: ${x.partType} | Fail: ${x.partFailure}</span>${x.otherParts ? `<br><span style="font-size:10px; color:#555;">Also received: ${x.otherParts}</span>` : ''}</td><td class="tc">Nos</td><td class="tc">${nIsNR?'-':(x.hsnNum || '84439959')}</td><td class="tc">${nIsNR?'-':'1'}</td><td class="tr">${nIsNR?'-':x.basePrice}</td><td class="tr">${nIsNR?'-':x.basePrice}</td></tr><tr><td colspan="7" style="border-top:none; color:#333; font-size:10px; padding-top:0;">Tax Type: IGST &nbsp;&nbsp;|&nbsp;&nbsp; Tax Rate: 18% &nbsp;&nbsp;|&nbsp;&nbsp; Tax Amount: ${nIsNR?'-':x.igst}</td></tr>`; });
       }
       return `<html><head><title>Quotation - ${q.quoteNo}</title><style>body { font-family: Arial, sans-serif; font-size: 11px; color: #000; padding: 20px; } .main-table { width: 100%; border-collapse: collapse; border: 1px solid #000; margin-bottom: -1px; } .main-table td, .main-table th { border: 1px solid #000; padding: 5px; vertical-align: top; line-height: 1.3; } .tc { text-align: center; } .tr { text-align: right; } .b { font-weight: bold; } .header-title { font-size: 16px; font-weight: bold; text-align: center; margin-bottom: 10px; text-decoration: underline; text-transform: uppercase; } .no-pad { padding: 0 !important; } .inner-table { width: 100%; border-collapse: collapse; height: 100%; } .inner-table td { border: none; padding: 5px; border-bottom: 1px solid #000; } .inner-table tr:last-child td { border-bottom: none; } .inner-table td:first-child { border-right: 1px solid #000; font-weight: bold; width: 40%; }</style></head><body><div class="header-title">${isMulti ? 'MASTER ' : ''}QUOTATION</div><table class="main-table"><tr><td style="width:55%;"><div style="font-size:16px; font-weight:bold; color:#0984e3; margin-bottom:5px;">WEPSOL</div><b>WeP Solutions Limited.</b><br>Plot no-87, PBU Baddi, EPIP Phase-1, Jharmajri,<br>Baddi-174103<br>Himachal Pradesh<br>India<br><b>STATE CODE:</b> 02<br><b>GSTIN:</b> 02AAACD5108M1ZZ<br><b>PAN No:</b> AAACD5108M</td><td style="width:45%;" class="no-pad"><table class="inner-table"><tr><td>Quotation No</td><td>${q.quoteNo}</td></tr><tr><td>Quotation Date</td><td>${q.quoteDate}</td></tr><tr><td>Salesperson</td><td>${q.salesperson || "Admin"}</td></tr><tr><td>Place of Supply</td><td>As per customer address</td></tr></table></td></tr></table><table class="main-table"><tr style="background:#f0f0f0;"><td style="width:50%;" class="b">Bill To:</td><td style="width:50%;" class="b">Ship To:</td></tr><tr><td><b style="font-size:13px;">${q.customer}</b><br><br><b>Contact:</b> ${q.contact || "N/A"}<br><b>Address:</b> As per registered records.<br></td><td><b style="font-size:13px;">${q.customer}</b><br><br><b>Contact:</b> ${q.contact || "N/A"}<br><b>Address:</b> As per registered records.<br></td></tr></table><table class="main-table" style="margin-top:8px;"><tr style="background:#f0f0f0;"><th class="tc">Sno.</th><th>Product Description</th><th class="tc">UOM</th><th class="tc">HSN Code</th><th class="tc">Qty</th><th class="tr">Unit Price</th><th class="tr">Total Amount</th></tr>${itemsHtml}</table><table class="main-table" style="margin-top:8px;"><tr><td style="width:70%; border-right:none;" rowspan="3"><b>Amount in Words:</b><br>INR ${amtWords} Only</td><td class="tr b" style="border-left:1px solid #000; border-bottom:none;">Sub Total:</td><td class="tr">${q.basePrice}</td></tr><tr><td class="tr b" style="border-left:1px solid #000; border-bottom:none; border-top:none;">Tax Amount (18%):</td><td class="tr" style="border-top:none;">${q.igst}</td></tr><tr><td class="tr b" style="border-left:1px solid #000; border-top:none;">Gross Total:</td><td class="tr b" style="border-top:none;">${q.total}</td></tr></table><table class="main-table" style="border-top:none;"><tr><td style="width:60%; border-right:none; font-size:10px;"><b>Bank Details:</b><br>${globalBankInfo.replace(/\n/g, '<br>')}<br><br><b>Terms & Conditions:</b><br>${tcHtml}</td><td style="width:40%; text-align:right; vertical-align:bottom; border-left:none;"><b>For WeP Solutions Limited</b><br><br><br><br>Authorized Signatory<br>E & O.E.</td></tr></table><script>window.print();<`+`/script></body></html>`;
   }
@@ -659,7 +918,7 @@
     }).catch(e=>{Swal.fire('Error',e.message,'error')});
   }
   function viewStoredQuote(encodedJson) { let qData = JSON.parse(safeDec(encodedJson)); let isMulti = qData.items ? true : false; let win = window.open('','_blank'); win.document.write(generatePdfHtml(qData, isMulti)); win.document.close(); }
-  function openPwMulti(c, sd) { document.getElementById('pwPayPanel').style.display='none'; document.getElementById('pwMultiPanel').style.display='block'; document.getElementById('pwMultiTitle').innerText="🧾 Master Quotation: "+safeDec(c); pwMultiItems=JSON.parse(safeDec(sd)); let h=''; pwMultiItems.forEach((x,i)=>{ if(x.status === "Not Repairable") { h+=`<div style="border:1px solid #eee;padding:10px;margin-bottom:5px;background:#fffdf5;"><b style="color:#d63031">${x.taskId} (Not Repairable)</b> - ${x.model}<br><small>Remark: ${x.reason}</small><input type="hidden" class="mq-s" data-i="${i}" value="NR"></div>`; } else { h+=`<div style="border:1px solid #eee;padding:10px;margin-bottom:5px;background:#fff;"><b>${x.taskId}</b> - ${x.model}<select class="mq-s" data-i="${i}" onchange="pwCalcMulti()" style="margin-top:5px;"><option value="">-- Select Rate --</option>`; pwPartsCat.forEach((p,j)=>{h+=`<option value="${j}">${p.name} - ₹${p.price}</option>`;}); h+='</select></div>'; } }); document.getElementById('pwMultiContainer').innerHTML=h; document.getElementById('pwMBase').value=''; document.getElementById('pwMTax').value=''; document.getElementById('pwMTotal').value=''; window.scrollTo(0, document.body.scrollHeight); }
+  function openPwMulti(c, sd) { document.getElementById('pwPayPanel').style.display='none'; document.getElementById('pwMultiPanel').style.display='block'; document.getElementById('pwMultiTitle').innerText="🧾 Master Quotation: "+safeDec(c); pwMultiItems=JSON.parse(safeDec(sd)); let h=''; pwMultiItems.forEach((x,i)=>{ if(x.status === "Not Repairable") { h+=`<div style="border:1px solid #eee;padding:10px;margin-bottom:5px;background:#fffdf5;"><b style="color:#d63031">${x.taskId} (Not Repairable)</b> - ${x.model}<br><small>Remark: ${x.reason}</small><input type="hidden" class="mq-s" data-i="${i}" value="NR"></div>`; } else { h+=`<div style="border:1px solid #eee;padding:10px;margin-bottom:5px;background:#fff;"><b>${x.taskId}</b> - ${x.model}<select class="mq-s" data-i="${i}" onchange="pwCalcMulti()" style="margin-top:5px;"><option value="">-- Select Rate --</option>`; pwPartsCat.forEach((p,j)=>{h+=`<option value="${j}">${p.name} - ₹${p.price}</option>`;}); h+='</select></div>'; } }); document.getElementById('pwMultiContainer').innerHTML=h; document.getElementById('pwMBase').value=''; document.getElementById('pwMTax').value=''; document.getElementById('pwMTotal').value=''; document.getElementById('pwMDoc').value=''; document.getElementById('pwMTrack').value=''; pwCalcMulti(); window.scrollTo(0, document.body.scrollHeight); }
   function pwCalcMulti() { let sels=document.querySelectorAll('.mq-s'); let gb=0, gt=0, gtot=0; sels.forEach((s,i)=>{ if(s.value==="NR") { pwMultiItems[i].partName="Not Repairable"; pwMultiItems[i].basePrice="0.00"; pwMultiItems[i].igst="0.00"; pwMultiItems[i].total="0.00"; pwMultiItems[i].fullDescription=pwMultiItems[i].model+" - Not Repairable (Remark: "+(pwMultiItems[i].reason||"")+")"; return; } if(s.value==="") return; let p=pwPartsCat[s.value]; let b=parseFloat(p.price); let t=b*0.18; let tot=b+t; gb+=b; gt+=t; gtot+=tot; pwMultiItems[i].partName=p.name; pwMultiItems[i].basePrice=b.toFixed(2); pwMultiItems[i].igst=t.toFixed(2); pwMultiItems[i].total=tot.toFixed(2); pwMultiItems[i].fullDescription=pwMultiItems[i].model+' - '+p.name; pwMultiItems[i].hsnDesc=p.hsnDesc||""; pwMultiItems[i].hsnNum=p.hsnNum||"84439959"; }); document.getElementById('pwMBase').value=gb.toFixed(2); document.getElementById('pwMTax').value=gt.toFixed(2); document.getElementById('pwMTotal').value=gtot.toFixed(2); }
   function pwGenMultiPrint() { 
     let s=document.querySelectorAll('.mq-s'); 
@@ -673,8 +932,8 @@
       document.getElementById('pwMultiPanel').style.display='none'; loadPwPayments(); 
     }).catch(e=>{Swal.fire('Error',e.message,'error')});
   }
-  function pwMarkSent() { if(pwQuoteData.row) apiCall('markQuoteSent', {row: pwQuoteData.row}).then(r=>{Swal.fire('Success',r,'success'); loadPwPayments();}).catch(e=>{}); }
-  function pwMarkMultiSent() { if(!pwMultiItems.length) return; apiCall('markMultiQuoteSent', {itemsArray: pwMultiItems}).then(r=>{Swal.fire('Success',r,'success'); loadPwPayments();}).catch(e=>{}); }
+  function pwMarkSent() { if(!pwQuoteData.row) return Swal.fire('Select a Task', 'Open a task from the list first.', 'warning'); apiCall('markQuoteSent', {row: pwQuoteData.row}).then(r=>{Swal.fire('Success',r,'success'); loadPwPayments();}).catch(e=>{Swal.fire('Error',e.message,'error')}); }
+  function pwMarkMultiSent() { if(!pwMultiItems.length) return Swal.fire('No Items', 'Open a Master Quote first.', 'warning'); apiCall('markMultiQuoteSent', {itemsArray: pwMultiItems}).then(r=>{Swal.fire('Success',r,'success'); loadPwPayments();}).catch(e=>{}); }
   function submitPwPayment(f) { Swal.fire({title:'Processing...',didOpen:()=>Swal.showLoading()}); apiCall('closePayment', {form: formToObj(f)}).then(r=>{Swal.fire('Closed!',r,'success'); document.getElementById('pwPayPanel').style.display='none'; loadPwPayments();}).catch(e=>{Swal.fire('Error',e.message,'error')}); }
   function pwSubmitMultiPayment() { let doc=document.getElementById('pwMDoc').value, trk=document.getElementById('pwMTrack').value; if(!doc||!trk) return; Swal.fire({title:'Processing...',didOpen:()=>Swal.showLoading()}); apiCall('closeMultiPayment', {itemsArray: pwMultiItems, docNo: doc, trackNo: trk}).then(r=>{Swal.fire('Closed!',r,'success'); document.getElementById('pwMultiPanel').style.display='none'; loadPwPayments();}).catch(e=>{Swal.fire('Error',e.message,'error')}); }
   
@@ -686,7 +945,7 @@
           let h='<table><tr><th>Date</th><th>Customer Details</th><th>Task / Hardware Details</th><th>Action & Status</th><th>Financials</th></tr>'; 
           d.forEach(r=>{ 
               let statClr=r.status==='Closed'?'green':'red'; 
-              let hwDetail=`<b>Task:</b> ${r.taskId}<br><b>Model:</b> ${r.model}<br><b>Part:</b> ${r.partType}<br><b>SN:</b> ${r.serial}<br><b>Issue:</b> ${r.issue}`; 
+              let hwDetail=`<b>Task:</b> ${r.taskId}<br><b>Model:</b> ${r.model}<br><b>Part:</b> ${r.partType}<br><b>SN:</b> ${r.serial}<br><b>Issue:</b> ${r.issue}` + (r.otherParts ? `<br><b style="color:#e67e22;">Also Received:</b> ${r.otherParts}` : '');
               let finDetail=`<b>Inward Doc:</b> ${r.inwardDoc}<br><b>Return/Pay Doc:</b> ${r.payDoc}<br><b>Track No:</b> ${r.trackNo}<br><b>TAT:</b> ${r.tat}`; 
               h+=`<tr><td>Rec: ${r.recDate}<br>Disp: ${r.dispDate}</td><td><b>${r.customer}</b></td><td>${hwDetail}</td><td style="color:${statClr};"><b>${r.status}</b><br><small style="color:#333;">${r.action}</small></td><td>${finDetail}</td></tr>`; 
           }); 
@@ -695,6 +954,271 @@
   }
   
   function ctSubmitEntry(form) { Swal.fire({title:'Saving...',didOpen:()=>Swal.showLoading()}); apiCall('ct_processForm', {formObject: formToObj(form)}).then(res=>{ Swal.fire('Saved!',res,'success'); form.reset(); document.getElementById('ctPerson').value = loggedInUser; ctLoadPending(); }).catch(e=>{Swal.fire('Error',e.message,'error')}); }
+
+  /* ================= BULK COMPLAINT UPLOAD =================
+     10 complaints in one request. An optional TAT (hours) back-dates the
+     complaint so the Pending list shows its real age, not the upload time. */
+  const BULK_ROWS = 10;
+
+  function bulkInit() {
+      if(!document.getElementById('bulkBody').innerHTML) bulkBuildRows();
+      if(!document.getElementById('bulkState').innerHTML) {
+          let sh = '<option value="">-- Select State --</option>';
+          indianStates.forEach(s => sh += `<option value="${s}">${s}</option>`);
+          document.getElementById('bulkState').innerHTML = sh;
+      }
+      bulkCount();
+  }
+
+  function bulkBuildRows() {
+      let h = '';
+      for(let i = 0; i < BULK_ROWS; i++) {
+          h += `<tr id="bulkRow${i}">
+                  <td class="bulk-rownum">${i+1}</td>
+                  <td><input type="tel" id="bNum${i}" maxlength="10" placeholder="10 digits" oninput="bulkCount()" autocomplete="off"></td>
+                  <td><input type="text" id="bIss${i}" placeholder="Issue" oninput="bulkCount()" autocomplete="off"></td>
+                  <td><input type="number" id="bTat${i}" min="0" step="0.5" placeholder="optional" oninput="bulkCount()"></td>
+                  <td><input type="text" id="bNam${i}" placeholder="optional" oninput="bulkCount()" autocomplete="off"></td>
+                </tr>`;
+      }
+      document.getElementById('bulkBody').innerHTML = h;
+  }
+
+  function bulkCount() {
+      let n = 0;
+      for(let i = 0; i < BULK_ROWS; i++) {
+          let num = (document.getElementById('bNum'+i).value || '').replace(/\D/g,'');
+          let iss = (document.getElementById('bIss'+i).value || '').trim();
+          let row = document.getElementById('bulkRow'+i);
+          let ready = num.length === 10 && iss !== '';
+          row.className = ready ? 'filled' : '';
+          if(ready) n++;
+      }
+      document.getElementById('bulkReady').innerText = n;
+      return n;
+  }
+
+  /* Accepts tab-separated (Excel copy/paste) or comma-separated lines. */
+  function bulkParsePaste() {
+      let raw = (document.getElementById('bulkPaste').value || '').trim();
+      if(!raw) return Swal.fire('Nothing pasted', 'Paste your list in the box first.', 'warning');
+      let lines = raw.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+      if(lines.length > BULK_ROWS) {
+          Swal.fire({toast:true, position:'top-end', icon:'info', title:`Only the first ${BULK_ROWS} lines were used`, showConfirmButton:false, timer:2800});
+          lines = lines.slice(0, BULK_ROWS);
+      }
+      bulkBuildRows();
+      lines.forEach((line, i) => {
+          let cols = line.includes('\t') ? line.split('\t') : line.split(',');
+          cols = cols.map(c => c.trim());
+          document.getElementById('bNum'+i).value = (cols[0] || '').replace(/\D/g,'').slice(-10);
+          document.getElementById('bIss'+i).value = cols[1] || '';
+          let t = parseFloat(cols[2]); document.getElementById('bTat'+i).value = (!isNaN(t) && t > 0) ? t : '';
+          document.getElementById('bNam'+i).value = cols[3] || '';
+      });
+      bulkCount();
+  }
+
+  function bulkClear() {
+      bulkBuildRows();
+      document.getElementById('bulkPaste').value = '';
+      bulkCount();
+  }
+
+  function bulkSubmit() {
+      let rows = [], bad = [];
+      for(let i = 0; i < BULK_ROWS; i++) {
+          let num = (document.getElementById('bNum'+i).value || '').replace(/\D/g,'');
+          let iss = (document.getElementById('bIss'+i).value || '').trim();
+          let tat = parseFloat(document.getElementById('bTat'+i).value);
+          let nam = (document.getElementById('bNam'+i).value || '').trim();
+          if(!num && !iss) continue;                       // untouched row
+          if(num.length !== 10) { bad.push(`Row ${i+1}: mobile number must be 10 digits`); continue; }
+          if(!iss) { bad.push(`Row ${i+1}: issue is required`); continue; }
+          rows.push({ contactNumber: num, problemDesc: iss, tatHours: (!isNaN(tat) && tat > 0) ? tat : 0, customerName: nam });
+      }
+      if(bad.length) return Swal.fire({ title: 'Please fix these rows', html: bad.join('<br>'), icon: 'warning' });
+      if(!rows.length) return Swal.fire('Nothing to upload', 'Fill at least one row.', 'warning');
+
+      let common = {
+          model: document.getElementById('bulkModel').value || "",
+          state: document.getElementById('bulkState').value || "N/A",
+          assignedTo: (document.getElementById('bulkAssign').value || '').trim(),
+          warrantyStatus: document.getElementById('bulkWarranty').checked,
+          callHandledBy: loggedInUser || "Admin",
+          location: ""
+      };
+
+      Swal.fire({ title: `Upload ${rows.length} complaint${rows.length>1?'s':''}?`, text: 'They will be saved as Pending calls.', icon: 'question', showCancelButton: true, confirmButtonText: 'Upload', confirmButtonColor: '#ff006e' }).then(r => {
+          if(!r.isConfirmed) return;
+          Swal.fire({title:'Uploading...', allowOutsideClick:false, didOpen:()=>Swal.showLoading()});
+          apiCall('ct_bulkProcessForm', { common: common, rows: rows }).then(res => {
+              Swal.fire({ title: 'Uploaded!', html: `<b>${res.saved}</b> complaint(s) saved.<br><br><b>Task IDs:</b><br><span style="color:#e74c3c; font-weight:bold;">${(res.taskIds||[]).join(', ')}</span>`, icon: 'success' });
+              bulkClear(); qlRefreshCache();
+          }).catch(e => Swal.fire('Error', e.message, 'error'));
+      });
+  }
+
+  /* ================= QUICK CALL LOG =================
+     Same data, same sheet, same flow as "Detailed Entry" —
+     just fewer fields so a call can be logged in seconds.
+     Uses only the existing ct_processForm / ct_updateCallStatus APIs. */
+  const QL_ISSUES = ["Printer not working","Print quality issue","Paper jam","Not powering ON","Driver / software issue","Network / LAN issue","Display / screen issue","SD card / memory issue","Battery / charging issue","Installation help","Demo support","Spare part required","General enquiry"];
+  let qlCallCount = 1, qlStatus = "Pending", qlPendingCache = [];
+
+  function qlOpen() {
+      qlRenderChips();
+      if(!document.getElementById('qlState').innerHTML) {
+          let sh = '<option value="">-- Select State --</option>';
+          indianStates.forEach(s => sh += `<option value="${s}">${s}</option>`);
+          document.getElementById('qlState').innerHTML = sh;
+      }
+      qlRefreshCache();
+      setTimeout(()=>{ try { document.getElementById('qlPhone').focus(); } catch(e){} }, 150);
+  }
+
+  function qlRefreshCache() {
+      apiCall('ct_getPendingCalls').then(d => { qlPendingCache = d || []; qlLookup(); }).catch(e=>{});
+  }
+
+  function qlRenderChips() {
+      let box = document.getElementById('qlChips');
+      if(box.innerHTML) return;
+      box.innerHTML = QL_ISSUES.map(t => `<span class="ql-chip" onclick="qlPickIssue(this)">${t}</span>`).join('');
+  }
+
+  function qlPickIssue(el) {
+      document.querySelectorAll('#qlChips .ql-chip').forEach(c => c.classList.remove('on'));
+      el.classList.add('on');
+      document.getElementById('qlIssue').value = el.innerText;
+  }
+
+  function qlCalls(delta) {
+      qlCallCount = Math.max(1, qlCallCount + delta);
+      document.getElementById('qlCallCount').innerText = qlCallCount;
+  }
+
+  function qlSetStatus(s) {
+      qlStatus = s;
+      let bp = document.getElementById('qlBtnPending'), bc = document.getElementById('qlBtnClosed');
+      bp.className = 'ql-tg' + (s === 'Pending' ? ' on-pending' : '');
+      bc.className = 'ql-tg' + (s === 'Closed' ? ' on-closed' : '');
+      document.getElementById('qlRemarkBox').style.display = (s === 'Closed') ? 'block' : 'none';
+      document.getElementById('qlAssignBox').style.display = (s === 'Closed') ? 'none' : 'block';
+      if(s === 'Closed') setTimeout(()=>{ try { document.getElementById('qlRemark').focus(); } catch(e){} }, 50);
+  }
+
+  /* Builds the "|| CALLS:" string the Pending-Calls panel already understands. */
+  function qlBuildCalls(count, totalMins) {
+      let arr = [];
+      for(let i = 0; i < count; i++) arr.push(0);
+      if(totalMins > 0) arr[arr.length - 1] = totalMins;
+      return arr.join(",");
+  }
+
+  /* If this number already has an open ticket, offer to add a call to it
+     instead of creating a duplicate entry. */
+  function qlLookup() {
+      let box = document.getElementById('qlMatchBox');
+      let ph = (document.getElementById('qlPhone').value || "").replace(/\D/g, '');
+      if(ph.length !== 10) { box.innerHTML = ''; return; }
+      let hits = qlPendingCache.filter(c => String(c.contact || "").replace(/\D/g, '').indexOf(ph) > -1);
+      if(!hits.length) { box.innerHTML = ''; return; }
+      let h = '';
+      hits.slice(0, 3).forEach(c => {
+          let logs = (c.action || "").includes("|| CALLS:") ? (c.action.split("|| CALLS:")[1].trim().split(",").filter(String)).length : 0;
+          h += `<div class="ql-match">
+                  <b><i class="fa-solid fa-circle-exclamation"></i> Already open:</b> ${c.taskId} &mdash; ${c.customerName}
+                  <div style="color:#7f8fa6; margin-top:4px;">Issue: ${c.issue} &nbsp;|&nbsp; Calls so far: <b>${logs}</b> &nbsp;|&nbsp; TAT: ${c.tat}</div>
+                  <div class="ql-mbtns">
+                    <button style="background:#e67e22;" onclick="qlAddCallToExisting(${c.row}, '${c.taskId}', '${safeB64(c.action)}', '${safeB64(c.assigned)}')"><i class="fa-solid fa-plus"></i> Add 1 Call to this ticket</button>
+                    <button style="background:#2ecc71;" onclick="qlCloseExisting(${c.row}, '${c.taskId}', '${safeB64(c.action)}', '${safeB64(c.assigned)}')"><i class="fa-solid fa-check"></i> Resolve &amp; Close it</button>
+                  </div>
+                </div>`;
+      });
+      box.innerHTML = h;
+  }
+
+  function qlPushCall(rawAction) {
+      let clean = rawAction, logs = [];
+      if(rawAction.includes("|| CALLS:")) {
+          let parts = rawAction.split("|| CALLS:");
+          clean = parts[0].trim();
+          logs = parts[1].trim().split(",").filter(String).map(Number);
+      }
+      logs.push(0);
+      return { clean: clean, calls: logs.join(",") };
+  }
+
+  function qlAddCallToExisting(row, taskId, encAct, encAss) {
+      let b = qlPushCall(safeDec(encAct));
+      Swal.fire({title:'Adding call...', allowOutsideClick:false, didOpen:()=>Swal.showLoading()});
+      apiCall('ct_updateCallStatus', { row: row, action: (b.clean + " || CALLS:" + b.calls).trim(), status: "Pending", assignedTo: safeDec(encAss), handledBy: loggedInUser })
+        .then(() => { Swal.fire({toast:true, position:'top-end', icon:'success', title:`Call added to ${taskId}`, showConfirmButton:false, timer:2200}); qlReset(); qlRefreshCache(); })
+        .catch(e => Swal.fire('Error', e.message, 'error'));
+  }
+
+  function qlCloseExisting(row, taskId, encAct, encAss) {
+      Swal.fire({ title: `Close ${taskId}?`, input: 'text', inputLabel: 'Closing remarks *', inputPlaceholder: 'What resolved the issue?', showCancelButton: true, confirmButtonText: 'Resolve & Close', confirmButtonColor: '#2ecc71',
+          inputValidator: v => (!v || !v.trim()) ? 'Remarks are required to close a call' : undefined
+      }).then(r => {
+          if(!r.isConfirmed) return;
+          let b = qlPushCall(safeDec(encAct));
+          let act = (b.clean ? b.clean + " | " : "") + r.value.trim() + " || CALLS:" + b.calls;
+          Swal.fire({title:'Closing...', allowOutsideClick:false, didOpen:()=>Swal.showLoading()});
+          apiCall('ct_updateCallStatus', { row: row, action: act, status: "Closed", assignedTo: safeDec(encAss), handledBy: loggedInUser })
+            .then(() => { Swal.fire('Closed!', `${taskId} has been resolved.`, 'success'); qlReset(); qlRefreshCache(); })
+            .catch(e => Swal.fire('Error', e.message, 'error'));
+      });
+  }
+
+  function qlReset() {
+      ['qlPhone','qlIssue','qlMins','qlRemark','qlAssign','qlName','qlSerial','qlCity'].forEach(id => { let el = document.getElementById(id); if(el) el.value = ''; });
+      let m = document.getElementById('qlModel'); if(m) m.value = '';
+      let st = document.getElementById('qlState'); if(st) st.value = '';
+      let w = document.getElementById('qlWarranty'); if(w) w.checked = true;
+      document.getElementById('qlMatchBox').innerHTML = '';
+      document.querySelectorAll('#qlChips .ql-chip').forEach(c => c.classList.remove('on'));
+      qlCallCount = 1; document.getElementById('qlCallCount').innerText = '1';
+      qlSetStatus('Pending');
+      try { document.getElementById('qlPhone').focus(); } catch(e){}
+  }
+
+  function qlSubmit() {
+      let phone = (document.getElementById('qlPhone').value || "").replace(/\D/g, '');
+      let issue = (document.getElementById('qlIssue').value || "").trim();
+      let remark = (document.getElementById('qlRemark').value || "").trim();
+
+      if(phone.length !== 10) return Swal.fire('Mobile Number', 'Please enter a valid 10-digit mobile number.', 'warning');
+      if(!issue) return Swal.fire('Issue', 'Please type the issue or tap a quick option.', 'warning');
+      if(qlStatus === 'Closed' && !remark) return Swal.fire('Remarks', 'Closing remarks are required to resolve a call.', 'warning');
+
+      let mins = parseInt(document.getElementById('qlMins').value) || 0;
+      let action = (qlStatus === 'Closed' ? remark : "Quick logged") + " || CALLS:" + qlBuildCalls(qlCallCount, mins);
+
+      let fObj = {
+          customerName: (document.getElementById('qlName').value || "").trim() || "Customer " + phone,
+          contactNumber: phone,
+          /* left blank on purpose when not captured — a fake "N/A" would show up
+             as its own bar in the Model-wise Calls chart */
+          model: document.getElementById('qlModel').value || "",
+          location: (document.getElementById('qlCity').value || "").trim(),
+          state: document.getElementById('qlState').value || "N/A",
+          serialNumber: (document.getElementById('qlSerial').value || "").trim() || "N/A",
+          warrantyStatus: document.getElementById('qlWarranty').checked,
+          problemDesc: issue,
+          actionTaken: action,
+          callHandledBy: loggedInUser || "Admin",
+          status: qlStatus,
+          assignedTo: (document.getElementById('qlAssign').value || "").trim()
+      };
+
+      Swal.fire({title:'Saving...', allowOutsideClick:false, didOpen:()=>Swal.showLoading()});
+      apiCall('ct_processForm', {formObject: fObj}).then(res => {
+          Swal.fire({ toast:true, position:'top-end', icon:'success', title: res, showConfirmButton:false, timer:2600 });
+          qlReset(); qlRefreshCache();
+      }).catch(e => Swal.fire('Error', e.message, 'error'));
+  }
   
   /* --- SMART CATEGORY LOGIC FOR PENDING CALLS --- */
   function filterCtGroup(gName) {
@@ -721,6 +1245,7 @@
   function ctLoadPending() {
       document.getElementById('ctList').innerHTML="Fetching...";
       apiCall('ct_getPendingCalls').then(data=>{
+          qlPendingCache = data || [];
           if(!data.length){ document.getElementById('ctList').innerHTML="No pending calls."; return; }
           
           let groups = { 'Installation': [], 'Demo': [], 'Complaint Log': [], 'Chatbot': [] };
@@ -767,11 +1292,15 @@
                   groups[g].forEach(c=>{
                       let assignInfo=c.assigned?`<span class="ct-assign">Assign: ${c.assigned}</span>`:""; let showTask=c.taskId?`${c.taskId} - `:'';
                       let snHtml = c.serial && c.serial !== "N/A" && c.serial !== "null" && c.serial !== "" ? ` | SN: <b>${c.serial}</b>` : "";
-                      let displayAct = c.action;
+                      let displayAct = c.action; let callBadge = "";
                       if(displayAct.includes("|| CALLS:")) {
-                          displayAct = displayAct.split("|| CALLS:")[0].trim();
+                          let aParts = displayAct.split("|| CALLS:");
+                          displayAct = aParts[0].trim();
+                          let aLogs = aParts[1].trim().split(",").filter(String);
+                          let aMins = aLogs.reduce((a,b)=>a+(parseInt(b)||0),0);
+                          callBadge = `<span class="ct-assign" style="background:#fff3e0; color:#e67e22; border-color:#f5cba7;"><i class="fa-solid fa-phone"></i> ${aLogs.length} Call${aLogs.length>1?'s':''}${aMins>0?' · '+aMins+'m':''}</span>`;
                       }
-                      html+=`<div class="ct-card" style="border-left-color:${gClr[g]};" onclick="ctOpenUpdate(${c.row}, '${safeB64(c.customerName)}', '${safeB64(c.action)}', '${safeB64(c.assigned)}', '${c.taskId}')"><div class="ct-tat" style="color:${gClr[g]}; background:${gClr[g]}15; border-color:${gClr[g]}50;">TAT: ${c.tat}</div><b>${showTask}${c.customerName}</b> ${assignInfo}<div style="color:#1976d2;font-size:12px;margin:2px 0;">📞 ${c.contact}</div><small>Model: ${c.model}${snHtml}<br>Issue: ${c.issue}<br><span style="color:#0984e3;">Action: ${displayAct}</span></small></div>`;
+                      html+=`<div class="ct-card" style="border-left-color:${gClr[g]};" onclick="ctOpenUpdate(${c.row}, '${safeB64(c.customerName)}', '${safeB64(c.action)}', '${safeB64(c.assigned)}', '${c.taskId}', '${c.contact}')"><div class="ct-tat" style="color:${gClr[g]}; background:${gClr[g]}15; border-color:${gClr[g]}50;">TAT: ${c.tat}</div><b>${showTask}${c.customerName}</b> ${assignInfo}${callBadge}<div style="display:flex; align-items:center; gap:8px; margin:4px 0;"><span style="color:#1976d2;font-size:12px;">📞 ${c.contact}</span><button class="copy-btn" title="Copy number" onclick="event.stopPropagation(); copyNumber('${c.contact}', this)"><i class="fa-regular fa-copy"></i> Copy</button></div><small>Model: ${c.model}${snHtml}<br>Issue: ${c.issue}<br><span style="color:#0984e3;">Action: ${displayAct}</span></small></div>`;
                   }); html+='</div></div>';
               }
           }
@@ -779,14 +1308,48 @@
       }).catch(err=>{ document.getElementById('ctList').innerHTML=`<div style="color:red; padding:10px;">Error fetching data</div>`; });
   }
 
-  function addCallLog() {
+  /* forceMins === 0 logs a call without a duration (rush hours).
+     Called with no argument it reads the minutes input as before. */
+  /* One-tap copy of a contact number. navigator.clipboard needs a secure context,
+     so a hidden-textarea fallback keeps it working everywhere. */
+  function copyNumber(num, el) {
+      num = String(num || "").trim();
+      if(!num) return;
+      let ok = () => {
+          if(el) { let old = el.innerHTML; el.classList.add('done'); el.innerHTML = '<i class="fa-solid fa-check"></i> Copied'; setTimeout(()=>{ el.classList.remove('done'); el.innerHTML = old; }, 1400); }
+          Swal.fire({toast:true, position:'top-end', icon:'success', title:'Number copied: ' + num, showConfirmButton:false, timer:1600});
+      };
+      let legacy = () => {
+          try {
+              let ta = document.createElement('textarea');
+              ta.value = num; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.top='-999px'; ta.style.opacity='0';
+              document.body.appendChild(ta); ta.select(); ta.setSelectionRange(0, num.length);
+              document.execCommand('copy'); document.body.removeChild(ta); ok();
+          } catch(e) {
+              Swal.fire({title:'Copy this number', input:'text', inputValue:num, confirmButtonText:'Done'});
+          }
+      };
+      try {
+          if(navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(num).then(ok).catch(legacy);
+          else legacy();
+      } catch(e) { legacy(); }
+  }
+
+  function addCallLog(forceMins) {
       let mInput = document.getElementById('newCallMins');
+      if(forceMins === 0) { window.currentCallLogs.push(0); renderCallLogs(); return; }
       let m = parseInt(mInput.value);
       if(m && m > 0) {
           window.currentCallLogs.push(m);
           mInput.value = '';
           renderCallLogs();
+      } else {
+          Swal.fire({toast:true, position:'top-end', icon:'info', title:'Enter minutes, or use "+ 1 Call"', showConfirmButton:false, timer:2200});
       }
+  }
+
+  function undoCallLog() {
+      if(window.currentCallLogs.length) { window.currentCallLogs.pop(); renderCallLogs(); }
   }
 
   function renderCallLogs() {
@@ -794,8 +1357,9 @@
       let totalMins = 0;
       let html = "";
       window.currentCallLogs.forEach((mins, idx) => {
+          mins = parseInt(mins) || 0;
           totalMins += mins;
-          html += `<span style="background:#dfe6e9; color:#2d3436; padding:3px 8px; border-radius:12px; font-size:11px; font-weight:bold;">Call ${idx+1}: ${mins}m</span>`;
+          html += `<span style="background:#dfe6e9; color:#2d3436; padding:3px 8px; border-radius:12px; font-size:11px; font-weight:bold;">Call ${idx+1}${mins > 0 ? ': ' + mins + 'm' : ''}</span>`;
       });
       if(window.currentCallLogs.length === 0) {
           html = `<span style="color:#a4b0be; font-style:italic; font-size:11px;">No calls logged yet.</span>`;
@@ -805,9 +1369,10 @@
       document.getElementById('callTimeTxt').innerText = totalMins;
   }
 
-  function ctOpenUpdate(r, encN, encAct, encAss, taskId) { 
-      document.getElementById('ctUpdatePanel').style.display='block'; 
-      document.getElementById('ctTargetCust').innerText="Update: "+safeDec(encN) + " (" + taskId + ")"; 
+  function ctOpenUpdate(r, encN, encAct, encAss, taskId, contact) {
+      document.getElementById('ctUpdatePanel').style.display='block';
+      document.getElementById('ctTargetCust').innerHTML = "Update: " + safeDec(encN) + " (" + taskId + ")"
+          + (contact ? ` <span style="font-weight:400; font-size:13px; color:#1976d2; margin-left:10px;">📞 ${contact}</span> <button class="copy-btn" title="Copy number" onclick="copyNumber('${contact}', this)"><i class="fa-regular fa-copy"></i> Copy</button>` : '');
       document.getElementById('ctRow').value=r; 
       document.getElementById('ctTargetId').value=taskId; 
       
@@ -818,10 +1383,14 @@
           let parts = rawAction.split("|| CALLS:");
           cleanAction = parts[0].trim();
           let logsStr = parts[1].trim();
-          if(logsStr) window.currentCallLogs = logsStr.split(",").map(Number);
+          if(logsStr) window.currentCallLogs = logsStr.split(",").filter(String).map(x => parseInt(x) || 0);
       }
-      document.getElementById('ctAction').value = cleanAction; 
-      document.getElementById('ctAssigned').value=safeDec(encAss); 
+      document.getElementById('ctAction').value = cleanAction;
+      document.getElementById('ctAssigned').value=safeDec(encAss);
+      /* Reset the status dropdown every time — otherwise a "Closed" left over
+         from the previous ticket silently closes the next one. */
+      document.getElementById('ctStatus').value = 'Pending';
+      document.getElementById('newCallMins').value = '';
       renderCallLogs();
 
       let historyBox = document.getElementById('ctChatHistoryBox');
@@ -855,9 +1424,13 @@
       window.scrollTo(0, document.body.scrollHeight); 
   }
   
-  function ctSaveUpdate() { 
-      Swal.fire({title:'Updating...',didOpen:()=>Swal.showLoading()}); 
+  function ctSaveUpdate() {
       let finalAction = document.getElementById('ctAction').value.trim();
+      /* A call can only be closed with a remark explaining how it was resolved. */
+      if(document.getElementById('ctStatus').value === 'Closed' && !finalAction) {
+          return Swal.fire('Remarks Required', 'Please write in "Action Taken" how the issue was resolved before closing this call.', 'warning');
+      }
+      Swal.fire({title:'Updating...', allowOutsideClick:false, didOpen:()=>Swal.showLoading()});
       if(window.currentCallLogs && window.currentCallLogs.length > 0) {
           finalAction += " || CALLS:" + window.currentCallLogs.join(",");
       }
@@ -868,25 +1441,14 @@
           assignedTo: document.getElementById('ctAssigned').value,
           handledBy: loggedInUser
       }).then(res=>{ 
-          Swal.fire('Updated!',res,'success'); 
-          document.getElementById('ctUpdatePanel').style.display='none'; 
-          ctLoadPending(); 
-      }).catch(e=>{Swal.fire('Error',e.message,'error')}); 
+          Swal.fire('Updated!',res,'success');
+          document.getElementById('ctUpdatePanel').style.display='none';
+          ctLoadPending();
+          qlRefreshCache();
+      }).catch(e=>{Swal.fire('Error',e.message,'error')});
   }
   
-  function formatAction(act) {
-      if(!act) return "";
-      if(act.includes("|| CALLS:")) {
-          let parts = act.split("|| CALLS:");
-          let cleanAct = parts[0].trim();
-          let logs = parts[1].trim().split(",");
-          let totalMins = logs.reduce((a,b)=>parseInt(a)+parseInt(b), 0);
-          return `${cleanAct} <div style="margin-top:4px; padding:4px 6px; background:#fff3e0; color:#e67e22; border-radius:4px; font-size:10px; font-weight:bold; display:inline-block;"><i class="fa-solid fa-phone"></i> ${logs.length} Calls (${totalMins} mins)</div>`;
-      }
-      return act;
-  }
-
-  function ctFetchReports() { 
+  function ctFetchReports() {
       let s=document.getElementById('ctRFrom').value, e=document.getElementById('ctRTo').value, u=document.getElementById('ctRUser').value; 
       document.getElementById('ctReportRes').innerHTML="Loading..."; 
       apiCall('ct_getClosedReport', {startStr: s, endStr: e, userFilter: u}).then(data=>{ 
