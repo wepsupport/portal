@@ -241,6 +241,7 @@
         </div>
         <div class="dash-row">
           <div class="stat-card" style="text-align:left; flex: 1; border-top: 4px solid #8e44ad;">
+            <div id="backendWarn" style="display:none; background:#fff3e0; border:1px solid #f0b27a; border-radius:7px; padding:10px 13px; margin-bottom:12px; font-size:12px; color:#b9770e;"></div>
             <h4 style="margin:0 0 5px 0; color:#2c3e50;">🖼️ Customer Portal Promo Banner</h4>
             <p style="text-transform:none; font-weight:normal; margin-bottom:14px; font-size:12px;">Pick a marketing image. It pops up on the Customer Portal and closes on its own after 10 seconds, or the customer can close it.</p>
             <input type="file" id="adminBannerFile" accept="image/*" onchange="previewPromoBanner()" style="width:100%; padding:9px; border-radius:6px; border:1px dashed #b39ddb; background:#faf7fd; margin-bottom:10px; font-size:12px;">
@@ -869,6 +870,7 @@
   function openPortal(portal) { ['landingScreen','dashPortal','pwPortal','ctPortal','wcrPortal'].forEach(id=>document.getElementById(id).style.display='none'); if(portal==='home') document.getElementById('landingScreen').style.display='flex'; else document.getElementById(portal+'Portal').style.display='block'; if(portal==='ct') qlOpen(); if(portal==='pw' || portal==='wcr') pwSetToday(); }
   
   function loadDashboard() {
+      checkBackendVersion();
      document.getElementById('dashLoader').style.display = 'block'; document.getElementById('dashContent').style.display = 'none';
      apiCall('getDashboardStats').then(stats => {
          document.getElementById('dashLoader').style.display = 'none'; document.getElementById('dashContent').style.display = 'block';
@@ -2702,6 +2704,26 @@
       Swal.fire({ title: v.vendor, html: h, width: '90%', showCloseButton: true, showConfirmButton: false });
   }
 
+  /* The portal and Code.gs ship together. If the deployed script reports a
+     different version (or no version at all), it was saved but never
+     redeployed - which shows up as "Unknown action" on newer features. */
+  const EXPECTED_SCRIPT_VERSION = "2026-11-18-a";
+
+  function checkBackendVersion() {
+      let box = document.getElementById('backendWarn');
+      if(!box) return;
+      apiCall('getVersion').then(v => {
+          if(String(v) === EXPECTED_SCRIPT_VERSION) { box.style.display = 'none'; return; }
+          box.style.display = 'block';
+          box.innerHTML = `<b>⚠ Script is out of date.</b> Deployed version is <b>${v}</b>, this portal expects <b>${EXPECTED_SCRIPT_VERSION}</b>.<br>
+            In Apps Script: <b>Deploy → Manage deployments → ✏️ Edit → Version: New version → Deploy</b>.`;
+      }).catch(() => {
+          box.style.display = 'block';
+          box.innerHTML = `<b>⚠ Script is out of date.</b> The deployed script does not report a version, so it is older than this portal.<br>
+            Paste the latest <b>Code.gs</b>, then <b>Deploy → Manage deployments → ✏️ Edit → Version: New version → Deploy</b>.`;
+      });
+  }
+
 function previewPromoBanner() {
     let f = document.getElementById('adminBannerFile').files[0];
     let box = document.getElementById('promoPreview');
@@ -2736,7 +2758,11 @@ function previewPromoBanner() {
         }).then(res => {
             Swal.fire('Saved!', 'Banner uploaded. It will now show on the Customer Portal.', 'success');
             fileInput.value = ''; document.getElementById('promoPreview').innerHTML = '';
-        }).catch(err => Swal.fire('Error', err.message, 'error'));
+        }).catch(err => {
+            if(/unknown action/i.test(err.message))
+              Swal.fire('Script not deployed', 'The uploader exists in your Code.gs but the deployed version is older.\n\nApps Script → Deploy → Manage deployments → Edit → Version: New version → Deploy.', 'warning');
+            else Swal.fire('Error', err.message, 'error');
+        });
       };
       reader.readAsDataURL(file);
       return;
