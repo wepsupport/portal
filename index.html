@@ -447,10 +447,9 @@
        backend returns it as bannerBase64 — but nothing here ever showed it. */
     let promoTimer = null;
 
-    /* Shown once per visit: large, closable, and it clears itself after 10s. */
+    /* Shown on every page load: large, closable, clears itself after 10s. */
     function showPromoBanner() {
         if(!promoBanner) return;
-        try { if(sessionStorage.getItem('wepPromoSeen')) return; sessionStorage.setItem('wepPromoSeen', '1'); } catch(e) {}
 
         let src = String(promoBanner).trim();
         let m = src.match(/src\s*=\s*["']([^"']+)["']/i);
