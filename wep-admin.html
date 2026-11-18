@@ -242,8 +242,13 @@
         <div class="dash-row">
           <div class="stat-card" style="text-align:left; flex: 1; border-top: 4px solid #8e44ad;">
             <h4 style="margin:0 0 5px 0; color:#2c3e50;">🖼️ Customer Portal Promo Banner</h4>
-            <p style="text-transform:none; font-weight:normal; margin-bottom:15px; font-size:12px;">Paste the Base64 code of your promotional image below to show it as a popup on the Customer Portal.</p>
-            <textarea id="adminBannerBase64" rows="3" placeholder="Paste Base64 code here (e.g., data:image/png;base64,...)" style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc; margin-bottom:10px; font-size:11px;"></textarea>
+            <p style="text-transform:none; font-weight:normal; margin-bottom:14px; font-size:12px;">Pick a marketing image. It pops up on the Customer Portal and closes on its own after 10 seconds, or the customer can close it.</p>
+            <input type="file" id="adminBannerFile" accept="image/*" onchange="previewPromoBanner()" style="width:100%; padding:9px; border-radius:6px; border:1px dashed #b39ddb; background:#faf7fd; margin-bottom:10px; font-size:12px;">
+            <div id="promoPreview" style="margin-bottom:10px;"></div>
+            <details style="margin-bottom:12px;">
+              <summary style="cursor:pointer; font-size:11.5px; color:#7f8fa6; font-weight:600;">Or paste an image link / Base64 code instead</summary>
+              <textarea id="adminBannerBase64" rows="3" placeholder="https://... or data:image/png;base64,..." style="width:100%; padding:10px; border-radius:5px; border:1px solid #ccc; margin-top:9px; font-size:11px;"></textarea>
+            </details>
             <button class="btn" style="background:#8e44ad; width:auto; padding:8px 15px; margin-right:10px;" onclick="savePromoBanner()">Save Banner</button>
             <button class="btn btn-dark" style="width:auto; padding:8px 15px;" onclick="removePromoBanner()">Remove Banner</button>
           </div>
@@ -639,7 +644,7 @@
 <script>
   // ===================== GITHUB API CONFIGURATION =====================
   // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-  const API_URL = "https://script.google.com/macros/s/AKfycby2Q5Rd9siJCg5au-WXdkk0xTCW5Gpazi4vWN1qIXyFmYNkMk3hMG9Ej71PvScinS4i/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbwRPu043N5h6jb9eSgi-DUuJU6wmeoWDSsYO3brwkN0BR1jgb9l1xBtR3fkOp595BnR/exec";
 
   async function apiCall(action, params = {}) {
       try {
@@ -2697,22 +2702,52 @@
       Swal.fire({ title: v.vendor, html: h, width: '90%', showCloseButton: true, showConfirmButton: false });
   }
 
-function savePromoBanner() {
-    let val = document.getElementById('adminBannerBase64').value.trim();
-    if(!val) return Swal.fire('Error', 'Please paste base64 code first.', 'error');
-    
-    // Auto-extract if user pastes full HTML <img src="..."> tag (Smart Logic)
-    let match = val.match(/src\s*=\s*["']([^"']+)["']/);
-    if(match && match[1]) {
-        val = match[1];
+function previewPromoBanner() {
+    let f = document.getElementById('adminBannerFile').files[0];
+    let box = document.getElementById('promoPreview');
+    if(!f) { box.innerHTML = ''; return; }
+    let kb = Math.round(f.size / 1024);
+    let r = new FileReader();
+    r.onload = e => {
+      box.innerHTML = `<div style="display:flex; gap:12px; align-items:center; background:#faf7fd; border:1px solid #e1d5f0; border-radius:8px; padding:10px;">
+          <img src="${e.target.result}" style="width:120px; height:auto; max-height:90px; object-fit:contain; border-radius:5px; background:#fff;">
+          <div style="font-size:11.5px; color:#5a6676;"><b>${f.name}</b><br>${kb} KB &middot; ready to upload</div>
+        </div>`;
+    };
+    r.readAsDataURL(f);
+  }
+
+  /* A picked file goes to Drive (a photo is far bigger than one sheet cell can
+     hold); a pasted link or small Base64 is stored directly. */
+  function savePromoBanner() {
+    let fileInput = document.getElementById('adminBannerFile');
+    let file = (fileInput && fileInput.files && fileInput.files.length) ? fileInput.files[0] : null;
+
+    if(file) {
+      if(!/^image\//.test(file.type)) return Swal.fire('Not an image', 'Please choose an image file.', 'warning');
+      Swal.fire({ title: 'Uploading image...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      let reader = new FileReader();
+      reader.onerror = () => Swal.fire('Error', 'Could not read that file.', 'error');
+      reader.onload = e => {
+        apiCall('uploadPromoBannerImage', {
+            base64Data: String(e.target.result).split('base64,')[1],
+            contentType: file.type,
+            fileName: 'PopupBanner_' + Date.now() + '_' + file.name.replace(/[^\w.\-]/g, '_')
+        }).then(res => {
+            Swal.fire('Saved!', 'Banner uploaded. It will now show on the Customer Portal.', 'success');
+            fileInput.value = ''; document.getElementById('promoPreview').innerHTML = '';
+        }).catch(err => Swal.fire('Error', err.message, 'error'));
+      };
+      reader.readAsDataURL(file);
+      return;
     }
-    
-    Swal.fire({ title: 'Saving...', didOpen: () => Swal.showLoading() });
+
+    let val = (document.getElementById('adminBannerBase64').value || '').trim();
+    if(!val) return Swal.fire('No image', 'Choose an image file, or paste a link / Base64 code.', 'warning');
+    Swal.fire({ title: 'Saving...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
     apiCall('savePromoBanner', { base64String: val }).then(res => {
-      Swal.fire('Success', res, 'success');
-    }).catch(err => {
-      Swal.fire('Error', err.message, 'error');
-    });
+      Swal.fire('Saved!', res, 'success');
+    }).catch(err => Swal.fire('Error', err.message, 'error'));
   }
 
   function removePromoBanner() {
@@ -2722,6 +2757,8 @@ function savePromoBanner() {
         apiCall('removePromoBanner').then((res) => {
           Swal.fire('Removed!', res, 'success');
           document.getElementById('adminBannerBase64').value = '';
+          document.getElementById('adminBannerFile').value = '';
+          document.getElementById('promoPreview').innerHTML = '';
         }).catch(err => Swal.fire('Error', err.message, 'error'));
       }
     });
