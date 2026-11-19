@@ -236,6 +236,36 @@
         .promo-wrap { width: 94vw; }
         .promo-img { max-height: 70vh; border-radius: 10px; }
     }
+  
+    /* --- PRODUCT ASK (AI) --- */
+    .icon-ask { background: linear-gradient(135deg,#d1f2eb,#a3e4d7); color:#117a65; }
+    .ask-wrap { max-width: 760px; margin: 0 auto; }
+    .ask-thread { min-height: 180px; margin-bottom: 14px; }
+    .ask-row { display:flex; margin-bottom:12px; }
+    .ask-row.me { justify-content:flex-end; }
+    .ask-bub { max-width:84%; padding:11px 15px; border-radius:16px; font-size:14px; line-height:1.62; white-space:pre-wrap; }
+    .ask-row.me .ask-bub { background:#0b63ce; color:#fff; border-bottom-right-radius:5px; }
+    .ask-row.bot .ask-bub { background:#f1f4f8; color:#1d2733; border-bottom-left-radius:5px; }
+    .ask-tag { font-size:10.5px; font-weight:700; letter-spacing:.3px; color:#7a8699; margin-bottom:5px; display:block; }
+    .ask-prod { display:flex; gap:12px; align-items:flex-start; border:1px solid #e2e7ee; border-radius:12px; padding:11px; margin-top:9px; background:#fff; text-decoration:none; color:inherit; }
+    .ask-prod:hover { border-color:#0b63ce; box-shadow:0 4px 14px rgba(0,0,0,.07); }
+    .ask-prod img { width:58px; height:58px; object-fit:contain; border-radius:8px; background:#f6f8fa; flex-shrink:0; }
+    .ask-prod > div { display:flex; flex-direction:column; gap:3px; min-width:0; }
+    .ask-prod b { font-size:13.5px; line-height:1.35; margin:0; }
+    .ask-prod span { font-size:11.5px; color:#6b7788; line-height:1.45; margin:0; }
+    .ask-prod .pr { color:#0b8a4f; font-weight:700; font-size:12.5px; }
+    .ask-bar { display:flex; gap:9px; }
+    .ask-bar input { flex:1; padding:13px 16px; border:1px solid #d8dee7; border-radius:11px; font-size:14px; font-family:inherit; }
+    .ask-bar input:focus { outline:none; border-color:#0b63ce; box-shadow:0 0 0 3px rgba(11,99,206,.12); }
+    .ask-bar button { background:#0b63ce; color:#fff; border:none; border-radius:11px; padding:0 20px; font-size:15px; cursor:pointer; }
+    .ask-bar button:disabled { background:#b7c1ce; cursor:default; }
+    .ask-chips { display:flex; flex-wrap:wrap; gap:7px; margin-bottom:14px; }
+    .ask-chip { background:#eef4fc; border:1px solid #cfe0f5; color:#0b63ce; padding:6px 12px; border-radius:16px; font-size:12px; cursor:pointer; }
+    .ask-chip:hover { background:#0b63ce; color:#fff; }
+    .ask-dots span { display:inline-block; width:7px; height:7px; margin-right:3px; border-radius:50%; background:#9aa7b8; animation:askb 1.1s infinite; }
+    .ask-dots span:nth-child(2){animation-delay:.18s} .ask-dots span:nth-child(3){animation-delay:.36s}
+    @keyframes askb { 0%,60%,100%{opacity:.3;transform:translateY(0)} 30%{opacity:1;transform:translateY(-4px)} }
+    .ask-foot { font-size:11px; color:#8b97a8; text-align:center; margin-top:12px; line-height:1.6; }
   </style>
 </head>
 <body>
@@ -303,6 +333,12 @@
               <h3 id="ui-card4-t">Support Assistant</h3>
               <p id="ui-card4-d">Get instant troubleshooting or connect with a executive.</p>
               <div class="card-arrow">Start Chat <i class="fa-solid fa-arrow-right"></i></div>
+          </div>
+          <div class="action-card" onclick="openAskView()">
+              <div class="action-card-icon icon-ask"><i class="fa-solid fa-lightbulb"></i></div>
+              <h3 id="ui-card5-t">Product &amp; Features</h3>
+              <p id="ui-card5-d">Ask anything about our products, features or price.</p>
+              <div class="card-arrow">Ask Now <i class="fa-solid fa-arrow-right"></i></div>
           </div>
       </div>
       
@@ -395,7 +431,7 @@
   <script>
     // ===================== GITHUB API CONFIGURATION =====================
     // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-    const API_URL = "https://script.google.com/macros/s/AKfycby3e6MiT0iOfehn9Squ4mNDbK1t5uWDJj0oU78wkQxGo0wip9J8PjMQdIGDtvKFy9ks/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbzG3IrVcfHC0ODmcGvgcx8FQ8pAs8-Z08CDQHA_Ob2qMknAxyfY16QFcBnv3dsBbf9t/exec";
 
     async function apiCall(action, params = {}) {
         try {
@@ -421,6 +457,7 @@
           c2t: "Demo Support", c2d: "Facing an issue during a product demo? Raise it here.",
           c3t: "Warranty Complaint", c3d: "Register a complaint for your products.",
           c4t: "Support Assistant", c4d: "Get instant troubleshooting or connect with a executive.",
+          c5t: "Product & Features", c5d: "Ask anything about our products, features or price.",
           track: "Track Existing Request",
           greeting: "Hello! I am the wepsol Service Bot. Please select your Printer Model to get started.", loading: "Loading...", selectNext: "Please select an option below:", selectModel: "Printer Model", drpDefault: "-- Select --", nextStep: "Continue", modelWait: "Model selection is required.", watchVideo: "Watch Tutorial", downloadFile: "Download Resources", needExecutive: "Connect to Executive", resolved: "Issue Resolved", or: "OR", formTitle: "Contact Live Agent", namePlaceholder: "Full Name", phonePlaceholder: "10-digit Mobile Number", startChatBtn: "Start Session", chatInputPlaceholder: "Message...", endBtn: "End Chat", rateExperience: "Session ended. Please rate us:", agentConnected: "Live Chat Connected. An agent will be with you shortly.", formError: "Please enter your Name and a valid 10-digit Mobile Number.", userEnded: "You ended the chat. Please rate your experience.", ratedMsg: "Thank you! You rated this chat {count} stars.", formCity: "City", formState: "State", formSerial: "Serial No (Opt)", formNext: "Submit Details", trackTitle: "Track Ticket Status", invalidPhone: "Mobile number must be exactly 10 digits." 
       },
@@ -430,6 +467,7 @@
           c2t: "डेमो सपोर्ट", c2d: "डेमो के दौरान कोई समस्या आ रही है? यहाँ दर्ज करें।",
           c3t: "वारंटी शिकायत", c3d: "अपने वारंटी वाले उत्पादों के लिए सेवा शिकायत दर्ज करें।",
           c4t: "सपोर्ट असिस्टेंट", c4d: "तुरंत स्वचालित समस्या निवारण प्राप्त करें या लाइव एक्जीक्यूटिव से जुड़ें।",
+          c5t: "प्रोडक्ट और फीचर्स", c5d: "हमारे प्रोडक्ट, फीचर्स या कीमत के बारे में कुछ भी पूछें।",
           track: "अपना टिकट ट्रैक करें",
           greeting: "नमस्ते! मैं wepsol सर्विस बॉट हूँ। कृपया शुरू करने के लिए अपना प्रिंटर मॉडल चुनें।", loading: "लोड हो रहा है...", selectNext: "कृपया नीचे से एक विकल्प चुनें:", selectModel: "प्रिंटर मॉडल चुनें:", drpDefault: "-- चुनें --", nextStep: "आगे बढ़ें", modelWait: "मॉडल चुनना आवश्यक है।", watchVideo: "वीडियो देखें", downloadFile: "रिसोर्स डाउनलोड करें", needExecutive: "एक्जीक्यूटिव से बात करें", resolved: "समस्या हल हो गई", or: "या", formTitle: "लाइव एजेंट संपर्क", namePlaceholder: "पूरा नाम", phonePlaceholder: "10-अंकों का मोबाइल नंबर", startChatBtn: "सत्र शुरू करें", chatInputPlaceholder: "मैसेज टाइप करें...", endBtn: "चैट बंद करें", rateExperience: "सत्र समाप्त! कृपया रेट करें:", agentConnected: "लाइव चैट कनेक्ट हो गया है। एक एजेंट जल्द ही आपसे जुड़ेगा।", formError: "कृपया अपना नाम और सही 10-अंकों का मोबाइल नंबर दर्ज करें।", userEnded: "आपने चैट समाप्त कर दी है। कृपया अपना अनुभव रेट करें।", ratedMsg: "धन्यवाद! आपने {count} स्टार दिए हैं।", formCity: "शहर (City)", formState: "राज्य (State)", formSerial: "सीरियल नंबर (Opt)", formNext: "जमा करें", trackTitle: "टिकट स्थिति ट्रैक करें", invalidPhone: "मोबाइल नंबर ठीक 10 अंकों का होना चाहिए।" 
       }
@@ -555,6 +593,9 @@
         document.getElementById('ui-card2-t').innerText = t.c2t; document.getElementById('ui-card2-d').innerText = t.c2d;
         document.getElementById('ui-card3-t').innerText = t.c3t; document.getElementById('ui-card3-d').innerText = t.c3d;
         document.getElementById('ui-card4-t').innerText = t.c4t; document.getElementById('ui-card4-d').innerText = t.c4d;
+        let c5t = document.getElementById('ui-card5-t'), c5d = document.getElementById('ui-card5-d');
+        if(c5t && t.c5t) c5t.innerText = t.c5t;
+        if(c5d && t.c5d) c5d.innerText = t.c5d;
         document.getElementById('ui-track-btn').innerText = t.track;
         
         document.getElementById('modelSelectLabel').innerText = t.selectModel;
@@ -582,6 +623,101 @@
         let lp = document.getElementById('landingPage');
         lp.style.display = 'flex';
         lp.style.animation = 'none'; 
+    }
+
+
+    /* ===== PRODUCT & FEATURES: ask about the catalogue ===== */
+    const ASK_SUGGEST = {
+      en: ["Which billing printer should I buy?", "BP 2100 features", "Barcode scanner options", "Difference between BP Joy and BP Emerge", "Thermal printer price"],
+      hi: ["कौन सा बिलिंग प्रिंटर लूँ?", "BP 2100 के फीचर्स", "बारकोड स्कैनर के विकल्प", "BP Joy और BP Emerge में फर्क", "थर्मल प्रिंटर की कीमत"]
+    };
+    let askBusy = false;
+
+    function openAskView() {
+        let hi = (currentLang === 'hi');
+        /* same page shell the other forms use */
+        document.getElementById('landingPage').style.display = 'none';
+        document.getElementById('formPage').style.display = 'flex';
+        let ttl = document.getElementById('formTitle');
+        if(ttl) ttl.innerText = hi ? 'प्रोडक्ट और फीचर्स' : 'Product & Features';
+        document.getElementById('formContentArea').innerHTML = `
+          <div class="ask-wrap">
+            <div class="ask-chips" id="askChips">
+              ${(hi ? ASK_SUGGEST.hi : ASK_SUGGEST.en).map(q => `<span class="ask-chip" onclick="askSend(this.innerText)">${q}</span>`).join('')}
+            </div>
+            <div class="ask-thread" id="askThread"></div>
+            <div class="ask-bar">
+              <input type="text" id="askInput" autocomplete="off"
+                     placeholder="${hi ? 'अपना सवाल लिखें…' : 'Type your question…'}"
+                     onkeypress="if(event.key==='Enter'){event.preventDefault();askSend();}">
+              <button id="askBtn" onclick="askSend()"><i class="fa-solid fa-paper-plane"></i></button>
+            </div>
+            <div class="ask-foot">${hi
+              ? 'जवाब हमारे प्रोडक्ट कैटलॉग से आते हैं। कीमतें बदल सकती हैं — पक्का करने के लिए टीम से बात करें।'
+              : 'Answers come from our product catalogue. Prices can change — please confirm with our team.'}</div>
+          </div>`;
+        askPush('bot', hi
+          ? 'नमस्ते! हमारे प्रोडक्ट, उनके फीचर्स या कीमत के बारे में कुछ भी पूछिए।'
+          : 'Hi! Ask me anything about our products, their features or price.');
+        setTimeout(() => { try { document.getElementById('askInput').focus(); } catch(e){} }, 150);
+    }
+
+    function askPush(who, text, html) {
+        let th = document.getElementById('askThread'); if(!th) return null;
+        let d = document.createElement('div');
+        d.className = 'ask-row ' + (who === 'me' ? 'me' : 'bot');
+        d.innerHTML = `<div class="ask-bub">${who === 'bot' ? '<span class="ask-tag">WEPSOL ASSISTANT</span>' : ''}${html || escapeAsk(text)}</div>`;
+        th.appendChild(d);
+        d.scrollIntoView({ behavior: 'smooth', block: 'end' });
+        return d;
+    }
+
+    function escapeAsk(t) {
+        return String(t == null ? '' : t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    }
+
+    function askProductCard(p) {
+        let img = p.image ? `<img src="${escapeAsk(p.image)}" alt="" onerror="this.style.display='none'">` : '';
+        let bits = [p.category, p.specs].filter(Boolean).join(' · ');
+        let open = p.url ? `href="${escapeAsk(p.url)}" target="_blank" rel="noopener"` : '';
+        return `<a class="ask-prod" ${open}>${img}<div><b>${escapeAsk(p.name)}</b>
+                ${p.price ? `<span class="pr">${escapeAsk(p.price)}</span>` : ''}
+                ${bits ? `<span>${escapeAsk(bits).slice(0,150)}</span>` : ''}</div></a>`;
+    }
+
+    function askSend(preset) {
+        if(askBusy) return;
+        let inp = document.getElementById('askInput');
+        let q = String(preset || (inp ? inp.value : '')).trim();
+        if(!q) return;
+        if(inp) inp.value = '';
+        askPush('me', q);
+
+        askBusy = true;
+        let btn = document.getElementById('askBtn'); if(btn) btn.disabled = true;
+        let thinking = askPush('bot', '', '<span class="ask-dots"><span></span><span></span><span></span></span>');
+
+        apiCall('ai_ask', { question: q, lang: currentLang }).then(r => {
+            if(thinking) thinking.remove();
+            let html = escapeAsk(r.answer);
+            (r.products || []).forEach(p => { html += askProductCard(p); });
+            (r.solutions || []).forEach(sv => {
+                if(sv.video)    html += `<a class="ask-prod" href="${escapeAsk(sv.video)}" target="_blank" rel="noopener"><div><b>▶ ${currentLang==='hi'?'वीडियो देखें':'Watch tutorial'}</b><span>${escapeAsk(sv.steps||'')}</span></div></a>`;
+                if(sv.download) html += `<a class="ask-prod" href="${escapeAsk(sv.download)}" target="_blank" rel="noopener"><div><b>⬇ ${currentLang==='hi'?'डाउनलोड':'Download'}</b><span>${escapeAsk(sv.steps||'')}</span></div></a>`;
+            });
+            if(r.source === 'none')
+                html += `<a class="ask-prod" onclick="openChatView()" style="cursor:pointer;"><div><b>💬 ${currentLang==='hi'?'एक्जीक्यूटिव से बात करें':'Talk to an executive'}</b><span>${currentLang==='hi'?'हमारी टीम आपकी मदद करेगी':'Our team will help you'}</span></div></a>`;
+            askPush('bot', '', html);
+        }).catch(e => {
+            if(thinking) thinking.remove();
+            askPush('bot', currentLang === 'hi'
+              ? 'अभी जवाब नहीं मिल पा रहा। कृपया एक्जीक्यूटिव से बात करें।'
+              : 'I could not fetch an answer right now. Please talk to our executive.');
+        }).finally(() => {
+            askBusy = false;
+            let b2 = document.getElementById('askBtn'); if(b2) b2.disabled = false;
+            try { document.getElementById('askInput').focus(); } catch(e){}
+        });
     }
 
     function openChatView() {
