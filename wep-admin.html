@@ -2801,7 +2801,7 @@
   /* The portal and Code.gs ship together. If the deployed script reports a
      different version (or no version at all), it was saved but never
      redeployed - which shows up as "Unknown action" on newer features. */
-  const EXPECTED_SCRIPT_VERSION = "2026-11-20-kb2";
+  const EXPECTED_SCRIPT_VERSION = "2026-11-20-kb3";
 
   function checkBackendVersion() {
       let box = document.getElementById('backendWarn');
@@ -3020,6 +3020,14 @@
               <div style="margin-top:8px; white-space:pre-wrap;">${r.answer}</div>
               ${why ? `<div style="margin-top:9px; font-size:11.5px; color:#b9770e; background:#fff8e8; border-radius:6px; padding:7px 10px;">${why}</div>` : ''}
               ${r.note ? `<div style="margin-top:7px; font-size:11px; color:#e67e22;">${r.note}</div>` : ''}
+              ${/UrlFetchApp|external_request|not allowed to call the internet/i.test(r.note || '') ? `
+                <div style="margin-top:9px; background:#fdecea; border:1px solid #f5b7b1; border-radius:7px; padding:10px 12px; font-size:12px; color:#922b21; line-height:1.65;">
+                  <b>Script ko internet ki permission nahi mili hai.</b> Isi wajah se AI reply nahi kar pa raha aur catalogue bhi 0 hai.<br>
+                  1. Apps Script editor kholiye.<br>
+                  2. Upar function list me se <b>authorizeNow</b> select kijiye aur <b>Run</b> dabaiye.<br>
+                  3. Google jo permissions maange, sab <b>Allow</b> kar dijiye.<br>
+                  4. Phir <b>Deploy &rsaquo; Manage deployments &rsaquo; Edit &rsaquo; Version: New version &rsaquo; Deploy</b>.
+                </div>` : ''}
             </div>`;
       }).catch(e => out.innerHTML = `<div style="font-size:12px; color:#e74c3c;">${e.message}</div>`);
   }
