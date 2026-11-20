@@ -258,6 +258,15 @@
     .ask-note { border-left:3px solid #0b63ce; background:#fff; border-radius:9px; padding:10px 13px; margin-top:9px; font-size:13px; line-height:1.6; }
     .ask-note b { display:block; font-size:11px; text-transform:uppercase; letter-spacing:.3px; color:#0b63ce; margin-bottom:4px; }
     .ask-guide { border-left-color:#6c5ce7 !important; }
+    .ask-steps { margin:10px 0 0; padding:0; list-style:none; counter-reset:askstep; }
+    .ask-steps li { counter-increment:askstep; position:relative; padding:9px 12px 9px 40px; margin-bottom:7px;
+                    background:#fff; border:1px solid #e3e8ef; border-radius:9px; font-size:13.5px; line-height:1.55; color:#1f2d3d; }
+    .ask-steps li::before { content:counter(askstep); position:absolute; left:11px; top:9px; width:20px; height:20px;
+                            border-radius:50%; background:#0b63ce; color:#fff; font-size:11.5px; font-weight:700;
+                            display:flex; align-items:center; justify-content:center; }
+    .ask-src { margin-top:8px; font-size:11px; color:#8a94a6; }
+    .ask-tip { margin-top:9px; background:#fff8e8; border:1px solid #f3dfae; border-radius:9px;
+               padding:9px 12px; font-size:12.5px; line-height:1.55; color:#8a6d1f; }
     .ask-guide b { color:#6c5ce7 !important; }
     .ask-bar { display:flex; gap:9px; }
     .ask-bar input { flex:1; padding:13px 16px; border:1px solid #d8dee7; border-radius:11px; font-size:14px; font-family:inherit; }
@@ -436,7 +445,7 @@
   <script>
     // ===================== GITHUB API CONFIGURATION =====================
     // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-    const API_URL = "https://script.google.com/macros/s/AKfycbzWhTpkC2LzzCf5yBRgnDmzP7tsnlNv9L4tCDqLdxwfxvets5aB16Qy5UgBiSb3o7b5/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbznMbH4D9U9OzFUjxkQNTByGBNmnwU8GnwXRqi0DIvzCIk60H8Q3c4nZ3-4tZnKraJR/exec";
 
     async function apiCall(action, params = {}) {
         try {
@@ -705,14 +714,19 @@
 
         apiCall('ai_ask', { question: q, lang: currentLang, history: askHistory.slice(-3) }).then(r => {
             if(thinking) thinking.remove();
-            let html = escapeAsk(r.answer);
+            /* One short line, then the steps as a numbered list - a wall of text
+               is what customers could not follow. */
+            let steps = r.steps || [];
+            let html = escapeAsk(steps.length ? (r.intro || '') : (r.answer || ''));
+            if(steps.length) {
+                html += '<ol class="ask-steps">';
+                steps.forEach(st => { html += `<li>${escapeAsk(st)}</li>`; });
+                html += '</ol>';
+            }
+            if(r.note) html += `<div class="ask-tip">${escapeAsk(r.note)}</div>`;
+            if(r.guideTitle) html += `<div class="ask-src">${currentLang==='hi'?'स्रोत':'Source'}: ${escapeAsk(r.guideTitle)}</div>`;
+            /* Products only when the customer actually asked about a product. */
             (r.products || []).forEach(p => { html += askProductCard(p); });
-            /* how-to / settings extracts, shown as their own card */
-            (r.guides || []).forEach((g, i) => {
-                let already = String(r.answer || '').indexOf(String(g.content || '').slice(0, 40)) > -1;
-                if(g.content && !already && i === 0)
-                    html += `<div class="ask-note ask-guide"><b>${escapeAsk(g.title || (currentLang==='hi'?'गाइड':'Guide'))}</b>${escapeAsk(g.content.slice(0, 700))}</div>`;
-            });
             /* show the written solution itself - previously only its links appeared,
                which left the bubble empty when a solution had no video or download */
             (r.solutions || []).forEach((sv, i) => {
