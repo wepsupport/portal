@@ -259,7 +259,8 @@
               Customers can ask about products and features on the portal. Answers come only from your catalogue below, so the AI cannot invent a price or a spec.
             </p>
 
-            <div class="q-tiles" id="aiTiles" style="margin-bottom:14px;"></div>
+            <div class="q-tiles" id="aiTiles" style="margin-bottom:12px;"></div>
+            <div id="aiSetupWarn" style="display:none; background:#fff3e0; border:1px solid #f0b27a; border-radius:7px; padding:11px 14px; margin-bottom:13px; font-size:12px; color:#b9770e;"></div>
 
             <div style="background:#f8f9fa; border:1px solid #dcdde1; border-radius:8px; padding:13px; margin-bottom:13px;">
               <label style="font-size:11.5px;">1. Catalogue &mdash; pulled from wepmyshop.com</label>
@@ -284,8 +285,57 @@
               </div>
             </div>
 
+            <div style="background:#f3f0ff; border:1px solid #d6cdfa; border-radius:8px; padding:13px; margin-bottom:13px;">
+              <label style="font-size:11.5px;">3. Knowledge Base &mdash; features, settings &amp; how-to <span id="kbCount" style="color:#6c5ce7; font-weight:700;"></span></label>
+              <div style="font-size:11px; color:#8a94a6; margin:6px 0 10px 0;">
+                This is what lets the assistant explain <b>settings and options</b>. Product descriptions only say what a machine is &mdash; paste manual sections, menu explanations and FAQs here.
+              </div>
+
+              <div class="grid" style="margin-bottom:9px;">
+                <div><label>Title *</label><input type="text" id="kbTitle" placeholder="e.g. BP 2100 — Menu Settings" autocomplete="off"></div>
+                <div><label>Model</label><select id="kbModel" class="i-model"></select></div>
+              </div>
+              <div class="grid" style="margin-bottom:9px;">
+                <div><label>Category</label>
+                  <select id="kbCat">
+                    <option>Settings &amp; Options</option><option>How To</option><option>Features</option>
+                    <option>Installation</option><option>Troubleshooting</option><option>FAQ</option><option>General</option>
+                  </select>
+                </div>
+                <div><label>Or import a Google Doc</label>
+                  <div style="display:flex; gap:7px;">
+                    <input type="text" id="kbDocUrl" placeholder="docs.google.com/document/..." autocomplete="off">
+                    <button class="btn" style="width:auto; margin:0; padding:9px 13px; background:#6c5ce7;" onclick="kbImportDoc()">Import</button>
+                  </div>
+                </div>
+              </div>
+              <textarea id="kbText" rows="6" placeholder="Paste the manual section, menu settings or FAQ here. Long text is split automatically.&#10;&#10;Example:&#10;To change paper width: press MENU, go to Print Setup, select Paper Width, choose 58mm or 80mm, press OK to save."
+                        style="width:100%; padding:10px; border-radius:6px; border:1px solid #ccc; font-size:12px; margin-bottom:9px;"></textarea>
+              <div style="display:flex; gap:9px; flex-wrap:wrap;">
+                <button class="btn" style="width:auto; margin:0; padding:9px 18px; background:#6c5ce7;" onclick="kbSave()"><i class="fa-solid fa-plus"></i> Add to Knowledge Base</button>
+                <button class="btn" style="width:auto; margin:0; padding:9px 16px; background:#7f8c8d;" onclick="kbRefresh()">Refresh list</button>
+              </div>
+              <div style="margin-top:14px; padding-top:12px; border-top:1px dashed #cfd3d8;">
+                <label style="font-weight:600;">Bulk import — manual pack (.json)</label>
+                <div style="font-size:11.5px; color:#636e72; margin:3px 0 8px;">
+                  Ye file sabhi product manuals ki settings, menu options aur how-to steps ek saath upload kar deti hai.
+                  Pehli baar upload karne ke baad assistant har model ke features &amp; settings samjha payega.
+                </div>
+                <div style="display:flex; gap:9px; flex-wrap:wrap; align-items:center;">
+                  <input type="file" id="kbPackFile" accept=".json,application/json"
+                         style="width:auto; flex:1; min-width:210px; padding:7px; border-radius:6px; border:1px solid #ccc; font-size:12px;">
+                  <button class="btn" style="width:auto; margin:0; padding:9px 18px; background:#00b894;" onclick="kbImportPack()">
+                    <i class="fa-solid fa-upload"></i> Import pack
+                  </button>
+                  <button class="btn" style="width:auto; margin:0; padding:9px 14px; background:#d63031;" onclick="kbClearAll()">Clear all</button>
+                </div>
+                <div id="kbPackStatus" style="display:none; margin-top:9px; font-size:12px;"></div>
+              </div>
+              <div id="kbList" style="margin-top:12px;"></div>
+            </div>
+
             <div style="background:#f8f9fa; border:1px solid #dcdde1; border-radius:8px; padding:13px;">
-              <label style="font-size:11.5px;">3. Try a question</label>
+              <label style="font-size:11.5px;">4. Try a question</label>
               <div style="display:flex; gap:9px; flex-wrap:wrap; margin-top:7px;">
                 <input type="text" id="aiTestQ" placeholder="e.g. BP 2100 ke features kya hai?" autocomplete="off" style="flex:1; min-width:230px;"
                        onkeypress="if(event.key==='Enter'){event.preventDefault();testAi();}">
@@ -914,6 +964,7 @@
   function loadDashboard() {
       checkBackendVersion();
       loadAiPanel();
+      kbRefresh();
      document.getElementById('dashLoader').style.display = 'block'; document.getElementById('dashContent').style.display = 'none';
      apiCall('getDashboardStats').then(stats => {
          document.getElementById('dashLoader').style.display = 'none'; document.getElementById('dashContent').style.display = 'block';
@@ -2750,7 +2801,7 @@
   /* The portal and Code.gs ship together. If the deployed script reports a
      different version (or no version at all), it was saved but never
      redeployed - which shows up as "Unknown action" on newer features. */
-  const EXPECTED_SCRIPT_VERSION = "2026-11-19-ai";
+  const EXPECTED_SCRIPT_VERSION = "2026-11-20-kb2";
 
   function checkBackendVersion() {
       let box = document.getElementById('backendWarn');
@@ -2771,9 +2822,24 @@
   function loadAiPanel() {
       apiCall('getProductStats').then(st => {
           document.getElementById('aiTiles').innerHTML =
-            `<div class="q-tile" style="border-top:3px solid #0984e3;"><span>Products</span><b>${st.total}</b></div>
-             <div class="q-tile" style="border-top:3px solid ${st.aiReady?'#16a085':'#b2bec3'};"><span>AI</span><b style="font-size:17px; padding-top:5px;">${st.aiReady?'Live':'Off'}</b></div>`;
+            `<div class="q-tile" style="border-top:3px solid ${st.total?'#0984e3':'#e74c3c'};"><span>Products</span><b>${st.total}</b></div>
+             <div class="q-tile" style="border-top:3px solid ${st.kb?'#6c5ce7':'#e74c3c'};"><span>Knowledge</span><b>${st.kb||0}</b></div>
+             <div class="q-tile" style="border-top:3px solid ${st.aiReady?'#16a085':'#e74c3c'};"><span>AI</span><b style="font-size:17px; padding-top:5px;">${st.aiReady?'Live':'Off'}</b></div>`;
           document.getElementById('aiSyncInfo').innerHTML = st.lastSynced ? `Last synced: <b>${st.lastSynced}</b>` : 'Not synced yet';
+
+          /* say plainly what is still missing - an empty catalogue or a missing key
+             is why customers get search results instead of written answers */
+          let todo = [];
+          if(!st.total)   todo.push('Catalogue is empty &mdash; press <b>Sync Products</b>.');
+          if(!st.kb)      todo.push('Knowledge Base is empty &mdash; without it the assistant cannot explain <b>settings or options</b>. Paste a manual section in step 3.');
+          if(!st.aiReady) todo.push('No AI key &mdash; paste one below to get written answers instead of plain search results.');
+          let warn = document.getElementById('aiSetupWarn');
+          if(warn) {
+              warn.style.display = todo.length ? 'block' : 'none';
+              warn.innerHTML = todo.length
+                ? `<b>⚠ Assistant is not fully set up</b><ul style="margin:7px 0 0 18px; padding:0;">${todo.map(t=>`<li style="margin-bottom:4px;">${t}</li>`).join('')}</ul>`
+                : '';
+          }
       }).catch(() => { document.getElementById('aiTiles').innerHTML = '<div style="font-size:12px;color:#7f8fa6;">Catalogue unavailable — redeploy Code.gs.</div>'; });
 
       apiCall('ai_getStatus').then(a => {
@@ -2782,6 +2848,123 @@
             ? `<span style="color:#16a085;">configured ${a.hint}${a.model ? ' · ' + a.model : ''}</span>`
             : `<span style="color:#e67e22;">not set — catalogue search only</span>`;
       }).catch(() => { document.getElementById('aiKeyState').innerHTML = '<span style="color:#e67e22;">unknown</span>'; });
+  }
+
+  /* ---------- Knowledge Base ---------- */
+  function kbRefresh() {
+      let box = document.getElementById('kbList'); if(!box) return;
+      box.innerHTML = '<div style="font-size:11.5px; color:#8a94a6;">Loading…</div>';
+      apiCall('kb_list', { limit: 150 }).then(r => {
+          let c = document.getElementById('kbCount'); if(c) c.innerText = r.total ? `· ${r.total} entries` : '· empty';
+          if(!r.items.length) { box.innerHTML = '<div style="font-size:11.5px; color:#8a94a6;">Nothing here yet. Paste a manual section above to get started.</div>'; return; }
+          // group the auto-split chunks back under one title
+          let groups = {};
+          r.items.forEach(it => {
+              let base = it.title.replace(/\s*\(\d+\/\d+\)\s*$/, '');
+              if(!groups[base]) groups[base] = { model: it.model, category: it.category, updated: it.updated, n: 0, preview: it.preview };
+              groups[base].n++;
+          });
+          let h = '<table class="q-table"><thead><tr><th>Title</th><th style="width:130px;">Model</th><th style="width:130px;">Category</th><th style="width:60px;">Parts</th><th style="width:50px;"></th></tr></thead><tbody>';
+          Object.keys(groups).forEach(t => {
+              let g = groups[t];
+              h += `<tr><td><b>${t}</b><div style="font-size:10.5px; color:#8a94a6; margin-top:2px;">${g.preview}…</div></td>
+                    <td>${g.model}</td><td>${g.category}</td><td>${g.n}</td>
+                    <td><button class="btn" style="width:auto; margin:0; padding:4px 9px; font-size:10px; background:#e74c3c;"
+                        onclick="kbDelete('${t.replace(/'/g,"\\'")}')">Del</button></td></tr>`;
+          });
+          box.innerHTML = h + '</tbody></table>';
+      }).catch(e => box.innerHTML = `<div style="font-size:11.5px; color:#e74c3c;">${e.message}</div>`);
+  }
+
+  function kbSave() {
+      let title = (document.getElementById('kbTitle').value || '').trim();
+      let text  = (document.getElementById('kbText').value || '').trim();
+      if(!title) return Swal.fire('Title needed', 'Give it a name like "BP 2100 — Menu Settings".', 'warning');
+      if(text.length < 20) return Swal.fire('Not enough text', 'Paste the content you want the assistant to learn.', 'warning');
+      Swal.fire({ title: 'Saving…', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      apiCall('kb_addText', { title: title, model: document.getElementById('kbModel').value || 'All Models',
+                              category: document.getElementById('kbCat').value, text: text })
+        .then(r => {
+            Swal.fire('Added', `Saved as ${r.saved} searchable part(s).`, 'success');
+            document.getElementById('kbTitle').value = ''; document.getElementById('kbText').value = '';
+            kbRefresh(); loadAiPanel();
+        }).catch(e => Swal.fire('Error', e.message, 'error'));
+  }
+
+  function kbImportDoc() {
+      let url = (document.getElementById('kbDocUrl').value || '').trim();
+      if(!url) return Swal.fire('Paste a link', 'Give the Google Doc link to import.', 'warning');
+      Swal.fire({ title: 'Reading the Doc…', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+      apiCall('kb_importDoc', { url: url, model: document.getElementById('kbModel').value || 'All Models',
+                                category: document.getElementById('kbCat').value })
+        .then(r => {
+            Swal.fire('Imported', `"${r.source}" saved as ${r.saved} searchable part(s).`, 'success');
+            document.getElementById('kbDocUrl').value = ''; kbRefresh(); loadAiPanel();
+        }).catch(e => Swal.fire('Could not import', e.message, 'error'));
+  }
+
+  function kbDelete(title) {
+      Swal.fire({ title: 'Remove this entry?', text: title, icon: 'warning', showCancelButton: true,
+                  confirmButtonText: 'Remove', confirmButtonColor: '#e74c3c' }).then(r => {
+          if(!r.isConfirmed) return;
+          apiCall('kb_deleteByTitle', { title: title })
+            .then(m => { Swal.fire('Removed', m, 'success'); kbRefresh(); loadAiPanel(); })
+            .catch(e => Swal.fire('Error', e.message, 'error'));
+      });
+  }
+
+  /* Sends the manual pack a few entries at a time, so no single request gets
+     too large and the admin can watch it move. */
+  async function kbImportPack() {
+      const input = document.getElementById('kbPackFile');
+      const file  = input.files && input.files[0];
+      if(!file) return Swal.fire('Choose a file', 'Pehle manual pack (.json) select kijiye.', 'warning');
+
+      let pack;
+      try {
+          pack = JSON.parse(await file.text());
+      } catch(e) { return Swal.fire('Bad file', 'Ye valid JSON pack nahi hai.', 'error'); }
+      if(!Array.isArray(pack) || !pack.length) return Swal.fire('Empty pack', 'Is file me koi entry nahi mili.', 'error');
+
+      const ok = await Swal.fire({ title: `Import ${pack.length} entries?`,
+          text: 'Same title wali purani entries replace ho jayengi. Baki Knowledge Base waise hi rahegi.',
+          icon: 'question', showCancelButton: true, confirmButtonText: 'Import', confirmButtonColor: '#00b894' });
+      if(!ok.isConfirmed) return;
+
+      const box = document.getElementById('kbPackStatus');
+      box.style.display = 'block';
+      const BATCH = 15;
+      let titles = 0, saved = 0, failed = 0;
+
+      for(let i = 0; i < pack.length; i += BATCH) {
+          const slice = pack.slice(i, i + BATCH);
+          const pct = Math.round(Math.min(i + BATCH, pack.length) / pack.length * 100);
+          box.innerHTML = `<div style="background:#dfe6e9; border-radius:5px; height:9px; overflow:hidden;">
+                             <div style="background:#00b894; height:100%; width:${pct}%;"></div></div>
+                           <div style="margin-top:5px; color:#2d3436;">Uploading ${Math.min(i + BATCH, pack.length)} / ${pack.length}…</div>`;
+          try {
+              const r = await apiCall('kb_bulkAdd', { entries: slice, replace: true });
+              titles += (r.titles || 0); saved += (r.saved || 0);
+          } catch(e) { failed += slice.length; }
+      }
+
+      box.innerHTML = `<div style="color:${failed ? '#d63031' : '#00875a'}; font-weight:600;">
+            ${titles} sections imported as ${saved} searchable parts.${failed ? ` ${failed} entries failed — dobara try kijiye.` : ''}</div>`;
+      input.value = '';
+      kbRefresh(); loadAiPanel();
+      Swal.fire(failed ? 'Partly imported' : 'Knowledge Base ready',
+                `${saved} parts saved. Ab assistant product settings aur options samjha sakta hai.`,
+                failed ? 'warning' : 'success');
+  }
+
+  function kbClearAll() {
+      Swal.fire({ title: 'Clear the whole Knowledge Base?', text: 'Saari manual entries hat jayengi. Products list par koi asar nahi.',
+                  icon: 'warning', showCancelButton: true, confirmButtonText: 'Clear', confirmButtonColor: '#d63031' }).then(r => {
+          if(!r.isConfirmed) return;
+          apiCall('kb_clear', {})
+            .then(m => { Swal.fire('Cleared', m, 'success'); kbRefresh(); loadAiPanel(); })
+            .catch(e => Swal.fire('Error', e.message, 'error'));
+      });
   }
 
   function syncProducts() {
@@ -2828,10 +3011,15 @@
       out.innerHTML = '<div style="font-size:12px; color:#7f8fa6;">Thinking…</div>';
       apiCall('ai_test', { question: q }).then(r => {
           let tag = r.ai ? '<span class="q-pill q-ok">AI answer</span>' : '<span class="q-pill q-hold">catalogue only</span>';
+          let why = { no_key: 'No AI key saved — add one above.',
+                      api_error: 'AI call failed — see the note below.',
+                      no_match: 'Nothing in the catalogue matched. Sync products, or add the item manually.',
+                      ok: '' }[r.reason] || '';
           out.innerHTML = `<div style="background:#fff; border:1px solid #dcdde1; border-radius:8px; padding:12px; font-size:13px; line-height:1.6;">
-              ${tag} <span style="font-size:11px; color:#8a94a6;">${r.productCount} product(s) used</span>
+              ${tag} <span style="font-size:11px; color:#8a94a6;">${r.productCount} product(s) used &middot; catalogue ${r.catalogueSize} &middot; key ${r.keyConfigured?'set':'not set'}${r.model?' &middot; '+r.model:''}</span>
               <div style="margin-top:8px; white-space:pre-wrap;">${r.answer}</div>
-              ${r.note ? `<div style="margin-top:8px; font-size:11px; color:#e67e22;">${r.note}</div>` : ''}
+              ${why ? `<div style="margin-top:9px; font-size:11.5px; color:#b9770e; background:#fff8e8; border-radius:6px; padding:7px 10px;">${why}</div>` : ''}
+              ${r.note ? `<div style="margin-top:7px; font-size:11px; color:#e67e22;">${r.note}</div>` : ''}
             </div>`;
       }).catch(e => out.innerHTML = `<div style="font-size:12px; color:#e74c3c;">${e.message}</div>`);
   }
