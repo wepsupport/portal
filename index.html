@@ -396,6 +396,23 @@
         <button class="submit-btn" onclick="confirmModel()" id="btnNextStep">Continue</button>
       </div>
       
+      <!-- Free-text AI question, so a customer whose problem is not in the
+           option list still gets an answer instead of a dead end. -->
+      <div class="action-area" id="botAskArea" style="display:none; padding-top:0;">
+        <div style="display:flex; gap:8px; align-items:center;">
+          <input type="text" id="botAskInput" placeholder="Ya apna sawal yahan likhiye…" autocomplete="off"
+                 onkeydown="if(event.key==='Enter'){event.preventDefault();botAskSend();}"
+                 style="flex:1; padding:12px 14px; border:1px solid #d7dee8; border-radius:10px; font-size:14px;">
+          <button id="botAskBtn" onclick="botAskSend()"
+                  style="background:var(--accent-blue); color:#fff; border:none; width:46px; height:44px; border-radius:10px; cursor:pointer; font-size:15px;">
+            <i class="fa-solid fa-paper-plane"></i>
+          </button>
+        </div>
+        <div style="font-size:11px; color:var(--text-secondary); margin-top:6px;" id="botAskHint">
+          Jaise: "BP 2100 mein discount kaise enable kare?"
+        </div>
+      </div>
+
       <div class="action-area" id="optionsContainer">
         <div class="options-grid" id="optionsGrid"></div>
         <button class="opt-btn" id="backBtn" style="background:transparent; justify-content:center; color:var(--text-secondary); margin-top:10px; display:none; border:none; box-shadow:none;" onclick="goBackStep()"><i class="fa-solid fa-arrow-left" style="margin-right:8px;"></i> Go Back</button>
@@ -445,7 +462,7 @@
   <script>
     // ===================== GITHUB API CONFIGURATION =====================
     // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-    const API_URL = "https://script.google.com/macros/s/AKfycbznMbH4D9U9OzFUjxkQNTByGBNmnwU8GnwXRqi0DIvzCIk60H8Q3c4nZ3-4tZnKraJR/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbyghn3EfknJjoroBgRniQYZW-HwZb-vyv9RGT2Bbuth94AQar4HyQwV7G8w065ZOXUG/exec";
 
     async function apiCall(action, params = {}) {
         try {
@@ -986,7 +1003,7 @@
     }
     function scrollToBottom() { const box = document.getElementById('chatBox'); box.scrollTop = box.scrollHeight; }
    
-    function renderModels() { document.getElementById('optionsContainer').style.display = 'none'; document.getElementById('modelSelectArea').style.display = 'block'; document.getElementById('videoOrAgentArea').style.display = 'none'; currentPath = []; }
+    function renderModels() { document.getElementById('optionsContainer').style.display = 'none'; document.getElementById('modelSelectArea').style.display = 'block'; document.getElementById('videoOrAgentArea').style.display = 'none'; document.getElementById('botAskArea').style.display = 'none'; currentPath = []; }
     function confirmModel() {
         const drp = document.getElementById('printerModelDropdown'); if(drp.value === "") { Swal.fire('Wait', uiText[currentLang].modelWait, 'warning'); return; }
         selectedModelText = drp.value; document.getElementById('modelSelectArea').style.display = 'none'; addMsg("Model: " + selectedModelText, 'user');
@@ -994,6 +1011,7 @@
         setTimeout(() => { document.getElementById('typingIndicator').style.display = 'none'; renderNextStep(); }, 600);
     }
     function renderNextStep() {
+        document.getElementById('botAskArea').style.display = 'block';
         document.getElementById('videoOrAgentArea').style.display = 'none'; document.getElementById('optionsContainer').style.display = 'none';
         let availableNodes = treeNodes.filter(n => n.model === selectedModelText || n.model === "All Models" || !n.model);
         let matchingNodes = availableNodes.filter(n => { if (n.path.length < currentPath.length) return false; for(let i = 0; i < currentPath.length; i++) { if(n.path[i] !== currentPath[i]) return false; } return true; });
@@ -1018,6 +1036,79 @@
         const vidUrl = node.videoUrl; const dlUrl = node.downloadUrl;
         document.getElementById('videoBtn').style.display = vidUrl ? 'flex' : 'none'; document.getElementById('downloadBtn').style.display = dlUrl ? 'flex' : 'none'; document.getElementById('videoOrAgentArea').style.display = 'flex'; scrollToBottom();
     }
+    /* The option tree only covers what someone built into it. This lets the
+       customer ask in their own words, and hands them to an executive when
+       the assistant genuinely has no answer. */
+    let botAskBusy = false;
+    function botAskSend() {
+        if(botAskBusy) return;
+        let inp = document.getElementById('botAskInput');
+        let q = String(inp ? inp.value : '').trim();
+        if(!q) return;
+        inp.value = '';
+        addMsg(q, 'user');
+
+        botAskBusy = true;
+        let btn = document.getElementById('botAskBtn'); if(btn) btn.disabled = true;
+        document.getElementById('typingIndicator').style.display = 'flex';
+        document.getElementById('optionsContainer').style.display = 'none';
+        document.getElementById('videoOrAgentArea').style.display = 'none';
+        scrollToBottom();
+
+        let ask = selectedModelText ? (q + ' (' + selectedModelText + ')') : q;
+        apiCall('ai_ask', { question: ask, lang: currentLang, history: [] }).then(r => {
+            document.getElementById('typingIndicator').style.display = 'none';
+
+            if(r.source === 'none' || !String(r.answer || '').trim()) {
+                addMsg(currentLang === 'hi'
+                  ? 'यह जानकारी मेरे पास नहीं है। हमारे एक्जीक्यूटिव आपकी मदद करेंगे।'
+                  : 'Mere paas is sawal ka jawab nahi hai. Hamare executive aapki madad karenge.', 'bot');
+                botAskOfferAgent();
+                return;
+            }
+
+            let steps = r.steps || [];
+            let html = escapeAsk(steps.length ? (r.intro || '') : (r.answer || ''));
+            if(steps.length) {
+                html += '<ol class="ask-steps">';
+                steps.forEach(st => { html += `<li>${escapeAsk(st)}</li>`; });
+                html += '</ol>';
+            }
+            if(r.note) html += `<div class="ask-tip">${escapeAsk(r.note)}</div>`;
+            if(r.guideTitle) html += `<div class="ask-src">${currentLang==='hi'?'स्रोत':'Source'}: ${escapeAsk(r.guideTitle)}</div>`;
+            addMsgHtml(html);
+            botAskOfferAgent();
+        }).catch(() => {
+            document.getElementById('typingIndicator').style.display = 'none';
+            addMsg(currentLang === 'hi'
+              ? 'अभी जवाब नहीं मिल पा रहा। कृपया एक्जीक्यूटिव से बात करें।'
+              : 'Abhi jawab nahi mil pa raha. Kripya executive se baat kijiye.', 'bot');
+            botAskOfferAgent();
+        }).finally(() => {
+            botAskBusy = false;
+            let b2 = document.getElementById('botAskBtn'); if(b2) b2.disabled = false;
+            scrollToBottom();
+        });
+    }
+
+    /* After every typed answer, keep both doors open: solved, or talk to a person. */
+    function botAskOfferAgent() {
+        document.getElementById('downloadBtn').style.display = 'none';
+        document.getElementById('videoBtn').style.display = 'none';
+        document.getElementById('videoOrAgentArea').style.display = 'flex';
+        scrollToBottom();
+    }
+
+    function addMsgHtml(html) {
+        let box = document.getElementById('chatBox'); if(!box) return;
+        let d = document.createElement('div');
+        d.className = 'msg bot';
+        d.innerHTML = `<div class="bubble">${html}</div>`;
+        let ti = document.getElementById('typingIndicator');
+        if(ti && ti.parentNode === box) box.insertBefore(d, ti); else box.appendChild(d);
+        scrollToBottom();
+    }
+
     function goBackStep() { if (currentPath.length === 0) { renderModels(); } else { currentPath.pop(); document.getElementById('optionsContainer').style.display = 'none'; document.getElementById('videoOrAgentArea').style.display = 'none'; renderNextStep(); } }
     function openFixVideo() { if(finalSelectedNode && finalSelectedNode.videoUrl) window.open(finalSelectedNode.videoUrl, '_blank'); }
     function downloadDriver() { if(finalSelectedNode && finalSelectedNode.downloadUrl) window.open(finalSelectedNode.downloadUrl, '_blank'); }
