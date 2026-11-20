@@ -254,6 +254,11 @@
     .ask-prod b { font-size:13.5px; line-height:1.35; margin:0; }
     .ask-prod span { font-size:11.5px; color:#6b7788; line-height:1.45; margin:0; }
     .ask-prod .pr { color:#0b8a4f; font-weight:700; font-size:12.5px; }
+
+    .ask-note { border-left:3px solid #0b63ce; background:#fff; border-radius:9px; padding:10px 13px; margin-top:9px; font-size:13px; line-height:1.6; }
+    .ask-note b { display:block; font-size:11px; text-transform:uppercase; letter-spacing:.3px; color:#0b63ce; margin-bottom:4px; }
+    .ask-guide { border-left-color:#6c5ce7 !important; }
+    .ask-guide b { color:#6c5ce7 !important; }
     .ask-bar { display:flex; gap:9px; }
     .ask-bar input { flex:1; padding:13px 16px; border:1px solid #d8dee7; border-radius:11px; font-size:14px; font-family:inherit; }
     .ask-bar input:focus { outline:none; border-color:#0b63ce; box-shadow:0 0 0 3px rgba(11,99,206,.12); }
@@ -631,7 +636,7 @@
       en: ["Which billing printer should I buy?", "BP 2100 features", "Barcode scanner options", "Difference between BP Joy and BP Emerge", "Thermal printer price"],
       hi: ["कौन सा बिलिंग प्रिंटर लूँ?", "BP 2100 के फीचर्स", "बारकोड स्कैनर के विकल्प", "BP Joy और BP Emerge में फर्क", "थर्मल प्रिंटर की कीमत"]
     };
-    let askBusy = false;
+    let askBusy = false, askHistory = [];
 
     function openAskView() {
         let hi = (currentLang === 'hi');
@@ -656,6 +661,7 @@
               ? 'जवाब हमारे प्रोडक्ट कैटलॉग से आते हैं। कीमतें बदल सकती हैं — पक्का करने के लिए टीम से बात करें।'
               : 'Answers come from our product catalogue. Prices can change — please confirm with our team.'}</div>
           </div>`;
+        askHistory = [];
         askPush('bot', hi
           ? 'नमस्ते! हमारे प्रोडक्ट, उनके फीचर्स या कीमत के बारे में कुछ भी पूछिए।'
           : 'Hi! Ask me anything about our products, their features or price.');
@@ -697,14 +703,27 @@
         let btn = document.getElementById('askBtn'); if(btn) btn.disabled = true;
         let thinking = askPush('bot', '', '<span class="ask-dots"><span></span><span></span><span></span></span>');
 
-        apiCall('ai_ask', { question: q, lang: currentLang }).then(r => {
+        apiCall('ai_ask', { question: q, lang: currentLang, history: askHistory.slice(-3) }).then(r => {
             if(thinking) thinking.remove();
             let html = escapeAsk(r.answer);
             (r.products || []).forEach(p => { html += askProductCard(p); });
-            (r.solutions || []).forEach(sv => {
+            /* how-to / settings extracts, shown as their own card */
+            (r.guides || []).forEach((g, i) => {
+                let already = String(r.answer || '').indexOf(String(g.content || '').slice(0, 40)) > -1;
+                if(g.content && !already && i === 0)
+                    html += `<div class="ask-note ask-guide"><b>${escapeAsk(g.title || (currentLang==='hi'?'गाइड':'Guide'))}</b>${escapeAsk(g.content.slice(0, 700))}</div>`;
+            });
+            /* show the written solution itself - previously only its links appeared,
+               which left the bubble empty when a solution had no video or download */
+            (r.solutions || []).forEach((sv, i) => {
+                let already = String(r.answer || '').indexOf(String(sv.answer || '').slice(0, 40)) > -1;
+                if(sv.answer && !already && i === 0)
+                    html += `<div class="ask-note"><b>${escapeAsk(sv.steps || (currentLang==='hi'?'समाधान':'Solution'))}</b>${escapeAsk(sv.answer)}</div>`;
                 if(sv.video)    html += `<a class="ask-prod" href="${escapeAsk(sv.video)}" target="_blank" rel="noopener"><div><b>▶ ${currentLang==='hi'?'वीडियो देखें':'Watch tutorial'}</b><span>${escapeAsk(sv.steps||'')}</span></div></a>`;
                 if(sv.download) html += `<a class="ask-prod" href="${escapeAsk(sv.download)}" target="_blank" rel="noopener"><div><b>⬇ ${currentLang==='hi'?'डाउनलोड':'Download'}</b><span>${escapeAsk(sv.steps||'')}</span></div></a>`;
             });
+            askHistory.push({ q: q, a: String(r.answer || '').slice(0, 300) });
+            if(askHistory.length > 6) askHistory = askHistory.slice(-6);
             if(r.source === 'none')
                 html += `<a class="ask-prod" onclick="openChatView()" style="cursor:pointer;"><div><b>💬 ${currentLang==='hi'?'एक्जीक्यूटिव से बात करें':'Talk to an executive'}</b><span>${currentLang==='hi'?'हमारी टीम आपकी मदद करेगी':'Our team will help you'}</span></div></a>`;
             askPush('bot', '', html);
