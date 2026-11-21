@@ -265,6 +265,11 @@
                             border-radius:50%; background:#0b63ce; color:#fff; font-size:11.5px; font-weight:700;
                             display:flex; align-items:center; justify-content:center; }
     .ask-src { margin-top:8px; font-size:11px; color:#8a94a6; }
+    .ask-rate { margin-top:9px; display:flex; gap:7px; align-items:center; font-size:11.5px; color:#8a94a6; }
+    .ask-rate button { border:1px solid #dfe4ec; background:#fff; border-radius:7px; padding:3px 10px;
+                       cursor:pointer; font-size:12.5px; line-height:1.4; }
+    .ask-rate button:hover { border-color:#0b63ce; }
+    .ask-rate.done { color:#00875a; }
     .ask-tip { margin-top:9px; background:#fff8e8; border:1px solid #f3dfae; border-radius:9px;
                padding:9px 12px; font-size:12.5px; line-height:1.55; color:#8a6d1f; }
     .ask-guide b { color:#6c5ce7 !important; }
@@ -462,7 +467,7 @@
   <script>
     // ===================== GITHUB API CONFIGURATION =====================
     // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-    const API_URL = "https://script.google.com/macros/s/AKfycbyghn3EfknJjoroBgRniQYZW-HwZb-vyv9RGT2Bbuth94AQar4HyQwV7G8w065ZOXUG/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbyONyn8jflFpa2xlJ2_1789AWdiQxqQ4rAKwepSUyvAyXrHbvfiUPwIT27_Ywt9Sggb/exec";
 
     async function apiCall(action, params = {}) {
         try {
@@ -576,7 +581,14 @@
         }
     }
 
+    /* A quiet count of how many people opened the portal today. Fire and
+       forget - if it fails, nothing about the page changes. */
+    function trackPortalVisit(kind) {
+        try { apiCall('trackVisit', { kind: kind || 'portal' }).catch(() => {}); } catch (e) {}
+    }
+
     window.onload = () => {
+        trackPortalVisit('portal');
         const textToType = "WEPSOL";
         const typeElem = document.getElementById('typewriter-text');
         if(typeElem) {
@@ -729,7 +741,7 @@
         let btn = document.getElementById('askBtn'); if(btn) btn.disabled = true;
         let thinking = askPush('bot', '', '<span class="ask-dots"><span></span><span></span><span></span></span>');
 
-        apiCall('ai_ask', { question: q, lang: currentLang, history: askHistory.slice(-3) }).then(r => {
+        apiCall('ai_ask', { question: q, lang: currentLang, history: askHistory.slice(-3), channel: 'portal' }).then(r => {
             if(thinking) thinking.remove();
             /* One short line, then the steps as a numbered list - a wall of text
                is what customers could not follow. */
@@ -744,6 +756,7 @@
             if(r.guideTitle) html += `<div class="ask-src">${currentLang==='hi'?'स्रोत':'Source'}: ${escapeAsk(r.guideTitle)}</div>`;
             /* Products only when the customer actually asked about a product. */
             (r.products || []).forEach(p => { html += askProductCard(p); });
+            html += askRateHtml(r.qid);
             /* show the written solution itself - previously only its links appeared,
                which left the bubble empty when a solution had no video or download */
             (r.solutions || []).forEach((sv, i) => {
@@ -771,6 +784,7 @@
     }
 
     function openChatView() {
+        trackPortalVisit('chatbot');
         document.getElementById('landingPage').style.display = 'none';
         document.getElementById('chatPage').style.display = 'flex';
         if(!selectedModelText) renderModels();
@@ -1039,6 +1053,23 @@
     /* The option tree only covers what someone built into it. This lets the
        customer ask in their own words, and hands them to an executive when
        the assistant genuinely has no answer. */
+    /* A thumbs up or down is the only honest signal about whether an answer
+       actually helped. It lands in the question log the team reviews. */
+    function askRateHtml(qid) {
+        if(!qid) return '';
+        return `<div class="ask-rate" id="rate-${qid}">
+                  <span>${currentLang==='hi'?'क्या यह मदद आई?':'Helpful?'}</span>
+                  <button onclick="askRate(${qid},'up')">&#128077;</button>
+                  <button onclick="askRate(${qid},'down')">&#128078;</button>
+                </div>`;
+    }
+
+    function askRate(qid, rating) {
+        let el = document.getElementById('rate-' + qid);
+        if(el) { el.className = 'ask-rate done'; el.innerHTML = currentLang==='hi' ? 'धन्यवाद!' : 'Thanks for the feedback!'; }
+        apiCall('ai_rate', { qid: qid, rating: rating }).catch(() => {});
+    }
+
     let botAskBusy = false;
     function botAskSend() {
         if(botAskBusy) return;
@@ -1056,7 +1087,7 @@
         scrollToBottom();
 
         let ask = selectedModelText ? (q + ' (' + selectedModelText + ')') : q;
-        apiCall('ai_ask', { question: ask, lang: currentLang, history: [] }).then(r => {
+        apiCall('ai_ask', { question: ask, lang: currentLang, history: [], channel: 'chatbot' }).then(r => {
             document.getElementById('typingIndicator').style.display = 'none';
 
             if(r.source === 'none' || !String(r.answer || '').trim()) {
@@ -1076,6 +1107,7 @@
             }
             if(r.note) html += `<div class="ask-tip">${escapeAsk(r.note)}</div>`;
             if(r.guideTitle) html += `<div class="ask-src">${currentLang==='hi'?'स्रोत':'Source'}: ${escapeAsk(r.guideTitle)}</div>`;
+            html += askRateHtml(r.qid);
             addMsgHtml(html);
             botAskOfferAgent();
         }).catch(() => {
