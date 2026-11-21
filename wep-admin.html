@@ -238,6 +238,23 @@
             <div class="stat-card" style="border-top: 4px solid #e74c3c;"><h3 id="d-pen">0</h3><p>Pending Cases</p></div>
             <div class="stat-card" style="border-top: 4px solid #2ecc71;"><h3 id="d-clo">0</h3><p>Resolved Cases</p></div>
             <div class="stat-card" style="border-top: 4px solid #f1c40f;"><h3 id="d-cha">0</h3><p>Active Chats</p></div>
+            <div class="stat-card" style="border-top: 4px solid #0b63ce;"><h3 id="d-vis">0</h3><p>Customers Today</p></div>
+        </div>
+
+        <!-- Who opened the customer portal, and what they clicked. -->
+        <div class="card" style="margin-bottom:18px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <h3 style="margin:0;"><i class="fa-solid fa-users" style="color:#0b63ce;"></i> Customer Portal Visits</h3>
+            <div style="display:flex; gap:8px; align-items:center;">
+              <select id="visitDays" onchange="loadVisitReport()" style="width:auto; padding:6px 10px; border:1px solid #cfd6e0; border-radius:4px; font-size:12px;">
+                <option value="7">Last 7 days</option>
+                <option value="30" selected>Last 30 days</option>
+                <option value="90">Last 90 days</option>
+              </select>
+              <button class="btn btn-dark" style="width:auto; margin:0; padding:6px 14px; font-size:12px;" onclick="loadVisitReport()">Refresh</button>
+            </div>
+          </div>
+          <div id="visitRes" style="margin-top:11px; font-size:13px; color:#555;">Loading…</div>
         </div>
         <div class="dash-row">
           <div class="stat-card" style="text-align:left; flex: 1; border-top: 4px solid #8e44ad;">
@@ -601,21 +618,6 @@
   </div>
   
   <div id="ct-reports" class="content ct-content">
-    <!-- Plain daily count of who opened the customer portal. -->
-    <div style="background:#eef4ff; border:1px solid #cfe0ff; border-radius:6px; padding:12px 14px; margin-bottom:14px;">
-      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-        <b style="color:#0b63ce;"><i class="fa-solid fa-users"></i> Customer Portal Visits</b>
-        <div style="display:flex; gap:8px; align-items:center;">
-          <select id="visitDays" onchange="loadVisitReport()" style="width:auto; padding:6px 10px; border:1px solid #cfd6e0; border-radius:4px; font-size:12px;">
-            <option value="7">Last 7 days</option>
-            <option value="30" selected>Last 30 days</option>
-            <option value="90">Last 90 days</option>
-          </select>
-          <button class="btn btn-dark" style="width:auto; margin:0; padding:6px 14px; font-size:12px;" onclick="loadVisitReport()">Refresh</button>
-        </div>
-      </div>
-      <div id="visitRes" style="margin-top:11px; font-size:13px; color:#555;">Loading…</div>
-    </div>
 
     <div class="grid" style="background: #fff0f6; padding: 10px; border-radius: 5px;">
       <div><label>From</label><input type="date" id="ctRFrom"></div>
@@ -776,7 +778,7 @@
 <script>
   // ===================== GITHUB API CONFIGURATION =====================
   // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-  const API_URL = "https://script.google.com/macros/s/AKfycbyONyn8jflFpa2xlJ2_1789AWdiQxqQ4rAKwepSUyvAyXrHbvfiUPwIT27_Ywt9Sggb/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbwAtQJvQEVF-Q6HvPlbezTqKMt4xSjYXk5XhVUGnf9DYaW_1kvbVQwyg2PsE0aN34s/exec";
 
   async function apiCall(action, params = {}) {
       try {
@@ -1001,6 +1003,7 @@
   function openPortal(portal) { ['landingScreen','dashPortal','pwPortal','ctPortal','wcrPortal'].forEach(id=>document.getElementById(id).style.display='none'); if(portal==='home') document.getElementById('landingScreen').style.display='flex'; else document.getElementById(portal+'Portal').style.display='block'; if(portal==='ct') qlOpen(); if(portal==='pw' || portal==='wcr') pwSetToday(); }
   
   function loadDashboard() {
+     try { loadVisitReport(); } catch(e) {}
       checkBackendVersion();
       loadAiPanel();
       kbRefresh();
@@ -1018,7 +1021,7 @@
      });
   }
   function showPwTab(id, el) { document.querySelectorAll('.pw-content').forEach(c=>c.classList.remove('active')); document.querySelectorAll('.pw-tab').forEach(t=>t.classList.remove('active')); document.getElementById(id).classList.add('active'); el.classList.add('active'); document.getElementById('pwRepairPanel').style.display='none'; document.getElementById('pwPayPanel').style.display='none'; document.getElementById('pwMultiPanel').style.display='none'; }
-  function showCtTab(id, el) { document.querySelectorAll('.ct-content').forEach(c=>c.classList.remove('active')); document.querySelectorAll('.ct-tab').forEach(t=>t.classList.remove('active')); document.getElementById(id).classList.add('active'); el.classList.add('active'); document.getElementById('ctUpdatePanel').style.display='none'; if(id==='ct-reports') { try { loadVisitReport(); } catch(e){} } }
+  function showCtTab(id, el) { document.querySelectorAll('.ct-content').forEach(c=>c.classList.remove('active')); document.querySelectorAll('.ct-tab').forEach(t=>t.classList.remove('active')); document.getElementById(id).classList.add('active'); el.classList.add('active'); document.getElementById('ctUpdatePanel').style.display='none'; }
   function showWcrTab(id, el) { document.querySelectorAll('.wcr-content').forEach(c=>c.classList.remove('active')); document.querySelectorAll('.wcr-tab').forEach(t=>t.classList.remove('active')); document.getElementById(id).classList.add('active'); el.classList.add('active'); document.getElementById('wcrUpdatePanel').style.display='none'; document.getElementById('wcrApprovePanel').style.display='none'; }
   function toggleGroup(id) { var el=document.getElementById(id); el.style.display=(el.style.display==='none'||el.style.display==='')?'block':'none'; }
   
@@ -2840,7 +2843,7 @@
   /* The portal and Code.gs ship together. If the deployed script reports a
      different version (or no version at all), it was saved but never
      redeployed - which shows up as "Unknown action" on newer features. */
-  const EXPECTED_SCRIPT_VERSION = "2026-11-20-sem2";
+  const EXPECTED_SCRIPT_VERSION = "2026-11-20-sem4";
 
   function checkBackendVersion() {
       let box = document.getElementById('backendWarn');
@@ -2866,7 +2869,7 @@
       box.innerHTML = 'Loading…';
       apiCall('getVisitReport', { days: days }).then(v => {
           if(!v.rows.length) {
-              box.innerHTML = 'Abhi tak koi visit record nahi hua.';
+              box.innerHTML = 'Abhi tak koi visit record nahi hua. Customer portal khulne par yahan count aana shuru ho jayega.';
               return;
           }
           const tile = (label, value) =>
@@ -2874,27 +2877,47 @@
                <div style="font-size:20px; font-weight:700; color:#0b63ce;">${value}</div>
                <div style="font-size:11px; color:#7a8699;">${label}</div></div>`;
 
+          const labels = v.labels || {};
+          const keys = Object.keys(labels);
+
           let html = `<div style="display:flex; gap:9px; flex-wrap:wrap; margin-bottom:11px;">
-              ${tile('Aaj', v.today)}
+              ${tile('Aaj aaye', v.today)}
               ${tile('Portal opens', v.totalPortal)}
               ${tile('Chatbot opens', v.totalChatbot)}
               ${tile('Questions asked', v.totalQuestions)}
-            </div>
-            <table style="width:100%; border-collapse:collapse; background:#fff; font-size:12.5px;">
+            </div>`;
+
+          /* Which link each customer actually clicked. */
+          if(keys.length) {
+              html += `<div style="display:flex; gap:9px; flex-wrap:wrap; margin-bottom:13px;">`;
+              keys.forEach(k => {
+                  html += `<div style="flex:1; min-width:105px; background:#fff; border:1px solid #e3e8ef; border-radius:7px; padding:8px 11px;">
+                             <div style="font-size:17px; font-weight:700; color:#2d3436;">${(v.actions||{})[k] || 0}</div>
+                             <div style="font-size:11px; color:#7a8699;">${escapeHtml(labels[k])} clicks</div></div>`;
+              });
+              html += '</div>';
+          }
+
+          html += `<div style="overflow-x:auto;"><table style="width:100%; border-collapse:collapse; background:#fff; font-size:12.5px;">
               <tr style="background:#dbe7fb;">
                 <th style="padding:7px 9px; text-align:left;">Date</th>
-                <th style="padding:7px 9px; text-align:center;">Portal opens</th>
-                <th style="padding:7px 9px; text-align:center;">Chatbot opens</th>
+                <th style="padding:7px 9px; text-align:center;">Portal<br>opens</th>
+                <th style="padding:7px 9px; text-align:center;">Chatbot</th>
                 <th style="padding:7px 9px; text-align:center;">Questions</th>
+                ${keys.map(k => `<th style="padding:7px 9px; text-align:center;">${escapeHtml(labels[k])}</th>`).join('')}
               </tr>`;
           v.rows.forEach(r => {
               html += `<tr style="border-bottom:1px solid #eef1f4;">
                   <td style="padding:6px 9px;">${escapeHtml(r.date)}</td>
                   <td style="padding:6px 9px; text-align:center; font-weight:600;">${r.portal}</td>
                   <td style="padding:6px 9px; text-align:center;">${r.chatbot}</td>
-                  <td style="padding:6px 9px; text-align:center;">${r.questions}</td></tr>`;
+                  <td style="padding:6px 9px; text-align:center;">${r.questions}</td>
+                  ${keys.map(k => `<td style="padding:6px 9px; text-align:center;">${(r.actions||{})[k] || 0}</td>`).join('')}
+                  </tr>`;
           });
-          box.innerHTML = html + '</table>';
+          box.innerHTML = html + '</table></div>';
+          const tileToday = document.getElementById('d-vis');
+          if(tileToday) tileToday.innerText = v.today;
       }).catch(e => { box.innerHTML = `<span style="color:#d63031;">${escapeHtml(e.message)}</span>`; });
   }
 
@@ -3095,7 +3118,7 @@
       const box = document.getElementById('kbPackStatus');
       box.style.display = 'block';
       const BATCH = 15;
-      let titles = 0, saved = 0, failed = 0;
+      let titles = 0, saved = 0, failed = 0, firstError = '';
 
       for(let i = 0; i < pack.length; i += BATCH) {
           const slice = pack.slice(i, i + BATCH);
@@ -3106,15 +3129,18 @@
           try {
               const r = await apiCall('kb_bulkAdd', { entries: slice, replace: true });
               titles += (r.titles || 0); saved += (r.saved || 0);
-          } catch(e) { failed += slice.length; }
+          } catch(e) { failed += slice.length; firstError = firstError || e.message; }
       }
 
       box.innerHTML = `<div style="color:${failed ? '#d63031' : '#00875a'}; font-weight:600;">
             ${titles} sections imported as ${saved} searchable parts.${failed ? ` ${failed} entries failed — dobara try kijiye.` : ''}</div>`;
       input.value = '';
       kbRefresh(); loadAiPanel();
+      if(failed && !saved) {
+          return Swal.fire('Import failed', firstError || 'Koi bhi entry save nahi hui.', 'error');
+      }
       Swal.fire(failed ? 'Partly imported' : 'Knowledge Base ready',
-                `${saved} parts saved. Ab assistant product settings aur options samjha sakta hai.`,
+                `${saved} parts saved.${failed ? ` ${failed} fail hui: ${escapeHtml(firstError)}` : ' Ab assistant product settings aur options samjha sakta hai.'}`,
                 failed ? 'warning' : 'success');
   }
 
@@ -3132,7 +3158,15 @@
       box.style.display = 'block';
       let next = 2, built = 0, rounds = 0;
 
-      while(rounds < 400) {
+      const bar = (built, remaining, note) => {
+          const total = built + (remaining || 0);
+          const pct = total ? Math.round(built / total * 100) : 100;
+          box.innerHTML = `<div style="background:#dfe6e9; border-radius:5px; height:9px; overflow:hidden;">
+                             <div style="background:#6c5ce7; height:100%; width:${pct}%;"></div></div>
+                           <div style="margin-top:5px; color:#2d3436;">${note}</div>`;
+      };
+
+      while(rounds < 600) {
           rounds++;
           let r;
           try {
@@ -3141,14 +3175,23 @@
               box.innerHTML = `<div style="color:#d63031; font-weight:600;">Ruk gaya: ${escapeHtml(e.message)}</div>`;
               return Swal.fire('Index rok diya gaya', e.message, 'error');
           }
+
+          /* Google's free tier allows only so many per minute. Hitting that is
+             normal on a big catalogue - wait it out and carry on, rather than
+             making the user start again. */
+          if(r.waitSeconds) {
+              for(let left = r.waitSeconds; left > 0; left--) {
+                  bar(built, r.remaining, `Free limit lag gayi — ${left}s ruk kar apne aap chalu hoga. (${built} ho chuke${r.remaining?`, ${r.remaining} baaki`:''})`);
+                  await new Promise(res => setTimeout(res, 1000));
+              }
+              continue;
+          }
+
           built += (r.built || 0);
-          const total = built + (r.remaining || 0);
-          const pct = total ? Math.round(built / total * 100) : 100;
-          box.innerHTML = `<div style="background:#dfe6e9; border-radius:5px; height:9px; overflow:hidden;">
-                             <div style="background:#6c5ce7; height:100%; width:${pct}%;"></div></div>
-                           <div style="margin-top:5px; color:#2d3436;">Samajh banayi ja rahi hai — ${built} sections${r.remaining?`, ${r.remaining} baaki`:''}…</div>`;
+          bar(built, r.remaining, `Samajh banayi ja rahi hai — ${built} sections${r.remaining?`, ${r.remaining} baaki`:''}…`);
           if(r.done) break;
           next = r.next || next;
+          await new Promise(res => setTimeout(res, 1200));   // stay under the per-minute limit
       }
 
       box.innerHTML = `<div style="color:#00875a; font-weight:600;">Meaning index ready — ${built} sections.</div>`;
