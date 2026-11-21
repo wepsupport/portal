@@ -467,7 +467,7 @@
   <script>
     // ===================== GITHUB API CONFIGURATION =====================
     // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-    const API_URL = "https://script.google.com/macros/s/AKfycbyONyn8jflFpa2xlJ2_1789AWdiQxqQ4rAKwepSUyvAyXrHbvfiUPwIT27_Ywt9Sggb/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwAtQJvQEVF-Q6HvPlbezTqKMt4xSjYXk5XhVUGnf9DYaW_1kvbVQwyg2PsE0aN34s/exec";
 
     async function apiCall(action, params = {}) {
         try {
@@ -677,6 +677,7 @@
     let askBusy = false, askHistory = [];
 
     function openAskView() {
+        trackPortalVisit('ask');
         let hi = (currentLang === 'hi');
         /* same page shell the other forms use */
         document.getElementById('landingPage').style.display = 'none';
@@ -791,6 +792,9 @@
     }
 
     function openFormView(type) {
+        trackPortalVisit(type === 'install' ? 'install'
+                       : type === 'demo' ? 'demo'
+                       : type === 'warranty' ? 'warranty' : 'track');
         document.getElementById('landingPage').style.display = 'none';
         document.getElementById('formPage').style.display = 'flex';
         
