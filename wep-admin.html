@@ -260,6 +260,25 @@
             </p>
 
             <div class="q-tiles" id="aiTiles" style="margin-bottom:12px;"></div>
+            <!-- What customers actually asked. This is the panel that tells the
+                 team which answers to write next. -->
+            <div class="card" style="margin-bottom:16px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+                <h3 style="margin:0;"><i class="fa-solid fa-chart-line" style="color:#6c5ce7;"></i> Customer Questions</h3>
+                <div style="display:flex; gap:8px; align-items:center;">
+                  <select id="statsDays" onchange="loadAiStats()" style="width:auto; padding:7px 10px; border-radius:6px; border:1px solid #ccc; font-size:12px;">
+                    <option value="7">Last 7 days</option>
+                    <option value="30" selected>Last 30 days</option>
+                    <option value="90">Last 90 days</option>
+                  </select>
+                  <button class="btn" style="width:auto; margin:0; padding:7px 14px; background:#636e72;" onclick="loadAiStats()">
+                    <i class="fa-solid fa-rotate"></i> Refresh
+                  </button>
+                </div>
+              </div>
+              <div id="statsBody" style="margin-top:13px; font-size:13px; color:#636e72;">Loading…</div>
+            </div>
+
             <div id="aiSetupWarn" style="display:none; background:#fff3e0; border:1px solid #f0b27a; border-radius:7px; padding:11px 14px; margin-bottom:13px; font-size:12px; color:#b9770e;"></div>
 
             <div style="background:#f8f9fa; border:1px solid #dcdde1; border-radius:8px; padding:13px; margin-bottom:13px;">
@@ -326,6 +345,9 @@
                          style="width:auto; flex:1; min-width:210px; padding:7px; border-radius:6px; border:1px solid #ccc; font-size:12px;">
                   <button class="btn" style="width:auto; margin:0; padding:9px 18px; background:#00b894;" onclick="kbImportPack()">
                     <i class="fa-solid fa-upload"></i> Import pack
+                  </button>
+                  <button class="btn" style="width:auto; margin:0; padding:9px 16px; background:#6c5ce7;" onclick="kbBuildIndex()">
+                    <i class="fa-solid fa-brain"></i> Build meaning index
                   </button>
                   <button class="btn" style="width:auto; margin:0; padding:9px 14px; background:#0984e3;" onclick="kbReindex()">Speed-up index</button>
                   <button class="btn" style="width:auto; margin:0; padding:9px 14px; background:#d63031;" onclick="kbClearAll()">Clear all</button>
@@ -579,6 +601,22 @@
   </div>
   
   <div id="ct-reports" class="content ct-content">
+    <!-- Plain daily count of who opened the customer portal. -->
+    <div style="background:#eef4ff; border:1px solid #cfe0ff; border-radius:6px; padding:12px 14px; margin-bottom:14px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <b style="color:#0b63ce;"><i class="fa-solid fa-users"></i> Customer Portal Visits</b>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <select id="visitDays" onchange="loadVisitReport()" style="width:auto; padding:6px 10px; border:1px solid #cfd6e0; border-radius:4px; font-size:12px;">
+            <option value="7">Last 7 days</option>
+            <option value="30" selected>Last 30 days</option>
+            <option value="90">Last 90 days</option>
+          </select>
+          <button class="btn btn-dark" style="width:auto; margin:0; padding:6px 14px; font-size:12px;" onclick="loadVisitReport()">Refresh</button>
+        </div>
+      </div>
+      <div id="visitRes" style="margin-top:11px; font-size:13px; color:#555;">Loading…</div>
+    </div>
+
     <div class="grid" style="background: #fff0f6; padding: 10px; border-radius: 5px;">
       <div><label>From</label><input type="date" id="ctRFrom"></div>
       <div><label>To</label><input type="date" id="ctRTo"></div>
@@ -738,7 +776,7 @@
 <script>
   // ===================== GITHUB API CONFIGURATION =====================
   // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-  const API_URL = "https://script.google.com/macros/s/AKfycbyghn3EfknJjoroBgRniQYZW-HwZb-vyv9RGT2Bbuth94AQar4HyQwV7G8w065ZOXUG/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbyONyn8jflFpa2xlJ2_1789AWdiQxqQ4rAKwepSUyvAyXrHbvfiUPwIT27_Ywt9Sggb/exec";
 
   async function apiCall(action, params = {}) {
       try {
@@ -980,7 +1018,7 @@
      });
   }
   function showPwTab(id, el) { document.querySelectorAll('.pw-content').forEach(c=>c.classList.remove('active')); document.querySelectorAll('.pw-tab').forEach(t=>t.classList.remove('active')); document.getElementById(id).classList.add('active'); el.classList.add('active'); document.getElementById('pwRepairPanel').style.display='none'; document.getElementById('pwPayPanel').style.display='none'; document.getElementById('pwMultiPanel').style.display='none'; }
-  function showCtTab(id, el) { document.querySelectorAll('.ct-content').forEach(c=>c.classList.remove('active')); document.querySelectorAll('.ct-tab').forEach(t=>t.classList.remove('active')); document.getElementById(id).classList.add('active'); el.classList.add('active'); document.getElementById('ctUpdatePanel').style.display='none'; }
+  function showCtTab(id, el) { document.querySelectorAll('.ct-content').forEach(c=>c.classList.remove('active')); document.querySelectorAll('.ct-tab').forEach(t=>t.classList.remove('active')); document.getElementById(id).classList.add('active'); el.classList.add('active'); document.getElementById('ctUpdatePanel').style.display='none'; if(id==='ct-reports') { try { loadVisitReport(); } catch(e){} } }
   function showWcrTab(id, el) { document.querySelectorAll('.wcr-content').forEach(c=>c.classList.remove('active')); document.querySelectorAll('.wcr-tab').forEach(t=>t.classList.remove('active')); document.getElementById(id).classList.add('active'); el.classList.add('active'); document.getElementById('wcrUpdatePanel').style.display='none'; document.getElementById('wcrApprovePanel').style.display='none'; }
   function toggleGroup(id) { var el=document.getElementById(id); el.style.display=(el.style.display==='none'||el.style.display==='')?'block':'none'; }
   
@@ -2802,7 +2840,7 @@
   /* The portal and Code.gs ship together. If the deployed script reports a
      different version (or no version at all), it was saved but never
      redeployed - which shows up as "Unknown action" on newer features. */
-  const EXPECTED_SCRIPT_VERSION = "2026-11-20-kb6";
+  const EXPECTED_SCRIPT_VERSION = "2026-11-20-sem2";
 
   function checkBackendVersion() {
       let box = document.getElementById('backendWarn');
@@ -2820,7 +2858,129 @@
   }
 
   /* ---------- AI assistant + product catalogue (admin) ---------- */
+  /* Date-wise visit counts - how many customers opened the portal each day. */
+  function loadVisitReport() {
+      const box = document.getElementById('visitRes');
+      if(!box) return;
+      const days = document.getElementById('visitDays').value;
+      box.innerHTML = 'Loading…';
+      apiCall('getVisitReport', { days: days }).then(v => {
+          if(!v.rows.length) {
+              box.innerHTML = 'Abhi tak koi visit record nahi hua.';
+              return;
+          }
+          const tile = (label, value) =>
+            `<div style="flex:1; min-width:110px; background:#fff; border:1px solid #d7e3f7; border-radius:7px; padding:9px 12px;">
+               <div style="font-size:20px; font-weight:700; color:#0b63ce;">${value}</div>
+               <div style="font-size:11px; color:#7a8699;">${label}</div></div>`;
+
+          let html = `<div style="display:flex; gap:9px; flex-wrap:wrap; margin-bottom:11px;">
+              ${tile('Aaj', v.today)}
+              ${tile('Portal opens', v.totalPortal)}
+              ${tile('Chatbot opens', v.totalChatbot)}
+              ${tile('Questions asked', v.totalQuestions)}
+            </div>
+            <table style="width:100%; border-collapse:collapse; background:#fff; font-size:12.5px;">
+              <tr style="background:#dbe7fb;">
+                <th style="padding:7px 9px; text-align:left;">Date</th>
+                <th style="padding:7px 9px; text-align:center;">Portal opens</th>
+                <th style="padding:7px 9px; text-align:center;">Chatbot opens</th>
+                <th style="padding:7px 9px; text-align:center;">Questions</th>
+              </tr>`;
+          v.rows.forEach(r => {
+              html += `<tr style="border-bottom:1px solid #eef1f4;">
+                  <td style="padding:6px 9px;">${escapeHtml(r.date)}</td>
+                  <td style="padding:6px 9px; text-align:center; font-weight:600;">${r.portal}</td>
+                  <td style="padding:6px 9px; text-align:center;">${r.chatbot}</td>
+                  <td style="padding:6px 9px; text-align:center;">${r.questions}</td></tr>`;
+          });
+          box.innerHTML = html + '</table>';
+      }).catch(e => { box.innerHTML = `<span style="color:#d63031;">${escapeHtml(e.message)}</span>`; });
+  }
+
+  function escapeHtml(t) {
+      return String(t == null ? '' : t)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  /* The whole point of the log: see what was asked, and turn the gaps into
+     Knowledge Base entries without leaving this screen. */
+  function loadAiStats() {
+      const box = document.getElementById('statsBody');
+      const days = document.getElementById('statsDays').value;
+      box.innerHTML = 'Loading…';
+      apiCall('ai_stats', { days: days }).then(s => {
+          if(!s.total) {
+              box.innerHTML = '<div style="padding:14px 0;">Abhi tak koi sawal record nahi hua. Customer jaise hi portal ya chatbot par sawal poochenge, yahan dikhega.</div>';
+              return;
+          }
+          const tile = (label, value, colour) =>
+            `<div style="flex:1; min-width:120px; background:#f7f8fa; border:1px solid #e6e9ee; border-radius:9px; padding:12px 14px;">
+               <div style="font-size:21px; font-weight:700; color:${colour};">${value}</div>
+               <div style="font-size:11.5px; color:#8a94a6; margin-top:2px;">${label}</div></div>`;
+
+          let html = `<div style="display:flex; gap:10px; flex-wrap:wrap;">
+              ${tile('Total questions', s.total, '#2d3436')}
+              ${tile('Answered', s.rate + '%', s.rate >= 70 ? '#00875a' : (s.rate >= 40 ? '#e67e22' : '#d63031'))}
+              ${tile('Helpful 👍', s.up, '#00875a')}
+              ${tile('Not helpful 👎', s.down, '#d63031')}
+            </div>`;
+
+          if(s.unanswered.length) {
+              html += `<div style="margin-top:16px;">
+                  <b style="color:#d63031;">Jin sawalon ka jawab nahi mila (${s.unanswered.length})</b>
+                  <div style="font-size:11.5px; color:#8a94a6; margin:3px 0 8px;">Yahi list batati hai ki aage kya content likhna hai. "Add answer" dabakar seedha Knowledge Base me daal dijiye.</div>
+                  <table style="width:100%; border-collapse:collapse; font-size:12.5px;">`;
+              s.unanswered.forEach(u => {
+                  html += `<tr style="border-bottom:1px solid #eef1f4;">
+                      <td style="padding:7px 6px;">${escapeHtml(u.q)}</td>
+                      <td style="padding:7px 6px; width:60px; text-align:center; color:#8a94a6;">${u.n}&times;</td>
+                      <td style="padding:7px 6px; width:110px; text-align:right;">
+                        <button class="btn" style="width:auto; margin:0; padding:5px 11px; font-size:11.5px; background:#00b894;"
+                                onclick="kbAnswerGap(${JSON.stringify(u.q).replace(/"/g,'&quot;')})">Add answer</button></td></tr>`;
+              });
+              html += '</table></div>';
+          }
+
+          if(s.top.length) {
+              html += `<div style="margin-top:16px;"><b>Sabse zyada poochhe gaye sawal</b>
+                       <table style="width:100%; border-collapse:collapse; font-size:12.5px; margin-top:7px;">`;
+              s.top.forEach(t => {
+                  const good = t.answered === t.n;
+                  html += `<tr style="border-bottom:1px solid #eef1f4;">
+                      <td style="padding:7px 6px;">${escapeHtml(t.q)}</td>
+                      <td style="padding:7px 6px; width:70px; text-align:center; color:#8a94a6;">${t.n}&times;</td>
+                      <td style="padding:7px 6px; width:90px; text-align:right; color:${good?'#00875a':'#e67e22'};">
+                        ${t.answered}/${t.n} ok</td></tr>`;
+              });
+              html += '</table></div>';
+          }
+          box.innerHTML = html;
+      }).catch(e => { box.innerHTML = `<span style="color:#d63031;">${escapeHtml(e.message)}</span>`; });
+  }
+
+  /* Turns an unanswered question straight into a Knowledge Base entry. */
+  function kbAnswerGap(question) {
+      Swal.fire({
+          title: 'Add an answer',
+          html: `<div style="text-align:left; font-size:12.5px; color:#636e72; margin-bottom:9px;">
+                   Customer ne poocha: <b style="color:#2d3436;">${escapeHtml(question)}</b></div>`,
+          input: 'textarea',
+          inputPlaceholder: 'Jawab steps me likhiye…\n1. MENU key dabaiye\n2. Bill Settings chuniye',
+          inputAttributes: { style: 'height:150px; font-size:13px;' },
+          showCancelButton: true, confirmButtonText: 'Save to Knowledge Base', confirmButtonColor: '#00b894'
+      }).then(r => {
+          if(!r.isConfirmed || !String(r.value || '').trim()) return;
+          apiCall('kb_addText', { title: question.slice(0, 90), model: 'All Models',
+                                  category: 'Customer Questions', text: r.value })
+            .then(() => { Swal.fire('Saved', 'Ab ye sawal aane par jawab mil jayega.', 'success'); kbRefresh(); loadAiStats(); })
+            .catch(e => Swal.fire('Error', e.message, 'error'));
+      });
+  }
+
   function loadAiPanel() {
+      try { loadAiStats(); } catch (e) {}
       apiCall('getProductStats').then(st => {
           document.getElementById('aiTiles').innerHTML =
             `<div class="q-tile" style="border-top:3px solid ${st.total?'#0984e3':'#e74c3c'};"><span>Products</span><b>${st.total}</b></div>
@@ -2956,6 +3116,43 @@
       Swal.fire(failed ? 'Partly imported' : 'Knowledge Base ready',
                 `${saved} parts saved. Ab assistant product settings aur options samjha sakta hai.`,
                 failed ? 'warning' : 'success');
+  }
+
+  /* Teaches the assistant what each manual section MEANS, so a customer can
+     describe a problem in their own words and still land on the right page.
+     Runs in batches because the catalogue is large. */
+  async function kbBuildIndex() {
+      const go = await Swal.fire({ title: 'Build the meaning index?',
+          html: 'Har section ka matlab samjha jayega, taaki customer kuch bhi likhe to sahi jawab mile.<br><br>' +
+                '<b>Ek baar ka kaam hai.</b> Catalogue bada ho to kuch minute lag sakte hain.',
+          icon: 'question', showCancelButton: true, confirmButtonText: 'Build', confirmButtonColor: '#6c5ce7' });
+      if(!go.isConfirmed) return;
+
+      const box = document.getElementById('kbPackStatus');
+      box.style.display = 'block';
+      let next = 2, built = 0, rounds = 0;
+
+      while(rounds < 400) {
+          rounds++;
+          let r;
+          try {
+              r = await apiCall('kb_buildIndex', { startRow: next });
+          } catch(e) {
+              box.innerHTML = `<div style="color:#d63031; font-weight:600;">Ruk gaya: ${escapeHtml(e.message)}</div>`;
+              return Swal.fire('Index rok diya gaya', e.message, 'error');
+          }
+          built += (r.built || 0);
+          const total = built + (r.remaining || 0);
+          const pct = total ? Math.round(built / total * 100) : 100;
+          box.innerHTML = `<div style="background:#dfe6e9; border-radius:5px; height:9px; overflow:hidden;">
+                             <div style="background:#6c5ce7; height:100%; width:${pct}%;"></div></div>
+                           <div style="margin-top:5px; color:#2d3436;">Samajh banayi ja rahi hai — ${built} sections${r.remaining?`, ${r.remaining} baaki`:''}…</div>`;
+          if(r.done) break;
+          next = r.next || next;
+      }
+
+      box.innerHTML = `<div style="color:#00875a; font-weight:600;">Meaning index ready — ${built} sections.</div>`;
+      Swal.fire('Ho gaya', `${built} sections ab matlab se dhoonde jayenge. Customer apne shabdon me poochega to bhi sahi jawab milega.`, 'success');
   }
 
   function kbReindex() {
