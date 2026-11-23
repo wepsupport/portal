@@ -778,7 +778,7 @@
 <script>
   // ===================== GITHUB API CONFIGURATION =====================
   // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-  const API_URL = "https://script.google.com/macros/s/AKfycbz3S6xHsh7pXFJPdlrH3BeEBPs3yzAbXQqE5t7omWCCatIZSnFrfJJmSeK--KTaLH0b/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbxndVZUJpHVv0EuZZHFqPO4VrU26qVq_ScT8UE8ByAsmsrbpaTV3YGyBeqkrgi0mvBs/exec";
 
   async function apiCall(action, params = {}) {
       try {
@@ -2843,7 +2843,7 @@
   /* The portal and Code.gs ship together. If the deployed script reports a
      different version (or no version at all), it was saved but never
      redeployed - which shows up as "Unknown action" on newer features. */
-  const EXPECTED_SCRIPT_VERSION = "2026-11-20-sem5";
+  const EXPECTED_SCRIPT_VERSION = "2026-11-20-sem6";
 
   function checkBackendVersion() {
       let box = document.getElementById('backendWarn');
@@ -3148,9 +3148,18 @@
      describe a problem in their own words and still land on the right page.
      Runs in batches because the catalogue is large. */
   async function kbBuildIndex() {
+      let st = null;
+      try { st = await apiCall('kb_indexStatus', {}); } catch(e) {}
+
+      const need = st ? st.pending : 0;
+      const overDay = st && need > (st.dailyFreeLimit || 1000);
+
       const go = await Swal.fire({ title: 'Build the meaning index?',
           html: 'Har section ka matlab samjha jayega, taaki customer kuch bhi likhe to sahi jawab mile.<br><br>' +
-                '<b>Ek baar ka kaam hai.</b> Catalogue bada ho to kuch minute lag sakte hain.',
+                (st ? `<b>${need}</b> section baaki hain (kul ${st.sections}). Google free tier me din me <b>${st.dailyFreeLimit}</b> milte hain.<br>` +
+                      (overDay ? '<span style="color:#d63031;">Ye ek din me poore nahi honge — jitne ho sakenge utne honge, baaki kal.</span><br>' : '') + '<br>'
+                    : '') +
+                '<b>Ek baar ka kaam hai.</b> Beech me band ho jaye to dobara dabane par wahin se chalu hoga.',
           icon: 'question', showCancelButton: true, confirmButtonText: 'Build', confirmButtonColor: '#6c5ce7' });
       if(!go.isConfirmed) return;
 
