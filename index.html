@@ -778,10 +778,13 @@
                 <input type="number" id="lgH" value="${logoCfg.h}" min="8" max="2048" oninput="lgDraw()">
               </div>
             </div>
-            <label style="font-size:12.5px; color:var(--text-secondary); display:block; margin-bottom:10px;">
+            <label style="font-size:12.5px; color:var(--text-secondary); display:block; margin-bottom:4px;">
               <input type="checkbox" id="lgRatio" checked onchange="lgDraw()" style="width:auto; margin-right:6px;">
-              Shape na bigde (width se height apne aap)
+              Shape na bigde — logo ko isi size ke andar fit karein
             </label>
+            <div style="font-size:11.5px; color:var(--text-secondary); margin-bottom:12px;">
+              File hamesha <b id="lgTarget">${logoCfg.w} × ${logoCfg.h}</b> px ki hi banegi, aap chahe koi bhi image dein.
+            </div>
 
             <div class="pro-input-group">
               <label>2. Kitna dark (threshold): <b id="lgTVal">128</b></label>
@@ -798,6 +801,13 @@
               <canvas id="lgCanvas" style="max-width:100%; image-rendering:pixelated; display:block; margin:0 auto;"></canvas>
             </div>
             <div id="lgInfo" style="font-size:12px; color:var(--text-secondary); margin-bottom:12px;"></div>
+            <div style="margin-bottom:12px;">
+              <button type="button" onclick="lgReset()"
+                      style="background:#fff; border:1px solid #d7dee8; border-radius:8px; padding:7px 13px;
+                             font-size:12px; cursor:pointer; color:var(--accent-blue); font-weight:600;">
+                Default size par wapas (${logoCfg.w} × ${logoCfg.h})
+              </button>
+            </div>
             <button class="pro-submit-btn" onclick="lgDownload()">
               <i class="fa-solid fa-download"></i> Download monochrome BMP
             </button>
@@ -813,10 +823,9 @@
             im.onload = () => {
                 logoImg = im;
                 document.getElementById('lgWork').style.display = 'block';
-                const keep = document.getElementById('lgRatio');
-                if(keep && keep.checked) {
-                    document.getElementById('lgH').value = Math.max(8, Math.round(logoCfg.w * im.height / im.width));
-                }
+                /* The size is the one the admin set. A big photo, a tiny icon
+                   or a square logo all come out at that size - the picture is
+                   fitted into it, never the other way round. */
                 lgDraw();
             };
             im.src = e.target.result;
@@ -830,20 +839,29 @@
         if(!logoImg) return;
         let w = Math.max(8, Math.min(2048, parseInt(document.getElementById('lgW').value, 10) || logoCfg.w));
         let h = Math.max(8, Math.min(2048, parseInt(document.getElementById('lgH').value, 10) || logoCfg.h));
-        if(document.getElementById('lgRatio').checked) {
-            h = Math.max(8, Math.round(w * logoImg.height / logoImg.width));
-            document.getElementById('lgH').value = h;
-        }
         const t = parseInt(document.getElementById('lgT').value, 10);
         const inv = document.getElementById('lgInv').checked;
         const dith = document.getElementById('lgDith').checked;
+        const fit = document.getElementById('lgRatio').checked;
         document.getElementById('lgTVal').innerText = t;
+        const tg = document.getElementById('lgTarget');
+        if(tg) tg.innerText = w + ' × ' + h;
 
         const c = document.getElementById('lgCanvas');
         c.width = w; c.height = h;
         const ctx = c.getContext('2d');
         ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h);      // transparent areas print white
-        ctx.drawImage(logoImg, 0, 0, w, h);
+
+        if(fit) {
+            /* Scale to fit inside the target and centre it, so a square logo
+               in a wide space stays round instead of being stretched. */
+            const sc = Math.min(w / logoImg.width, h / logoImg.height);
+            const dw = Math.max(1, Math.round(logoImg.width * sc));
+            const dh = Math.max(1, Math.round(logoImg.height * sc));
+            ctx.drawImage(logoImg, Math.round((w - dw) / 2), Math.round((h - dh) / 2), dw, dh);
+        } else {
+            ctx.drawImage(logoImg, 0, 0, w, h);                // stretch to fill
+        }
 
         const img = ctx.getImageData(0, 0, w, h);
         const d = img.data;
@@ -890,6 +908,12 @@
     /* Writes a real 1-bit BMP: headers, a two-colour palette, then one bit
        per pixel with rows bottom-up and padded to 4 bytes - the same file
        Paint produces with "Monochrome Bitmap". */
+    function lgReset() {
+        document.getElementById('lgW').value = logoCfg.w;
+        document.getElementById('lgH').value = logoCfg.h;
+        lgDraw();
+    }
+
     function lgDownload() {
         const bits = window.__lgBits;
         if(!bits || !bits.length) return;
