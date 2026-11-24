@@ -338,6 +338,7 @@
     .km-pre { border:1px solid #d7dee8; border-radius:8px; padding:10px 12px; min-height:44px;
               font-size:20px; background:#f8fafc; word-break:break-all; }
     .km-bar { display:flex; gap:14px; margin:9px 0 2px; }
+    .ask-go { background:var(--accent-blue); }   /* a save or close, not a destructive yes */
 
     .it-bar { display:grid; gap:10px; align-items:end;
               background:#f5f8fc; border:1px solid #e0e7f1; border-radius:11px; padding:14px; margin-bottom:12px; }
@@ -347,8 +348,9 @@
     .un-tbl th { background:#eef3f9; text-align:left; padding:8px 9px; font-size:11px;
                  text-transform:uppercase; letter-spacing:.3px; color:var(--text-secondary); }
     .un-tbl td { padding:5px 9px; border-bottom:1px solid #eef1f5; }
-    .un-tbl input[type=text] { width:100%; padding:6px 8px; border:1px solid #d7dee8;
-                               border-radius:6px; font-size:12.5px; box-sizing:border-box; }
+    .un-tbl input[type=text], .un-tbl select { width:100%; padding:6px 8px; border:1px solid #d7dee8;
+                               border-radius:6px; font-size:12.5px; box-sizing:border-box; background:#fff; }
+    .un-tbl select:disabled { background:#f2f4f7; color:#aab2bf; }
     .un-note { font-size:12px; color:var(--text-secondary); margin:0 0 12px; }
     .it-bar label { display:block; font-size:11.5px; font-weight:700; color:var(--text-secondary);
                     margin-bottom:5px; text-transform:uppercase; letter-spacing:.3px; }
@@ -371,6 +373,9 @@
     .it-tbl tr:hover td { background:#fafbfd; }
     .it-del { background:none; border:none; color:#d63031; cursor:pointer; font-size:13px; }
     .it-empty { text-align:center; padding:34px 16px; color:var(--text-secondary); font-size:13px; }
+    .it-warn { background:#fff8e6; border:1px solid #f0dca8; border-radius:9px; padding:11px 13px;
+               font-size:12.5px; color:#7a5a12; margin:0 0 14px; }
+    .it-warn a { color:#0b63ce; font-weight:600; }
     .it-actions { display:flex; gap:10px; flex-wrap:wrap; margin:16px 0 0; }
     .it-btn { border-radius:9px; padding:11px 18px; font-size:13.5px; font-weight:700; cursor:pointer; border:1.5px solid transparent; }
     .it-primary { background:#00875a; color:#fff; }
@@ -1023,18 +1028,25 @@
           </div>`, openDbBp);
     }
 
+    /* Models whose file format has been confirmed against a printer export. */
+    const MODEL_READY = ['BP Joy Plus', 'BP 85T Plus', 'BP 25T Plus', 'BP Ultra Pro',
+                         'BP Emerge Basic', 'BP Emerge 25T Edge', 'BP Emerge 25T',
+                         'BP 2100', 'BP 1100 Joy'];
+
     function openBpSeries(id) {
         bpSeriesId = id;
         const sr = BP_SERIES.find(x => x.id === id);
-        const ready = id === 'plus' || id === 'emerge';
         dbPage(sr.name, [['Database Creation', 'openDbView()'], ['BP Database', 'openDbBp()'], [sr.name, '']], `
           <p style="color:var(--text-secondary); font-size:13.5px; margin:0 0 18px;">
             Which model are you building this for?
           </p>
           <div class="db-grid">
-            ${sr.models.map(m => dbTile('fa-print', '#e8f0fe', '#0b63ce', m,
-                ready ? 'Build the item database for this model.' : 'Item format is being added.',
-                `openBpModel('${id}', ${JSON.stringify(m).replace(/"/g, '&quot;')})`, !ready)).join('')}
+            ${sr.models.map(m => {
+                const ok = MODEL_READY.indexOf(m) >= 0;
+                return dbTile('fa-print', '#e8f0fe', '#0b63ce', m,
+                  ok ? 'Build the database for this model.' : 'File format is being added.',
+                  `openBpModel('${id}', ${JSON.stringify(m).replace(/"/g, '&quot;')})`, !ok);
+            }).join('')}
           </div>`, () => openBpSeries(id));
     }
 
@@ -1047,16 +1059,7 @@
           <p style="color:var(--text-secondary); font-size:13.5px; margin:0 0 18px;">
             Build the item list, then export it for ${escapeAsk(model)}.
           </p>
-          <div class="db-grid">
-            ${id === 'emerge'
-              ? Object.keys(EM_LANG).map(l => dbTile('fa-box', '#e8f0fe', '#0b63ce',
-                  'Item Database (' + EM_LANG[l].label + ')',
-                  l === 'en' ? 'Item name, unit, rate and tax.'
-                             : 'Adds an ' + EM_LANG[l].label + ' name column in ' + EM_LANG[l].font + '.',
-                  `openItemBuilder('em_${l}')`)).join('')
-              : dbTile('fa-box', '#e8f0fe', '#0b63ce', 'Item Database',
-                       'Item name, unit, rate and tax.', "openItemBuilder('bp')")}
-          </div>`, () => openBpModel(id, model));
+          <div class="db-grid">${bpModelTiles(id, model)}</div>`, () => openBpModel(id, model));
     }
 
 
@@ -1071,24 +1074,41 @@
        are the factory lists; the customer can change them from the Units
        button and the dropdown, the CSV and the pendrive file all follow. */
     const UNIT_DEFAULTS = {
+      /* BP Plus keeps only the short code and a decimal yes/no. */
       bp: [
         { name: 'Packet', code: 'Pk', dec: false }, { name: 'Litre', code: 'Lt', dec: true },
         { name: 'Millilitre', code: 'Ml', dec: true }, { name: 'Gram', code: 'Gm', dec: true },
         { name: 'Kilogram', code: 'Kg', dec: true }
       ],
+      /* Emerge and the 2K series store the full name, the short code, whether
+         decimal quantities are allowed and how many decimal places - exactly
+         the four columns on the printer's Unit Configuration screen. */
       emerge: [
-        { name: 'Packet', code: 'Pk' }, { name: 'Litre', code: 'Lt' }, { name: 'M.Litre', code: 'Ml' },
-        { name: 'Gram', code: 'Gm' }, { name: 'K.Gram', code: 'Kg' }, { name: 'Bag', code: 'Bg' },
-        { name: 'Box', code: 'Bx' }, { name: 'Number', code: 'No' }, { name: 'Metre', code: 'Mt' },
-        { name: 'Dozen', code: 'Dz' }, { name: 'Sachet', code: 'Sa' }, { name: 'Sheet', code: 'St' },
-        { name: 'Bottle', code: 'Bt' }, { name: 'Plate', code: 'Pl' }, { name: 'Piece', code: 'Pc' }
+        { name: 'Packet', code: 'Pk', dec: true, dp: 3 }, { name: 'Litre', code: 'Lt', dec: true, dp: 3 },
+        { name: 'M.Litre', code: 'Ml', dec: true, dp: 3 }, { name: 'Gram', code: 'Gm', dec: true, dp: 3 },
+        { name: 'K.Gram', code: 'Kg', dec: true, dp: 3 }, { name: 'Bag', code: 'Bg', dec: true, dp: 3 },
+        { name: 'Box', code: 'Bx', dec: true, dp: 3 }, { name: 'Number', code: 'No', dec: true, dp: 3 },
+        { name: 'Metre', code: 'Mt', dec: true, dp: 3 }, { name: 'Dozen', code: 'Dz', dec: true, dp: 3 },
+        { name: 'Sachet', code: 'Sa', dec: true, dp: 3 }, { name: 'Sheet', code: 'St', dec: true, dp: 3 },
+        { name: 'Bottle', code: 'Bt', dec: true, dp: 3 }, { name: 'Plate', code: 'Pl', dec: true, dp: 3 },
+        { name: 'Piece', code: 'Pc', dec: true, dp: 2 }
+      ],
+      bp2k: [
+        { name: 'Packet', code: 'Pk', dec: false, dp: 0 }, { name: 'Litre', code: 'Lt', dec: true, dp: 3 },
+        { name: 'M.Litre', code: 'Ml', dec: true, dp: 3 }, { name: 'Gram', code: 'Gm', dec: true, dp: 3 },
+        { name: 'K.Gram', code: 'Kg', dec: true, dp: 3 }, { name: 'Bag', code: 'Bg', dec: false, dp: 0 },
+        { name: 'Box', code: 'Bx', dec: false, dp: 0 }, { name: 'Number', code: 'No', dec: false, dp: 0 },
+        { name: 'Metre', code: 'Mt', dec: true, dp: 3 }, { name: 'Dozen', code: 'Dz', dec: true, dp: 3 },
+        { name: 'Sachet', code: 'Sa', dec: false, dp: 0 }, { name: 'Sheet', code: 'St', dec: false, dp: 0 },
+        { name: 'Bottle', code: 'Bt', dec: false, dp: 0 }, { name: 'Plate', code: 'Pl', dec: false, dp: 0 },
+        { name: 'Piece', code: 'Pc', dec: false, dp: 0 }
       ]
     };
-    const unitCfg = { bp: null, emerge: null };        // null = factory list
+    const unitCfg = { bp: null, emerge: null, bp2k: null };   // null = factory list
 
     function unitsFor(group) {
         const list = unitCfg[group] || UNIT_DEFAULTS[group];
-        return list.map(u => ({ name: u.name, code: u.code, dec: !!u.dec }));
+        return list.map(u => ({ name: u.name, code: u.code, dec: !!u.dec, dp: u.dp || 0 }));
     }
     const BP_UNITS = UNIT_DEFAULTS.bp.map(u => u.name);
 
@@ -1149,6 +1169,156 @@
           auto: (it, i) => ({ sl: String(i + 1) })
         };
     }
+
+    function bpModelTiles(id, model) {
+        const tile = (t, d, fn) => dbTile('fa-box', '#e8f0fe', '#0b63ce', t, d, fn);
+        if(id === 'emerge') {
+            return Object.keys(EM_LANG).map(l => tile(
+                'Item Database (' + EM_LANG[l].label + ')',
+                l === 'en' ? 'Item name, unit, rate and tax.'
+                           : 'Adds an ' + EM_LANG[l].label + ' name column in ' + EM_LANG[l].font + '.',
+                `openItemBuilder('em_${l}')`)).join('');
+        }
+        if(id === '2k') {
+            if(model === 'BP 2100') {
+                return tile('Item Database', 'Department, unit, rates, tax and stock.', "openItemBuilder('bp2100')")
+                     + tile('Customer Database', 'Names, credit limits and balances.', "openItemBuilder('cust2100')")
+                     + dbTile('fa-layer-group', '#fdf1e3', '#b9690a', 'Departments',
+                              'The list the item screen picks from.', "openItemBuilder('dept2100')");
+            }
+            return tile('Item Database', 'Item name, unit, rates and tax.', "openItemBuilder('bp1100')");
+        }
+        return tile('Item Database', 'Item name, unit, rate and tax.', "openItemBuilder('bp')");
+    }
+
+    /* ---------- BP 2K Series ----------------------------------------------
+       BP 2100 keeps departments and a customer list beside its items; BP 1100
+       Joy keeps items only. Column names and sample rows come from the
+       printer's own exports. */
+    const TAX_TYPES = ['SALES', 'PURCHASE'];
+
+    function deptNames() { return (itData.dept2100 || []).map(d => d.name).filter(Boolean); }
+
+    const SPEC_2100 = {
+      name: 'Item Database', file: 'BP_2100.csv', zeros: true,
+      unitGroup: 'bp2k', nameMax: 21,
+      pending: 'CSV is ready. The pendrive file for this series is waiting on one sample export with every box filled in, so that each value lands in the right place on the printer.',
+      back: () => openBpModel('2k', bpModel),
+      crumbs: () => bpCrumbs('Item Database'),
+      cols: [
+        ['Sl.No', 'sl'], ['Department', 'dept'], ['Item Code', 'code'], ['Item Name', 'name'],
+        ['HSN Code', 'hsn'], ['Item Unit', 'uom'], ['Item Unit 2', 'uom2'],
+        ['U1 U2 Relation', 'rel'], ['Stock', 'stock'], ['Cost Price', 'cost'],
+        ['Rate 1', 'rate'], ['Rate 2', 'rate2'], ['Rate 3', 'rate3'], ['Discount', 'disc'],
+        ['Tax', 'tax'], ['Cess', 'cess'], ['Tax Type', 'taxtype'], ['MRP', 'mrp'],
+        ['WholeSalePrice', 'ws']
+      ],
+      num: ['rel', 'stock', 'cost', 'rate', 'rate2', 'rate3', 'disc', 'tax', 'cess', 'mrp', 'ws'],
+      req: [
+        { k: 'code', label: 'Item Code', ph: '1', w: 1 },
+        { k: 'name', label: 'Item Name', ph: 'OIL', max: 21, w: 2 },
+        { k: 'dept', label: 'Department', type: 'sel', depts: true, w: 1 },
+        { k: 'uom',  label: 'Item Unit', type: 'sel', units: true, w: 1 },
+        { k: 'rate', label: 'Rate 1', ph: '0.00', type: 'num', w: 1 }
+      ],
+      opt: [
+        { k: 'hsn', label: 'HSN Code', max: 32 },
+        { k: 'uom2', label: 'Item Unit 2', type: 'sel', units: true },
+        { k: 'rel', label: 'U1 U2 Relation', type: 'num' },
+        { k: 'stock', label: 'Stock', type: 'num' },
+        { k: 'cost', label: 'Cost Price', type: 'num' },
+        { k: 'mrp', label: 'MRP', type: 'num' },
+        { k: 'ws', label: 'Wholesale Price', type: 'num' },
+        { k: 'rate2', label: 'Rate 2', type: 'num' },
+        { k: 'rate3', label: 'Rate 3', type: 'num' },
+        { k: 'disc', label: 'Discount %', type: 'num' },
+        { k: 'tax', label: 'Tax %', type: 'num' },
+        { k: 'cess', label: 'Cess %', type: 'num' },
+        { k: 'taxtype', label: 'Bill Type', type: 'sel', opts: TAX_TYPES }
+      ],
+      show: [['code', 'Code'], ['dept', 'Department'], ['name', 'Item'],
+             ['uom', 'Unit'], ['rate', 'Rate 1'], ['tax', 'Tax']],
+      auto: (it, i) => ({ sl: String(i + 1), rel: it.rel || '1', taxtype: it.taxtype || 'SALES' })
+    };
+
+    const SPEC_1100 = {
+      name: 'Item Database', file: 'BP_1100_Joy.csv', zeros: true,
+      unitGroup: 'bp2k', nameMax: 21,
+      pending: 'CSV is ready. The pendrive file for this series is waiting on one sample export with every box filled in, so that each value lands in the right place on the printer.',
+      back: () => openBpModel('2k', bpModel),
+      crumbs: () => bpCrumbs('Item Database'),
+      cols: [
+        ['Item.No', 'sl'], ['Item Code', 'code'], ['Item Name', 'name'], ['HSN Code', 'hsn'],
+        ['Item Unit', 'uom'], ['Stock', 'stock'], ['Cost Price', 'cost'], ['Rate 1', 'rate'],
+        ['Rate 2', 'rate2'], ['Rate 3', 'rate3'], ['Discount', 'disc'], ['Tax', 'tax'],
+        ['Cess', 'cess'], ['Tax Type', 'taxtype']
+      ],
+      num: ['stock', 'cost', 'rate', 'rate2', 'rate3', 'disc', 'tax', 'cess'],
+      req: [
+        { k: 'code', label: 'Item Code', ph: '1', w: 1 },
+        { k: 'name', label: 'Item Name', ph: 'SAMPLE', max: 21, w: 2 },
+        { k: 'uom',  label: 'Item Unit', type: 'sel', units: true, w: 1 },
+        { k: 'rate', label: 'Rate 1', ph: '0.00', type: 'num', w: 1 }
+      ],
+      opt: [
+        { k: 'hsn', label: 'HSN Code', max: 32 },
+        { k: 'stock', label: 'Stock', type: 'num' },
+        { k: 'cost', label: 'Cost Price', type: 'num' },
+        { k: 'rate2', label: 'Rate 2', type: 'num' },
+        { k: 'rate3', label: 'Rate 3', type: 'num' },
+        { k: 'disc', label: 'Discount %', type: 'num' },
+        { k: 'tax', label: 'Tax %', type: 'num' },
+        { k: 'cess', label: 'Cess %', type: 'num' },
+        { k: 'taxtype', label: 'Bill Type', type: 'sel', opts: TAX_TYPES }
+      ],
+      show: [['code', 'Code'], ['name', 'Item'], ['uom', 'Unit'],
+             ['rate', 'Rate 1'], ['tax', 'Tax']],
+      auto: (it, i) => ({ sl: String(i + 1), taxtype: it.taxtype || 'SALES' })
+    };
+
+    /* Customer list for BP 2100. It never leaves the browser - the file is
+       written here and downloaded, nothing is sent anywhere. */
+    const SPEC_CUST = {
+      name: 'Customer Database', file: 'Customer_DB.csv', zeros: true,
+      inModel: true,
+      back: () => openBpModel('2k', bpModel),
+      crumbs: () => bpCrumbs('Customer Database'),
+      cols: [
+        ['Sl.No', 'sl'], ['Name', 'name'], ['Address', 'addr'], ['Phone Number', 'phone'],
+        ['Amount Limit', 'amt'], ['Days Limit', 'days'], ['GSTIN', 'gstin'],
+        ['Balance', 'bal'], ['Allow Credit', 'credit']
+      ],
+      num: ['amt', 'days', 'bal'],
+      req: [
+        { k: 'name', label: 'Customer Name', ph: 'Name', max: 21, w: 2 },
+        { k: 'phone', label: 'Phone Number', ph: '10 digits', max: 16, w: 1 }
+      ],
+      opt: [
+        { k: 'addr', label: 'Address', max: 100 },
+        { k: 'amt', label: 'Amount Limit', type: 'num' },
+        { k: 'days', label: 'Days Limit', type: 'num' },
+        { k: 'gstin', label: 'GSTIN', max: 15 },
+        { k: 'bal', label: 'Balance', type: 'num' },
+        { k: 'credit', label: 'Allow Credit', type: 'sel', opts: ['YES', 'NO'] }
+      ],
+      show: [['name', 'Name'], ['addr', 'Address'], ['phone', 'Phone'],
+             ['amt', 'Amount Limit'], ['days', 'Days Limit']],
+      auto: (it, i) => ({ sl: String(i + 1), credit: it.credit || 'YES' })
+    };
+
+    /* Departments are a list of their own on BP 2100, with their own export,
+       and they feed the Department box on the item screen. */
+    const SPEC_DEPT = {
+      name: 'Departments', file: 'Department_DB.csv', zeros: false,
+      inModel: true,
+      back: () => openBpModel('2k', bpModel),
+      crumbs: () => bpCrumbs('Departments'),
+      cols: [['Number', 'sl'], ['Department Name', 'name']],
+      req: [{ k: 'name', label: 'Department Name', ph: 'GROCERY', max: 32, w: 3 }],
+      opt: [],
+      show: [['name', 'Department Name']],
+      auto: (it, i) => ({ sl: String(i + 1) })
+    };
 
     const DB_SPEC = {
       retail: {
@@ -1286,12 +1456,18 @@
          Emerge software spells them - do not correct them. */
       em_en: emergeSpec('en'),
       em_hi: emergeSpec('hi'),
-      em_ta: emergeSpec('ta')
+      em_ta: emergeSpec('ta'),
+
+      bp2100: SPEC_2100,
+      bp1100: SPEC_1100,
+      cust2100: SPEC_CUST,
+      dept2100: SPEC_DEPT
     };
 
     let itApp  = 'retail';
     let itEdIx = -1;                       // -1 = adding, otherwise editing a row
-    const itData = { retail: [], fnb: [], bp: [], em_en: [], em_hi: [], em_ta: [] };
+    const itData = { retail: [], fnb: [], bp: [], em_en: [], em_hi: [], em_ta: [],
+                     bp2100: [], bp1100: [], cust2100: [], dept2100: [] };
 
     const itSpec = () => DB_SPEC[itApp];
     const itList = () => itData[itApp];
@@ -1299,6 +1475,7 @@
     /* One field, used for both the required bar and the optional grid. */
     function itOpts(f) {
         if(f.units) return unitsFor(itSpec().unitGroup).map(u => u.name);
+        if(f.depts) return deptNames();
         return f.opts || [];
     }
 
@@ -1331,8 +1508,10 @@
         itEdIx = -1;
         const sp = itSpec();
         const crumbs = typeof sp.crumbs === 'function' ? sp.crumbs() : sp.crumbs;
-        const title = sp.unitGroup && bpModel ? bpModel + ' - ' + sp.name : sp.name;
+        const title = (sp.unitGroup || sp.inModel) && bpModel ? bpModel + ' - ' + sp.name : sp.name;
         const L = sp.lang ? EM_LANG[sp.lang] : null;
+
+        const needDept = sp.req.some(f => f.depts) && !deptNames().length;
 
         dbPage(title, crumbs, `
           <p style="color:var(--text-secondary); font-size:13.5px; margin:0 0 16px;">
@@ -1341,6 +1520,11 @@
               L && L.col ? ' The ' + L.label + ' name is written exactly as you type it, so type it in ' +
                            L.font + ' the way you would in the Emerge software.' : ''}
           </p>
+          ${needDept ? `<div class="it-warn">
+            No departments yet, and BP 2100 files one item under one department.
+            <a href="#" onclick="openItemBuilder('dept2100'); return false;">Add your departments first</a>.
+          </div>` : ''}
+          ${sp.pending ? `<div class="it-warn">${escapeAsk(sp.pending)}</div>` : ''}
 
           <div class="it-bar" style="grid-template-columns:${itBarCols(sp)};">
             ${sp.req.map(f => itField(f, true)).join('')}
@@ -1367,6 +1551,9 @@
             </button>` : ''}
             ${sp.unitGroup ? `<button class="it-btn it-ghost" onclick="unOpen()">
               <i class="fa-solid fa-ruler"></i> Units
+            </button>` : ''}
+            ${sp.req.some(f => f.depts) ? `<button class="it-btn it-ghost" onclick="openItemBuilder('dept2100')">
+              <i class="fa-solid fa-layer-group"></i> Departments
             </button>` : ''}
             ${L && L.col ? `<button class="it-btn it-ghost" onclick="kmOpen()">
               <i class="fa-solid fa-keyboard"></i> ${L.label} keyboard
@@ -1558,7 +1745,7 @@
                     <span class="km-a">${escapeAsk(k)}</span>
                   </button>`).join('')}</div>`).join('')}
             </div>
-            <div class="ask-row"><button class="ask-yes" onclick="kmClose()">Done</button></div>
+            <div class="ask-row"><button class="ask-yes ask-go" onclick="kmClose()">Done</button></div>
           </div>`;
         back.onclick = e => { if(e.target === back) kmClose(); };
         document.body.appendChild(back);
@@ -1623,7 +1810,7 @@
             <div class="ask-row">
               <button class="ask-no" onclick="unReset()">Factory list</button>
               <button class="ask-no" onclick="unClose()">Cancel</button>
-              <button class="ask-yes" onclick="unSave()">Save</button>
+              <button class="ask-yes ask-go" onclick="unSave()">Save</button>
             </div>
           </div>`;
         back.onclick = e => { if(e.target === back) unClose(); };
@@ -1637,11 +1824,15 @@
     }
 
     function unRender() {
-        const dec = itSpec().unitGroup === 'bp';
+        /* BP Plus stores only a yes/no; the other printers also store how many
+           decimal places - the same two columns the Unit Configuration screen
+           on the printer shows. */
+        const places = itSpec().unitGroup !== 'bp';
         document.getElementById('unBody').innerHTML = `
           <table class="un-tbl">
-            <thead><tr><th>#</th><th>Unit name</th><th style="width:88px;">Code</th>
-              ${dec ? '<th style="width:70px;">Decimal</th>' : ''}<th style="width:34px;"></th></tr></thead>
+            <thead><tr><th>#</th><th>Unit name</th><th style="width:76px;">Code</th>
+              <th style="width:64px;">Decimal</th>${places ? '<th style="width:74px;">Places</th>' : ''}
+              <th style="width:34px;"></th></tr></thead>
             <tbody>${unDraft.map((u, i) => `
               <tr>
                 <td style="color:var(--text-secondary);">${i + 1}</td>
@@ -1649,8 +1840,12 @@
                            oninput="unDraft[${i}].name=this.value"></td>
                 <td><input type="text" maxlength="2" value="${escapeAsk(u.code)}"
                            oninput="unDraft[${i}].code=this.value"></td>
-                ${dec ? `<td style="text-align:center;"><input type="checkbox" ${u.dec ? 'checked' : ''}
-                           onchange="unDraft[${i}].dec=this.checked"></td>` : ''}
+                <td style="text-align:center;"><input type="checkbox" ${u.dec ? 'checked' : ''}
+                           onchange="unDraft[${i}].dec=this.checked; unRender();"></td>
+                ${places ? `<td><select ${u.dec ? '' : 'disabled'}
+                           onchange="unDraft[${i}].dp=+this.value">
+                           ${[0,1,2,3,4,5,6].map(n => `<option value="${n}"${+u.dp === n ? ' selected' : ''}>${n}</option>`).join('')}
+                         </select></td>` : ''}
                 <td><button class="it-del" title="Remove" onclick="unRemove(${i})">
                       <i class="fa-solid fa-trash"></i></button></td>
               </tr>`).join('')}</tbody>
@@ -1659,7 +1854,7 @@
 
     function unAdd() {
         if(unDraft.length >= UN_MAX) { toast('The printer table holds ' + UN_MAX + ' units', 'warn'); return; }
-        unDraft.push({ name: '', code: '', dec: false });
+        unDraft.push({ name: '', code: '', dec: false, dp: 0 });
         unRender();
     }
 
@@ -1670,7 +1865,7 @@
     }
 
     function unReset() {
-        unDraft = UNIT_DEFAULTS[itSpec().unitGroup].map(u => ({ name: u.name, code: u.code, dec: !!u.dec }));
+        unDraft = UNIT_DEFAULTS[itSpec().unitGroup].map(u => ({ name: u.name, code: u.code, dec: !!u.dec, dp: u.dp || 0 }));
         unRender();
         toast('Factory list restored - press Save to keep it');
     }
@@ -1679,7 +1874,7 @@
         const sp = itSpec();
         const clean = unDraft.map(u => ({ name: String(u.name || '').trim(),
                                           code: String(u.code || '').trim(),
-                                          dec: !!u.dec }));
+                                          dec: !!u.dec, dp: u.dec ? (+u.dp || 0) : 0 }));
         if(clean.some(u => !u.name || !u.code)) { toast('Every unit needs a name and a code', 'warn'); return; }
         const names = clean.map(u => u.name.toLowerCase());
         if(new Set(names).size !== names.length) { toast('Two units share a name', 'warn'); return; }
@@ -1856,8 +2051,8 @@
             const o = EM_BLK + i * 13;
             emText(buf, o, u.name, 9, 0);
             emText(buf, o + 9, u.code, 2, 0);
-            buf[o + 11] = 0x01;
-            buf[o + 12] = (i === units.length - 1) ? 0x02 : 0x03;
+            buf[o + 11] = u.dec ? 1 : 0;
+            buf[o + 12] = u.dec ? (u.dp || 0) : 0;
         });
 
         let base = EM_BLK * 3;
@@ -1868,7 +2063,9 @@
 
         list.forEach((it, i) => {
             const o = base + i * EM_REC;
-            buf[o] = 0x53; buf[o + 1] = 0x01;
+            /* the printer indexes on the first letter of the name */
+            const nm = String(it.name || ' ');
+            buf[o] = nm.charCodeAt(0) & 0xFF; buf[o + 1] = 0x01;
             const num = v => parseFloat(v) || 0;
             dv.setFloat64(o + 512, num(it.stock), true);
             dv.setFloat64(o + 520, num(it.disc),  true);
@@ -1877,11 +2074,11 @@
             dv.setFloat64(o + 544, num(it.rate3), true);
             dv.setFloat64(o + 552, num(it.tax),   true);
             dv.setUint16(o + 576, i + 1, true);
-            const u = names.indexOf(it.uom);
-            dv.setUint16(o + 578, (u < 0 ? 0 : u) + 1, true);
+            dv.setUint16(o + 578, 1, true);          /* department - unused on Emerge */
             emText(buf, o + 580, it.name, 21, 0);
             emText(buf, o + 601, it.code, 21, 0);
-            dv.setUint16(o + 622, 1, true);
+            const u = names.indexOf(it.uom);
+            dv.setUint16(o + 622, (u < 0 ? 0 : u) + 1, true);
             emText(buf, o + 696, it.hsn, 32, 32);     /* space-padded, unlike the rest */
             emText(buf, o + 728, it.local, 21, 0);
         });
