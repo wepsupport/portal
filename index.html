@@ -265,6 +265,13 @@
                             border-radius:50%; background:#0b63ce; color:#fff; font-size:11.5px; font-weight:700;
                             display:flex; align-items:center; justify-content:center; }
     .ask-src { margin-top:8px; font-size:11px; color:#8a94a6; }
+    /* A customer who already raised a request should not have to scroll to
+       find where to check it. */
+    .track-top-btn { background:#fff; border:1.5px solid var(--accent-blue); color:var(--accent-blue);
+                     font-weight:700; font-size:13px; padding:8px 15px; border-radius:8px; cursor:pointer;
+                     margin-right:10px; white-space:nowrap; transition:background .15s; }
+    .track-top-btn:hover { background:var(--accent-blue); color:#fff; }
+    @media (max-width: 640px) { .track-top-btn span { display:none; } .track-top-btn { padding:8px 11px; } }
     .ask-rate { margin-top:9px; display:flex; gap:7px; align-items:center; font-size:11.5px; color:#8a94a6; }
     .ask-rate button { border:1px solid #dfe4ec; background:#fff; border-radius:7px; padding:3px 10px;
                        cursor:pointer; font-size:12.5px; line-height:1.4; }
@@ -308,9 +315,14 @@
           <span style="display:none; font-weight:800; color:var(--accent-blue);">wepsol</span>
       </div>
       <div class="corporate-nav-actions">
+          <button class="track-top-btn" onclick="trackTaskModal()">
+            <i class="fa-solid fa-magnifying-glass"></i> <span id="ui-track-top">Track Existing Request</span>
+          </button>
           <select id="langSelect" class="lang-toggle" onchange="changeLanguage()">
               <option value="en">English</option>
               <option value="hi">हिंदी</option>
+              <option value="ta">தமிழ்</option>
+              <option value="te">తెలుగు</option>
           </select>
       </div>
   </div>
@@ -358,6 +370,12 @@
               <h3 id="ui-card5-t">Product &amp; Features</h3>
               <p id="ui-card5-d">Ask anything about our products, features or price.</p>
               <div class="card-arrow">Ask Now <i class="fa-solid fa-arrow-right"></i></div>
+          </div>
+          <div class="action-card" id="driverCard" style="display:none;" onclick="openDriverView()">
+              <div class="action-card-icon" style="background:#e8f0fe; color:#0b63ce;"><i class="fa-solid fa-download"></i></div>
+              <h3 id="ui-card6-t">Driver &amp; Utility</h3>
+              <p id="ui-card6-d">Download drivers, utilities and manuals for your model.</p>
+              <div class="card-arrow">Downloads <i class="fa-solid fa-arrow-right"></i></div>
           </div>
       </div>
       
@@ -467,7 +485,7 @@
   <script>
     // ===================== GITHUB API CONFIGURATION =====================
     // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-    const API_URL = "https://script.google.com/macros/s/AKfycbw1VbFG9PGnQ3nhJGTH8cpSMN8xHMK7SYkYVSADnQohyiR_ipir87FOBD2C9-_OE0lM/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwVT19WubM1ThkCkw-5y7SMXJhOJg37stEM2j_0dCFSGToeVfRsIY-kIgJITAxlmNs5/exec";
 
     async function apiCall(action, params = {}) {
         try {
@@ -494,6 +512,7 @@
           c3t: "Warranty Complaint", c3d: "Register a complaint for your products.",
           c4t: "Support Assistant", c4d: "Get instant troubleshooting or connect with a executive.",
           c5t: "Product & Features", c5d: "Ask anything about our products, features or price.",
+          c6t: "Driver & Utility", c6d: "Download drivers, utilities and manuals for your model.",
           track: "Track Existing Request",
           greeting: "Hello! I am the wepsol Service Bot. Please select your Printer Model to get started.", loading: "Loading...", selectNext: "Please select an option below:", selectModel: "Printer Model", drpDefault: "-- Select --", nextStep: "Continue", modelWait: "Model selection is required.", watchVideo: "Watch Tutorial", downloadFile: "Download Resources", needExecutive: "Connect to Executive", resolved: "Issue Resolved", or: "OR", formTitle: "Contact Live Agent", namePlaceholder: "Full Name", phonePlaceholder: "10-digit Mobile Number", startChatBtn: "Start Session", chatInputPlaceholder: "Message...", endBtn: "End Chat", rateExperience: "Session ended. Please rate us:", agentConnected: "Live Chat Connected. An agent will be with you shortly.", formError: "Please enter your Name and a valid 10-digit Mobile Number.", userEnded: "You ended the chat. Please rate your experience.", ratedMsg: "Thank you! You rated this chat {count} stars.", formCity: "City", formState: "State", formSerial: "Serial No (Opt)", formNext: "Submit Details", trackTitle: "Track Ticket Status", invalidPhone: "Mobile number must be exactly 10 digits." 
       },
@@ -504,8 +523,31 @@
           c3t: "वारंटी शिकायत", c3d: "अपने वारंटी वाले उत्पादों के लिए सेवा शिकायत दर्ज करें।",
           c4t: "सपोर्ट असिस्टेंट", c4d: "तुरंत स्वचालित समस्या निवारण प्राप्त करें या लाइव एक्जीक्यूटिव से जुड़ें।",
           c5t: "प्रोडक्ट और फीचर्स", c5d: "हमारे प्रोडक्ट, फीचर्स या कीमत के बारे में कुछ भी पूछें।",
+          c6t: "ड्राइवर और यूटिलिटी", c6d: "अपने मॉडल के ड्राइवर, यूटिलिटी और मैनुअल डाउनलोड करें।",
           track: "अपना टिकट ट्रैक करें",
           greeting: "नमस्ते! मैं wepsol सर्विस बॉट हूँ। कृपया शुरू करने के लिए अपना प्रिंटर मॉडल चुनें।", loading: "लोड हो रहा है...", selectNext: "कृपया नीचे से एक विकल्प चुनें:", selectModel: "प्रिंटर मॉडल चुनें:", drpDefault: "-- चुनें --", nextStep: "आगे बढ़ें", modelWait: "मॉडल चुनना आवश्यक है।", watchVideo: "वीडियो देखें", downloadFile: "रिसोर्स डाउनलोड करें", needExecutive: "एक्जीक्यूटिव से बात करें", resolved: "समस्या हल हो गई", or: "या", formTitle: "लाइव एजेंट संपर्क", namePlaceholder: "पूरा नाम", phonePlaceholder: "10-अंकों का मोबाइल नंबर", startChatBtn: "सत्र शुरू करें", chatInputPlaceholder: "मैसेज टाइप करें...", endBtn: "चैट बंद करें", rateExperience: "सत्र समाप्त! कृपया रेट करें:", agentConnected: "लाइव चैट कनेक्ट हो गया है। एक एजेंट जल्द ही आपसे जुड़ेगा।", formError: "कृपया अपना नाम और सही 10-अंकों का मोबाइल नंबर दर्ज करें।", userEnded: "आपने चैट समाप्त कर दी है। कृपया अपना अनुभव रेट करें।", ratedMsg: "धन्यवाद! आपने {count} स्टार दिए हैं।", formCity: "शहर (City)", formState: "राज्य (State)", formSerial: "सीरियल नंबर (Opt)", formNext: "जमा करें", trackTitle: "टिकट स्थिति ट्रैक करें", invalidPhone: "मोबाइल नंबर ठीक 10 अंकों का होना चाहिए।" 
+      },
+      ta: {
+          title: "நாங்கள் உங்களுக்கு எவ்வாறு உதவ முடியும்?", sub: "சரியான உதவியை விரைவாகப் பெற கீழே ஒரு விருப்பத்தைத் தேர்ந்தெடுக்கவும்.",
+          c1t: "நிறுவல் உதவி", c1d: "உங்கள் புதிய wepsol தயாரிப்பை அமைக்கவும் நிறுவவும் கோரிக்கை வைக்கவும்.",
+          c2t: "டெமோ உதவி", c2d: "தயாரிப்பு டெமோவின் போது சிக்கலா? இங்கே பதிவு செய்யவும்.",
+          c3t: "உத்தரவாதப் புகார்", c3d: "உங்கள் தயாரிப்புக்கான புகாரைப் பதிவு செய்யவும்.",
+          c4t: "ஆதரவு உதவியாளர்", c4d: "உடனடி சிக்கல் தீர்வு பெறவும் அல்லது அதிகாரியுடன் இணையவும்.",
+          c5t: "தயாரிப்பு & அம்சங்கள்", c5d: "எங்கள் தயாரிப்பு, அம்சங்கள் அல்லது விலை பற்றி எதையும் கேளுங்கள்.",
+          c6t: "டிரைவர் & யூட்டிலிட்டி", c6d: "உங்கள் மாடலுக்கான டிரைவர், யூட்டிலிட்டி மற்றும் கையேடுகளைப் பதிவிறக்கவும்.",
+          track: "உங்கள் கோரிக்கையைக் கண்காணிக்கவும்",
+          greeting: "வணக்கம்! நான் wepsol சேவை பாட். தொடங்க உங்கள் பிரிண்டர் மாடலைத் தேர்ந்தெடுக்கவும்.", loading: "ஏற்றுகிறது...", selectNext: "கீழே ஒரு விருப்பத்தைத் தேர்ந்தெடுக்கவும்:", selectModel: "பிரிண்டர் மாடல்", drpDefault: "-- தேர்ந்தெடுக்கவும் --", nextStep: "தொடரவும்", modelWait: "மாடல் தேர்வு அவசியம்.", watchVideo: "பயிற்சி வீடியோ", downloadFile: "ஆதாரங்களைப் பதிவிறக்கவும்", needExecutive: "அதிகாரியுடன் இணைக்கவும்", resolved: "சிக்கல் தீர்ந்தது", or: "அல்லது", formTitle: "நேரடி முகவரைத் தொடர்பு கொள்ளவும்", namePlaceholder: "முழு பெயர்", phonePlaceholder: "10 இலக்க மொபைல் எண்", startChatBtn: "அமர்வைத் தொடங்கு", chatInputPlaceholder: "செய்தி...", endBtn: "அரட்டையை முடி", rateExperience: "அமர்வு முடிந்தது. தயவுசெய்து மதிப்பிடுங்கள்:", agentConnected: "நேரடி அரட்டை இணைக்கப்பட்டது. ஒரு முகவர் விரைவில் வருவார்.", formError: "உங்கள் பெயர் மற்றும் சரியான 10 இலக்க மொபைல் எண்ணை உள்ளிடவும்.", userEnded: "நீங்கள் அரட்டையை முடித்தீர்கள். உங்கள் அனுபவத்தை மதிப்பிடவும்.", ratedMsg: "நன்றி! நீங்கள் {count} நட்சத்திரங்கள் அளித்தீர்கள்.", formCity: "நகரம்", formState: "மாநிலம்", formSerial: "வரிசை எண் (விரும்பினால்)", formNext: "விவரங்களைச் சமர்ப்பி", trackTitle: "டிக்கெட் நிலையைக் கண்காணி", invalidPhone: "மொபைல் எண் சரியாக 10 இலக்கங்கள் இருக்க வேண்டும்."
+      },
+      te: {
+          title: "మేము మీకు ఎలా సహాయం చేయగలము?", sub: "సరైన సహాయాన్ని త్వరగా పొందడానికి క్రింద ఒక ఎంపికను ఎంచుకోండి.",
+          c1t: "ఇన్‌స్టాలేషన్ సपోర్ట్", c1d: "మీ కొత్త wepsol ఉత్పత్తిని సెటప్ చేసి ఇన్‌స్టాల్ చేయమని అభ్యర్థించండి.",
+          c2t: "డెమో సపోర్ట్", c2d: "ఉత్పత్తి డెమో సమయంలో సమస్యా? ఇక్కడ నమోదు చేయండి.",
+          c3t: "వారంటీ ఫిర్యాదు", c3d: "మీ ఉత్పత్తులకు ఫిర్యాదును నమోదు చేయండి.",
+          c4t: "సపోర్ట్ అసిస్టెంట్", c4d: "తక్షణ పరిష్కారం పొందండి లేదా ఎగ్జిక్యూటివ్‌తో కనెక్ట్ అవ్వండి.",
+          c5t: "ఉత్పత్తి & ఫీచర్లు", c5d: "మా ఉత్పత్తులు, ఫీచర్లు లేదా ధర గురించి ఏదైనా అడగండి.",
+          c6t: "డ్రైవర్ & యుటిలిటీ", c6d: "మీ మోడల్ కోసం డ్రైవర్లు, యుటిలిటీలు మరియు మాన్యువల్‌లను డౌన్‌లోడ్ చేయండి.",
+          track: "మీ అభ్యర్థనను ట్రాక్ చేయండి",
+          greeting: "నమస్కారం! నేను wepsol సర్వీస్ బాట్. ప్రారంభించడానికి మీ ప్రింటర్ మోడల్‌ను ఎంచుకోండి.", loading: "లోడ్ అవుతోంది...", selectNext: "దయచేసి క్రింద ఒక ఎంపికను ఎంచుకోండి:", selectModel: "ప్రింటర్ మోడల్", drpDefault: "-- ఎంచుకోండి --", nextStep: "కొనసాగించు", modelWait: "మోడల్ ఎంపిక తప్పనిసరి.", watchVideo: "ట్యుటోరియల్ చూడండి", downloadFile: "వనరులను డౌన్‌లోడ్ చేయండి", needExecutive: "ఎగ్జిక్యూటివ్‌తో కనెక్ట్ అవ్వండి", resolved: "సమస్య పరిష్కారమైంది", or: "లేదా", formTitle: "లైవ్ ఏజెంట్‌ను సంప్రదించండి", namePlaceholder: "పూర్తి పేరు", phonePlaceholder: "10 అంకెల మొబైల్ నంబర్", startChatBtn: "సెషన్ ప్రారంభించు", chatInputPlaceholder: "సందేశం...", endBtn: "చాట్ ముగించు", rateExperience: "సెషన్ ముగిసింది. దయచేసి రేట్ చేయండి:", agentConnected: "లైవ్ చాట్ కనెక్ట్ అయింది. ఏజెంట్ త్వరలో వస్తారు.", formError: "దయచేసి మీ పేరు మరియు సరైన 10 అంకెల మొబైల్ నంబర్ నమోదు చేయండి.", userEnded: "మీరు చాట్ ముగించారు. మీ అనుభవాన్ని రేట్ చేయండి.", ratedMsg: "ధన్యవాదాలు! మీరు {count} స్టార్లు ఇచ్చారు.", formCity: "నగరం", formState: "రాష్ట్రం", formSerial: "సీరియల్ నంబర్ (ఐచ్ఛికం)", formNext: "వివరాలను సమర్పించు", trackTitle: "టికెట్ స్థితిని ట్రాక్ చేయండి", invalidPhone: "మొబైల్ నంబర్ ఖచ్చితంగా 10 అంకెలు ఉండాలి."
       }
     };
 
@@ -589,6 +631,7 @@
 
     window.onload = () => {
         trackPortalVisit('portal');
+        loadDriverLinks();
         const textToType = "WEPSOL";
         const typeElem = document.getElementById('typewriter-text');
         if(typeElem) {
@@ -639,7 +682,11 @@
         let c5t = document.getElementById('ui-card5-t'), c5d = document.getElementById('ui-card5-d');
         if(c5t && t.c5t) c5t.innerText = t.c5t;
         if(c5d && t.c5d) c5d.innerText = t.c5d;
+        let c6t = document.getElementById('ui-card6-t'), c6d = document.getElementById('ui-card6-d');
+        if(c6t && t.c6t) c6t.innerText = t.c6t;
+        if(c6d && t.c6d) c6d.innerText = t.c6d;
         document.getElementById('ui-track-btn').innerText = t.track;
+        let th = document.getElementById('ui-track-top'); if(th && t.track) th.innerText = t.track;
         
         document.getElementById('modelSelectLabel').innerText = t.selectModel;
         document.getElementById('drpDefault').innerText = t.drpDefault;
@@ -675,6 +722,58 @@
       hi: ["कौन सा बिलिंग प्रिंटर लूँ?", "BP 2100 के फीचर्स", "बारकोड स्कैनर के विकल्प", "BP Joy और BP Emerge में फर्क", "थर्मल प्रिंटर की कीमत"]
     };
     let askBusy = false, askHistory = [];
+
+    /* The card only appears once the admin has added at least one link, so a
+       customer never opens an empty downloads page. */
+    let driverLinks = [];
+    function loadDriverLinks() {
+        apiCall('drv_list', {}).then(r => {
+            driverLinks = r.items || [];
+            const card = document.getElementById('driverCard');
+            if(card) card.style.display = driverLinks.length ? '' : 'none';
+        }).catch(() => {});
+    }
+
+    function openDriverView() {
+        trackPortalVisit('driver');
+        const t = uiText[currentLang];
+        document.getElementById('landingPage').style.display = 'none';
+        document.getElementById('formPage').style.display = 'block';
+        document.getElementById('formTitle').innerText = (t.c6t || 'Driver & Utility');
+        window.scrollTo(0, 0);
+
+        const groups = {};
+        driverLinks.forEach(d => {
+            const k = d.model || 'All Models';
+            (groups[k] = groups[k] || []).push(d);
+        });
+
+        const icon = ty => ty === 'Utility' ? 'fa-screwdriver-wrench'
+                        : ty === 'Manual'  ? 'fa-book'
+                        : ty === 'Firmware'? 'fa-microchip' : 'fa-download';
+
+        let html = `<p style="color:var(--text-secondary); font-size:13.5px; margin:0 0 16px;">${escapeAsk(t.c6d || '')}</p>`;
+        Object.keys(groups).sort().forEach(model => {
+            html += `<div style="margin-bottom:18px;">
+                       <div style="font-weight:800; font-size:13px; color:var(--text-primary); margin-bottom:8px;">${escapeAsk(model)}</div>`;
+            groups[model].forEach(d => {
+                html += `<a href="${escapeAsk(d.url)}" target="_blank" rel="noopener noreferrer"
+                           style="display:flex; align-items:center; gap:12px; text-decoration:none;
+                                  border:1px solid #e3e8ef; border-radius:10px; padding:12px 14px; margin-bottom:9px; background:#fff;">
+                           <span style="width:36px; height:36px; border-radius:9px; background:#e8f0fe; color:#0b63ce;
+                                        display:flex; align-items:center; justify-content:center; flex:none;">
+                             <i class="fa-solid ${icon(d.type)}"></i></span>
+                           <span style="flex:1; min-width:0;">
+                             <span style="display:block; font-weight:700; font-size:13.5px; color:var(--text-primary);">${escapeAsk(d.title)}</span>
+                             <span style="display:block; font-size:11.5px; color:var(--text-secondary);">${escapeAsk(d.type)}${d.notes ? ' · ' + escapeAsk(d.notes) : ''}</span>
+                           </span>
+                           <i class="fa-solid fa-arrow-down" style="color:#0b63ce;"></i>
+                         </a>`;
+            });
+            html += '</div>';
+        });
+        document.getElementById('formContentArea').innerHTML = html;
+    }
 
     function openAskView() {
         trackPortalVisit('ask');
