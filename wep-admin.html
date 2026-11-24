@@ -571,6 +571,11 @@
               </div>
               <label>Customer ko dikhane wali line</label>
               <input type="text" id="setLogoNote" placeholder="e.g. Apna logo yahan se printer ke format me badal lijiye">
+              <label>Pendrive file ka naam</label>
+              <input type="text" id="setLogoFile" placeholder="LOGODBS.WBP">
+              <div style="font-size:11px; color:#8a94a6; margin-top:-6px;">
+                Printer pendrive par isi naam ki file dhoondta hai. Badal rahe hain to poora naam .WBP ke saath likhiye.
+              </div>
               <button class="btn" style="width:auto; margin:10px 0 0; padding:9px 18px; background:#e8117f;" onclick="saveSettings()">
                 <i class="fa-solid fa-floppy-disk"></i> Save
               </button>
@@ -3106,7 +3111,7 @@
   /* The portal and Code.gs ship together. If the deployed script reports a
      different version (or no version at all), it was saved but never
      redeployed - which shows up as "Unknown action" on newer features. */
-  const EXPECTED_SCRIPT_VERSION = "2026-11-20-sv6";
+  const EXPECTED_SCRIPT_VERSION = "2026-11-20-sv7";
 
   function checkBackendVersion() {
       let box = document.getElementById('backendWarn');
@@ -3477,6 +3482,7 @@
           const w = document.getElementById('setLogoW');   if(w) w.value = c.logoToolWidth || 448;
           const h = document.getElementById('setLogoH');   if(h) h.value = c.logoToolHeight || 326;
           const n = document.getElementById('setLogoNote');if(n) n.value = c.logoToolNote || '';
+          const fl = document.getElementById('setLogoFile'); if(fl) fl.value = c.logoToolFileName || 'LOGODBS.WBP';
       }).catch(() => {});
   }
 
@@ -3487,7 +3493,8 @@
           logoToolEnabled: document.getElementById('setLogoOn').checked ? 'yes' : 'no',
           logoToolWidth:   document.getElementById('setLogoW').value,
           logoToolHeight:  document.getElementById('setLogoH').value,
-          logoToolNote:    document.getElementById('setLogoNote').value.trim()
+          logoToolNote:    document.getElementById('setLogoNote').value.trim(),
+          logoToolFileName: (document.getElementById('setLogoFile').value.trim() || 'LOGODBS.WBP')
       }}).then(c => {
           box.innerHTML = `<span style="color:#00875a; font-weight:600;">Saved — Logo Converter ${String(c.logoToolEnabled)==='yes'?'ab customer ko dikhega':'chhupa diya gaya'}.</span>`;
       }).catch(e => { box.innerHTML = `<span style="color:#d63031;">${escapeHtml(e.message)}</span>`; });
