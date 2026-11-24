@@ -440,7 +440,7 @@
   <div id="formPage" class="view-wrapper" style="display:none;">
       <div class="form-container">
           <div class="form-header">
-              <i class="fa-solid fa-arrow-left" onclick="goHome()" title="Go Back"></i>
+              <i class="fa-solid fa-arrow-left" onclick="goBackOne()" title="Go Back"></i>
               <h2 id="formTitle">Form Title</h2>
           </div>
           <div id="formContentArea">
@@ -809,7 +809,20 @@
        in the right places by itself. */
     const UOMS = ['PCS','NOS','KGS','GMS','LTR','MLT','PAC','BTL','DOZ','BOX','MTR','SET'];
 
-    function dbPage(title, crumbs, body) {
+    /* The back arrow used to drop the customer all the way to the home
+       screen from four levels down. It now walks back one step at a time. */
+    let navStack = [];
+
+    function goBackOne() {
+        navStack.pop();                          // the page we are on
+        const prev = navStack.pop();             // the one before it
+        if(typeof prev === 'function') { prev(); return; }
+        navStack = [];
+        goHome();
+    }
+
+    function dbPage(title, crumbs, body, self) {
+        if(self) navStack.push(self);
         document.getElementById('landingPage').style.display = 'none';
         document.getElementById('formPage').style.display = 'block';
         document.getElementById('formTitle').innerText = title;
@@ -830,6 +843,7 @@
 
     function openDbView() {
         trackPortalVisit('logo');
+        navStack = [];
         dbPage('Database Creation', [['Database Creation', '']], `
           <p style="color:var(--text-secondary); font-size:13.5px; margin:0 0 18px;">
             Create the files your machine needs, ready to copy onto a pendrive.
@@ -841,7 +855,7 @@
                      'Items, customers and suppliers for Retail or F&amp;B.', 'openDbPos()')}
             ${dbTile('fa-print', '#eaf7f0', '#00875a', 'BP Database',
                      'Item list for BP billing printers.', 'openDbBp()')}
-          </div>`);
+          </div>`, openDbView);
     }
 
     function openDbPos() {
@@ -855,7 +869,7 @@
                      'Shops and stores — items with MRP, stock and barcodes.', "openDbApp('retail')")}
             ${dbTile('fa-utensils', '#fff4e5', '#e17055', 'F&amp;B Application',
                      'Restaurants and cafes — menu items, rates and kitchen codes.', "openDbApp('fnb')")}
-          </div>`);
+          </div>`, openDbPos);
     }
 
     function openDbApp(app) {
@@ -874,7 +888,7 @@
                      'Your regular customers with contact and GST details.', '', true)}
             ${dbTile('fa-truck', '#eaf7f0', '#00875a', 'Supplier Database',
                      'Your suppliers with contact and GST details.', '', true)}
-          </div>`);
+          </div>`, () => openDbApp(app));
     }
 
     function openDbBp() {
@@ -886,7 +900,7 @@
               The BP billing printer item format is being added. Until then, use
               <a onclick="openDbPos()" style="color:var(--accent-blue); cursor:pointer; font-weight:600;">POS Application Database</a>.
             </p>
-          </div>`);
+          </div>`, openDbBp);
     }
 
     /* The column order below is the file the application expects. It is kept
@@ -957,7 +971,7 @@
     function dbStore() { try { localStorage.setItem(dbKey(), JSON.stringify(dbRows)); } catch(e) {} }
 
     function openItemBuilder(app) {
-        dbApp = app; dbLoad();
+        dbApp = app; dbLoad(); itEditing = -1;
         const sp = DB_SPEC[app];
         const field = (f, cls) => {
             const [k, col, label, type] = f;
@@ -978,9 +992,13 @@
             <b>More details</b> only when you need it.
           </p>
 
-          <div class="it-bar">
+          <div class="it-bar" id="itBar">
             ${sp.required.map(f => field(f, 'req')).join('')}
-            <button class="it-add" onclick="itAdd()"><i class="fa-solid fa-plus"></i> Add</button>
+            <div style="display:flex; gap:8px;">
+              <button class="it-add" id="itAddBtn" onclick="itAdd()"><i class="fa-solid fa-plus"></i> Add</button>
+              <button class="it-add" id="itCancelBtn" onclick="itCancelEdit()"
+                      style="display:none; background:#fff; color:var(--text-secondary); border:1.5px solid #d7dee8;">Cancel</button>
+            </div>
           </div>
 
           <button class="it-more" onclick="itToggleMore()">
@@ -990,15 +1008,20 @@
             ${sp.optional.map(f => field(f, 'opt')).join('')}
           </div>
 
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;
+                      flex-wrap:wrap; margin-bottom:9px;">
             <b style="font-size:13.5px;">Items added: <span id="itCount">0</span></b>
-            <label style="font-size:12px; color:var(--text-secondary); cursor:pointer;">
+            <div>
               <input type="file" id="itCsv" accept=".csv" style="display:none;" onchange="itImport(event)">
-              <span onclick="document.getElementById('itCsv').click()"
-                    style="color:var(--accent-blue); font-weight:600;">
-                <i class="fa-solid fa-file-import"></i> Load an existing CSV
-              </span>
-            </label>
+              <button class="it-btn it-ghost" style="padding:9px 15px; font-size:12.5px;"
+                      onclick="document.getElementById('itCsv').click()">
+                <i class="fa-solid fa-file-import"></i> Upload existing CSV
+              </button>
+            </div>
+          </div>
+          <div style="font-size:11.5px; color:var(--text-secondary); margin-bottom:9px;">
+            Already have a file? Upload it to see every item here, change what you need, and export again.
+            Tap any row to edit it.
           </div>
 
           <div style="border:1px solid #e3e8ef; border-radius:11px; overflow:auto; max-height:420px; background:#fff;">
@@ -1010,7 +1033,7 @@
               <i class="fa-solid fa-file-csv"></i> Export CSV
             </button>
             <button class="it-btn it-danger" onclick="itClear()">Clear all</button>
-          </div>`);
+          </div>`, () => openItemBuilder(app));
         itRender();
     }
 
@@ -1022,6 +1045,9 @@
     }
 
     function itVal(k) { const e = document.getElementById('it_' + k); return e ? String(e.value).trim() : ''; }
+    function itSet(k, v) { const e = document.getElementById('it_' + k); if(e) e.value = v == null ? '' : v; }
+
+    let itEditing = -1;      // -1 means we are adding a new item
 
     function itAdd() {
         const sp = DB_SPEC[dbApp];
@@ -1031,14 +1057,58 @@
         const miss = sp.required.filter(f => !row[f[0]]).map(f => f[2]);
         if(miss.length) return alert('Please fill: ' + miss.join(', '));
 
-        dbRows.push(row); dbStore(); itRender();
-        /* Keep the unit and the optional details - the next item is usually
-           similar, and retyping them is what makes bulk entry slow. */
-        for(const [k,,, type] of sp.required) if(type !== 'uom') document.getElementById('it_' + k).value = '';
+        if(itEditing > -1) { dbRows[itEditing] = row; itCancelEdit(true); }
+        else {
+            dbRows.push(row);
+            /* Keep the unit and the optional details - the next item is usually
+               similar, and retyping them is what makes bulk entry slow. */
+            for(const [k,,, type] of sp.required) if(type !== 'uom') itSet(k, '');
+        }
+        dbStore(); itRender();
         document.getElementById('it_' + sp.required[0][0]).focus();
     }
 
-    function itRemove(i) { dbRows.splice(i, 1); dbStore(); itRender(); }
+    /* Puts a saved item back into the form so it can be corrected, rather
+       than deleted and typed again. */
+    function itEdit(i) {
+        const sp = DB_SPEC[dbApp], r = dbRows[i];
+        if(!r) return;
+        itEditing = i;
+        for(const [k] of sp.required.concat(sp.optional)) itSet(k, r[k]);
+
+        // show the optional block if this item uses any of it
+        const used = sp.optional.some(f => String(r[f[0]] || '').trim());
+        const opt = document.getElementById('itOpt');
+        if(used && opt.style.display === 'none') itToggleMore();
+
+        document.getElementById('itAddBtn').innerHTML = '<i class="fa-solid fa-check"></i> Update';
+        document.getElementById('itCancelBtn').style.display = '';
+        document.getElementById('itBar').style.background = '#fff6e8';
+        document.getElementById('itBar').style.borderColor = '#f0c38a';
+        itRender();
+        document.getElementById('itBar').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        document.getElementById('it_' + sp.required[0][0]).focus();
+    }
+
+    function itCancelEdit(keepValues) {
+        const sp = DB_SPEC[dbApp];
+        itEditing = -1;
+        if(!keepValues) for(const [k,,, type] of sp.required.concat(sp.optional))
+            if(type !== 'uom') itSet(k, '');
+        document.getElementById('itAddBtn').innerHTML = '<i class="fa-solid fa-plus"></i> Add';
+        document.getElementById('itCancelBtn').style.display = 'none';
+        document.getElementById('itBar').style.background = '';
+        document.getElementById('itBar').style.borderColor = '';
+        itRender();
+    }
+
+    function itRemove(i, ev) {
+        if(ev) ev.stopPropagation();
+        dbRows.splice(i, 1);
+        if(itEditing === i) itCancelEdit();
+        else if(itEditing > i) itEditing--;
+        dbStore(); itRender();
+    }
 
     function itRender() {
         const sp = DB_SPEC[dbApp];
@@ -1052,17 +1122,21 @@
         }
         const cols = sp.required.concat(sp.optional.slice(0, 2));
         t.innerHTML = `<thead><tr><th style="width:44px;">#</th>
-            ${cols.map(c => `<th>${c[2]}</th>`).join('')}<th style="width:44px;"></th></tr></thead><tbody>` +
-          dbRows.map((r, i) => `<tr><td style="color:var(--text-secondary);">${i + 1}</td>
+            ${cols.map(c => `<th>${c[2]}</th>`).join('')}<th style="width:78px;"></th></tr></thead><tbody>` +
+          dbRows.map((r, i) => `<tr onclick="itEdit(${i})" style="cursor:pointer;${i === itEditing ? 'background:#fff6e8;' : ''}">
+            <td style="color:var(--text-secondary);">${i + 1}</td>
             ${cols.map(c => `<td>${escapeAsk(r[c[0]] || '')}</td>`).join('')}
-            <td><button class="it-del" onclick="itRemove(${i})" title="Remove">
-              <i class="fa-solid fa-trash"></i></button></td></tr>`).join('') + '</tbody>';
+            <td style="white-space:nowrap;">
+              <button class="it-del" style="color:var(--accent-blue);" onclick="itEdit(${i})" title="Edit">
+                <i class="fa-solid fa-pen"></i></button>
+              <button class="it-del" onclick="itRemove(${i}, event)" title="Remove">
+                <i class="fa-solid fa-trash"></i></button></td></tr>`).join('') + '</tbody>';
     }
 
     function itClear() {
         if(!dbRows.length) return;
         if(!confirm('Remove all ' + dbRows.length + ' items?')) return;
-        dbRows = []; dbStore(); itRender();
+        dbRows = []; itCancelEdit(); dbStore(); itRender();
     }
 
     /* Writes the columns in the order the application expects, leaving every
@@ -1147,6 +1221,7 @@
 
     function openLogoView() {
         trackPortalVisit('logo');
+        navStack.push(openLogoView);
         document.getElementById('landingPage').style.display = 'none';
         document.getElementById('formPage').style.display = 'block';
         document.querySelector('.form-container').classList.add('db-wide');
@@ -1379,6 +1454,7 @@
     }
 
     function openBlockView(i) {
+        navStack = [];
         document.querySelector('.form-container').classList.remove('db-wide');
         const b = (window.__blocks || [])[i];
         if(!b) return;
@@ -1413,6 +1489,7 @@
     }
 
     function openDriverView() {
+        navStack = [];
         document.querySelector('.form-container').classList.remove('db-wide');
         trackPortalVisit('driver');
         const t = uiText[currentLang];
@@ -1455,6 +1532,7 @@
     }
 
     function openAskView() {
+        navStack = [];
         document.querySelector('.form-container').classList.remove('db-wide');
         trackPortalVisit('ask');
         let hi = (currentLang === 'hi');
@@ -1571,6 +1649,7 @@
     }
 
     function openFormView(type) {
+        navStack = [];
         document.querySelector('.form-container').classList.remove('db-wide');
         trackPortalVisit(type === 'install' ? 'install'
                        : type === 'demo' ? 'demo'
