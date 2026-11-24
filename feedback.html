@@ -4,6 +4,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WeP Service &amp; Support — Regional Feedback Portal</title>
+  <meta name="description" content="Regional Service, ASP Coverage, Spare Parts, and Support Improvement Feedback Portal for WeP Solutions." />
+  <link rel="icon" type="image/png" href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdeFo6dKT8cqYERzmuuHQ2N50akaaBtfrZHJtQvpOOmg&s" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -631,6 +633,19 @@
     .btn-submit:hover { background: var(--brand-dark); }
     .btn-submit:disabled { background: #94a3b8; cursor: not-allowed; }
 
+    /* Error Toast */
+    .err-banner {
+      display: none;
+      margin: 0 32px 18px;
+      padding: 11px 14px;
+      border-radius: 6px;
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      color: #b91c1c;
+      font-size: 13px;
+      font-weight: 500;
+    }
+
     /* Success Receipt Screen */
     .receipt-view {
       display: none;
@@ -736,6 +751,7 @@
       .side-panel h1 { font-size: 17px; }
       .form-section { padding: 20px 16px; }
       .form-footer { padding: 16px; }
+      .err-banner { margin: 0 16px 14px; }
       .grid-2, .chip-grid { grid-template-columns: 1fr; gap: 14px; }
       .field { margin-bottom: 14px; }
       input[type="text"], input[type="tel"], select, textarea, .drawer-input { font-size: 16px !important; }
@@ -1106,7 +1122,6 @@
                 </div>
               </div>
 
-              <!-- NEW: Warranty Complaint Payout -->
               <div class="imp-row" data-field="fixPayout">
                 <label class="imp-trigger">
                   <input type="checkbox" value="Payout for Warranty Complaints" />
@@ -1143,6 +1158,8 @@
           </div>
         </div>
 
+        <div class="err-banner" id="errBanner"></div>
+
         <!-- Submit Footer -->
         <div class="form-footer">
           <span class="footer-hint" id="fHint">Fields marked with * are mandatory.</span>
@@ -1168,8 +1185,11 @@
   </main>
 
   <script>
-    // STEP: Paste your Google Apps Script Web App URL here before deploying to Vercel
-    const APPS_SCRIPT_URL = "PASTE_YOUR_WEB_APP_URL_HERE";
+    // =========================================================================
+    // CONFIGURATION: Paste your Google Apps Script Web App URL below
+    // (Deploy -> Manage Deployments -> Web App URL ending in /exec)
+    // =========================================================================
+    const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzfTc2wp1W0PDqRySsABq4ZJIk7OctljgqKcgF1uo4y4yh25MqX_N33QBEWCTBEo_G-/exec";
 
     const TEXT = {
       en: {
@@ -1235,7 +1255,8 @@
         btnCopied: "Copied!",
         errMobile: "Please enter a valid 10-digit mobile number.",
         errRequired: "Please fill all required fields marked with *.",
-        errUrl: "Apps Script Web App URL is not configured yet in index.html."
+        errUrl: "Apps Script Web App URL is not set in index.html. Please paste your /exec URL.",
+        errNetwork: "Could not submit right now. Please check your internet connection and try again."
       },
       hi: {
         navDept: "सर्विस एवं सपोर्ट ऑपरेशंस",
@@ -1300,7 +1321,8 @@
         btnCopied: "कॉपी हो गया!",
         errMobile: "कृपया 10 अंकों का सही मोबाइल नंबर दर्ज करें।",
         errRequired: "कृपया * चिह्नित सभी अनिवार्य फ़ील्ड भरें।",
-        errUrl: "index.html में Apps Script Web App URL सेट नहीं किया गया है।"
+        errUrl: "index.html में Apps Script Web App URL सेट नहीं है। कृपया अपना /exec URL पेस्ट करें।",
+        errNetwork: "सबमिट करने में समस्या आई। कृपया इंटरनेट कनेक्शन जांचें और पुनः प्रयास करें।"
       }
     };
 
@@ -1353,19 +1375,28 @@
       });
     }
 
-    // Keep mobile strictly digits
+    function showError(msg) {
+      const box = document.getElementById('errBanner');
+      box.textContent = msg;
+      box.style.display = 'block';
+    }
+
+    function clearError() {
+      const box = document.getElementById('errBanner');
+      box.style.display = 'none';
+      box.textContent = '';
+    }
+
     document.getElementById('mobile').addEventListener('input', function() {
       this.value = this.value.replace(/\D/g, '').slice(0, 10);
     });
 
-    // Auto-select Zone on State change
     document.getElementById('state').addEventListener('change', function() {
       const zone = this.options[this.selectedIndex].getAttribute('data-zone');
       if (zone) document.getElementById('region').value = zone;
       updateProgress();
     });
 
-    // Smart product chip toggle (No Issues vs Specific Products)
     const noIssueCb = document.getElementById('noProdIssue');
     document.querySelectorAll('#productsGroup input[type="checkbox"]').forEach(cb => {
       cb.addEventListener('change', function() {
@@ -1385,7 +1416,6 @@
       });
     });
 
-    // Improvement row accordion drawer
     document.querySelectorAll('.imp-trigger input[type="checkbox"]').forEach(cb => {
       cb.addEventListener('change', function() {
         const row = this.closest('.imp-row');
@@ -1399,6 +1429,7 @@
     });
 
     function updateProgress() {
+      clearError();
       const s1Done = Boolean(
         document.getElementById('submittedBy').value &&
         document.getElementById('fullName').value.trim() &&
@@ -1492,18 +1523,24 @@
 
     document.getElementById('feedbackForm').addEventListener('submit', async function(e) {
       e.preventDefault();
+      clearError();
       const t = TEXT[lang];
       const mobileVal = document.getElementById('mobile').value.trim();
 
       if (!/^[0-9]{10}$/.test(mobileVal)) {
-        alert(t.errMobile);
+        showError(t.errMobile);
         document.getElementById('mobile').focus();
         return;
       }
 
       if (!this.checkValidity()) {
-        alert(t.errRequired);
+        showError(t.errRequired);
         this.reportValidity();
+        return;
+      }
+
+      if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('PASTE_YOUR_WEB_APP_URL')) {
+        showError(t.errUrl);
         return;
       }
 
@@ -1537,45 +1574,27 @@
         generalFeedback: document.getElementById('generalFeedback').value.trim()
       };
 
-      // Mode 1: Running directly inside Google Apps Script
-      if (typeof google !== 'undefined' && google.script && google.script.run) {
-        google.script.run
-          .withSuccessHandler(function(res) {
-            showSuccess(res && res.refId ? res.refId : 'SUBMITTED');
-            btn.disabled = false;
-            btn.textContent = t.submitBtn;
-          })
-          .withFailureHandler(function(err) {
-            alert('Submission Error: ' + err.message);
-            btn.disabled = false;
-            btn.textContent = t.submitBtn;
-          })
-          .submitFeedback(payload);
-        return;
-      }
-
-      // Mode 2: Hosted on Vercel (or any external web host)
-      if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('PASTE_YOUR_WEB_APP_URL')) {
-        alert(t.errUrl);
-        btn.disabled = false;
-        btn.textContent = t.submitBtn;
-        return;
-      }
-
       try {
         const res = await fetch(APPS_SCRIPT_URL, {
           method: 'POST',
+          redirect: 'follow',
           headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
-        const data = await res.json();
+
+        const text = await res.text();
+        let data = {};
+        try { data = JSON.parse(text); } catch (_) {}
+
         if (data && data.status === 'success') {
           showSuccess(data.refId);
+        } else if (res.ok) {
+          showSuccess('WEP-SRV-SAVED');
         } else {
-          throw new Error((data && data.message) || 'Unknown server error');
+          throw new Error((data && data.message) || t.errNetwork);
         }
       } catch (err) {
-        alert('Submission Error: ' + err.message);
+        showError(err.message || t.errNetwork);
       } finally {
         btn.disabled = false;
         btn.textContent = t.submitBtn;
