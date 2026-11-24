@@ -764,7 +764,7 @@
         document.getElementById('formContentArea').innerHTML = `
           ${logoCfg.note ? `<p style="color:var(--text-secondary); font-size:13.5px; margin:0 0 14px;">${escapeAsk(logoCfg.note)}</p>` : ''}
           <div class="pro-input-group">
-            <label>1. Apni logo image chuniye</label>
+            <label>1. Choose your Logo</label>
             <input type="file" id="lgFile" accept="image/*" onchange="lgPick(event)">
           </div>
           <div id="lgWork" style="display:none;">
@@ -780,23 +780,23 @@
             </div>
             <label style="font-size:12.5px; color:var(--text-secondary); display:block; margin-bottom:4px;">
               <input type="checkbox" id="lgRatio" checked onchange="lgDraw()" style="width:auto; margin-right:6px;">
-              Shape na bigde — logo ko isi size ke andar fit karein
+              Don't chnage the Width and Height (Above is default size)
             </label>
             <div style="font-size:11.5px; color:var(--text-secondary); margin-bottom:12px;">
-              File hamesha <b id="lgTarget">${logoCfg.w} × ${logoCfg.h}</b> px ki hi banegi, aap chahe koi bhi image dein.
+              File Always <b id="lgTarget">${logoCfg.w} × ${logoCfg.h}</b> px
             </div>
 
             <div class="pro-input-group">
-              <label>2. Kitna dark (threshold): <b id="lgTVal">128</b></label>
+              <label>2. Dark (threshold): <b id="lgTVal">128</b></label>
               <input type="range" id="lgT" min="16" max="240" value="128" oninput="lgDraw()" style="width:100%;">
-              <div style="font-size:11.5px; color:var(--text-secondary);">Slider ghumakar dekhiye — jahan logo saaf dikhe wahi sahi hai.</div>
+              <div style="font-size:11.5px; color:var(--text-secondary);">Slider for logo clearity.</div>
             </div>
             <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:14px; font-size:12.5px;">
-              <label><input type="checkbox" id="lgInv" onchange="lgDraw()" style="width:auto; margin-right:6px;">Ulta karein (black ⇄ white)</label>
+              <label><input type="checkbox" id="lgInv" onchange="lgDraw()" style="width:auto; margin-right:6px;">For black ⇄ white </label>
               <label><input type="checkbox" id="lgDith" onchange="lgDraw()" style="width:auto; margin-right:6px;">Photo mode (dithering)</label>
             </div>
 
-            <label style="font-weight:700; font-size:13px;">Printer par aisa chhapega:</label>
+            <label style="font-weight:700; font-size:13px;">On printer print like this</label>
             <div style="border:1px solid #e3e8ef; border-radius:10px; padding:12px; background:#fff; overflow:auto; margin:7px 0 14px;">
               <canvas id="lgCanvas" style="max-width:100%; image-rendering:pixelated; display:block; margin:0 auto;"></canvas>
             </div>
@@ -805,7 +805,7 @@
               <button type="button" onclick="lgReset()"
                       style="background:#fff; border:1px solid #d7dee8; border-radius:8px; padding:7px 13px;
                              font-size:12px; cursor:pointer; color:var(--accent-blue); font-weight:600;">
-                Default size par wapas (${logoCfg.w} × ${logoCfg.h})
+                Default size par (${logoCfg.w} × ${logoCfg.h})
               </button>
             </div>
             <button class="pro-submit-btn" onclick="lgDownload()">
