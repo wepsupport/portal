@@ -26,6 +26,55 @@
     .wepsol-sub { font-size: 14px; color: #2c3e50; font-weight: 600; margin-bottom: 40px; letter-spacing: 1px; }
     .landing-card { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); text-align: center; width: 100%; max-width: 400px; margin-bottom: 12px; cursor: pointer; transition: transform 0.2s; border-top: 8px solid #ccc; }
     .landing-card:hover { transform: translateY(-5px); } .card-pw { border-top-color: var(--brand); } .card-ct { border-top-color: var(--brand2); } .card-wcr { border-top-color: var(--brand3); } .card-dash { border-top-color: #2c3e50; }
+
+    /* ---------- Admin shell: standing navigation, calm work area ---------- */
+    #appShell { display: flex; min-height: 100vh; }
+    #sideNav { width: 236px; flex: none; background: #121a2b; color: #cfd6e4;
+               display: flex; flex-direction: column; position: sticky; top: 0; height: 100vh; }
+    .sn-brand { display: flex; align-items: center; gap: 11px; padding: 20px 18px 18px; }
+    .sn-logo { width: 34px; height: 34px; border-radius: 9px; background: linear-gradient(135deg,#e8117f,#ff6b9d);
+               color: #fff; font-weight: 800; font-size: 17px; display: flex; align-items: center; justify-content: center; }
+    .sn-name { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: .2px; }
+    .sn-sub  { font-size: 10.5px; color: #7c8aa5; margin-top: 1px; }
+    .sn-items { flex: 1; padding: 6px 10px; overflow-y: auto; }
+    .sn-item { display: flex; align-items: center; gap: 11px; padding: 10px 12px; margin-bottom: 3px;
+               border-radius: 8px; font-size: 13.5px; color: #aeb9cd; cursor: pointer; text-decoration: none;
+               transition: background .14s, color .14s; }
+    .sn-item i { width: 17px; text-align: center; font-size: 13px; }
+    .sn-item:hover { background: #1c2740; color: #fff; }
+    .sn-item.active { background: #e8117f; color: #fff; font-weight: 600; }
+    .sn-foot { padding: 14px 16px 18px; border-top: 1px solid #1f2a42; }
+    .sn-user { font-size: 11px; color: #7c8aa5; margin-bottom: 9px; }
+    .sn-logout { width: 100%; background: #1c2740; color: #cfd6e4; border: none; padding: 8px;
+                 border-radius: 7px; font-size: 12px; cursor: pointer; }
+    .sn-logout:hover { background: #26324f; }
+
+    /* The floating chat button sits bottom-right; leaving room below the content
+       stops it covering the last row of buttons on a long form. */
+    #mainArea { flex: 1; min-width: 0; background: #f4f6fa; padding: 22px 26px 96px; }
+    /* Inside the shell the old boxed look fights the layout - flatten it. */
+    #mainArea .container { max-width: 100%; margin: 0; border-radius: 12px; border-top: none;
+                           box-shadow: 0 1px 3px rgba(16,24,40,.07), 0 1px 2px rgba(16,24,40,.04); }
+    /* The dark title bar duplicated the rail. A plain page heading reads
+       better and gives the content back its space. */
+    #mainArea .header-nav { background: transparent !important; border-radius: 0;
+      padding: 0 0 14px !important; border-bottom: 1px solid #e7ebf1; margin-bottom: 16px; }
+    #mainArea .header-nav h3 { color: #101828 !important; font-size: 20px; letter-spacing: -.3px; }
+    #mainArea .header-nav .back-btn { display: none; }
+    #mainArea .container { background: transparent; box-shadow: none; }
+    #mainArea .content { background: transparent !important; padding: 0 !important; }
+    #mainArea .tabs { border-bottom: 1px solid #e7ebf1; margin-bottom: 16px; }
+    #mainArea .card, #mainArea .stat-card, #mainArea .chart-container {
+      border-radius: 11px; box-shadow: 0 1px 3px rgba(16,24,40,.06); border: 1px solid #e7ebf1; }
+    #mainArea .stat-card h3 { font-size: 27px; letter-spacing: -.5px; }
+    #mainArea .stat-card p { letter-spacing: .4px; }
+    @media (max-width: 900px) {
+      #appShell { flex-direction: column; }
+      #sideNav { width: 100%; height: auto; position: static; flex-direction: row; align-items: center; overflow-x: auto; }
+      .sn-brand { padding: 12px 14px; } .sn-items { display: flex; padding: 8px; }
+      .sn-item span { display: none; } .sn-foot { display: none; }
+      #mainArea { padding: 14px; }
+    }
     .container { max-width: 900px; background: #fff; margin: auto; border-radius: 8px; border-top: 5px solid var(--brand); box-shadow: 0 4px 15px rgba(0,0,0,0.1); } .container-ct { border-top-color: var(--brand2); } .container-wcr { border-top-color: var(--brand3); } .container-dash { border-top-color: #2c3e50; }
     /* Reports and dashboards are read across, not filled in, so they get the
        whole screen. Entry forms stay narrow - a 1700px-wide text field is
@@ -229,6 +278,28 @@
   </div>
 </div>
 
+<!-- A single standing navigation rail. Before this, every screen was reached
+     by going back to a menu first, which is three clicks for a two-click job. -->
+<div id="appShell" style="display:none;">
+  <aside id="sideNav">
+    <div class="sn-brand">
+      <div class="sn-logo">W</div>
+      <div><div class="sn-name">WeP Admin</div><div class="sn-sub">Service Portal</div></div>
+    </div>
+    <nav class="sn-items" id="snItems">
+      <a class="sn-item" data-go="dash"    onclick="navGo('dash')"><i class="fa-solid fa-chart-line"></i><span>Dashboard</span></a>
+      <a class="sn-item" data-go="ct"      onclick="navGo('ct')"><i class="fa-solid fa-phone"></i><span>Call Tracking</span></a>
+      <a class="sn-item" data-go="pw"      onclick="navGo('pw')"><i class="fa-solid fa-screwdriver-wrench"></i><span>Post Warranty</span></a>
+      <a class="sn-item" data-go="wcr"     onclick="navGo('wcr')"><i class="fa-solid fa-recycle"></i><span>WCR Defective</span></a>
+      <a class="sn-item" data-go="quality" id="snQuality" style="display:none;" onclick="navGo('quality')"><i class="fa-solid fa-clipboard-check"></i><span>Quality</span></a>
+      <a class="sn-item" data-go="home"    onclick="navGo('home')"><i class="fa-solid fa-grip"></i><span>All Sections</span></a>
+    </nav>
+    <div class="sn-foot">
+      <div class="sn-user" id="snUser">Logged in</div>
+      <button class="sn-logout" onclick="location.reload()"><i class="fa-solid fa-right-from-bracket"></i> Sign out</button>
+    </div>
+  </aside>
+  <main id="mainArea">
 <div id="landingScreen" style="display:none;">
   <div class="wepsol-logo">WEPSOL</div><div class="wepsol-sub">SERVICE MANAGEMENT PORTAL</div>
   <div class="landing-card card-dash" onclick="openPortal('dash'); loadDashboard();"><h3 style="color: #2c3e50; margin: 0;">📊 Main Dashboard</h3></div>
@@ -428,6 +499,46 @@
                 <button class="btn btn-dark" style="width:auto; margin:0; padding:9px 16px;" onclick="drvRefresh()">Refresh</button>
               </div>
               <div id="drvList" style="margin-top:12px;"></div>
+            </div>
+
+            <!-- Anything extra you want in front of customers: a feedback form,
+                 a quiz, a campaign page. Paste a link, switch it on. -->
+            <div class="card" style="margin-top:16px;">
+              <h3 style="margin:0 0 4px;"><i class="fa-solid fa-shapes" style="color:#6c5ce7;"></i> Extra blocks on the Customer Portal</h3>
+              <div style="font-size:11.5px; color:#636e72; margin-bottom:10px;">
+                Feedback form, quiz, offer page — koi bhi link. On karte hi customer portal par alag card
+                ban jata hai aur page portal ke andar hi khul jata hai. Off karte hi gayab.
+              </div>
+              <div class="grid">
+                <div><label>Block name</label><input type="text" id="blkTitle" placeholder="e.g. Service Feedback"></div>
+                <div><label>One line below the name</label><input type="text" id="blkSub" placeholder="e.g. 1 minute me apna feedback dijiye"></div>
+              </div>
+              <div class="grid">
+                <div><label>Icon</label>
+                  <select id="blkIcon">
+                    <option value="fa-star">⭐ Feedback / rating</option>
+                    <option value="fa-clipboard-question">📝 Quiz / survey</option>
+                    <option value="fa-gift">🎁 Offer / campaign</option>
+                    <option value="fa-circle-info">ℹ️ Information</option>
+                    <option value="fa-calendar-check">📅 Booking / event</option>
+                  </select>
+                </div>
+                <div><label>Kaise khule</label>
+                  <select id="blkOpen">
+                    <option value="embed">Portal ke andar (recommended)</option>
+                    <option value="newtab">Nayi tab me</option>
+                  </select>
+                </div>
+              </div>
+              <label>Link</label>
+              <input type="text" id="blkUrl" placeholder="https://… (Google Form, quiz portal, koi bhi page)">
+              <div style="display:flex; gap:9px; flex-wrap:wrap; margin-top:10px;">
+                <button class="btn" style="width:auto; margin:0; padding:9px 18px; background:#6c5ce7;" onclick="blkAdd()">
+                  <i class="fa-solid fa-plus"></i> Add block
+                </button>
+                <button class="btn btn-dark" style="width:auto; margin:0; padding:9px 16px;" onclick="blkRefresh()">Refresh</button>
+              </div>
+              <div id="blkList" style="margin-top:12px;"></div>
             </div>
 
             <div style="background:#f8f9fa; border:1px solid #dcdde1; border-radius:8px; padding:13px;">
@@ -820,6 +931,9 @@
   </div>
 </div>
 
+  </main>
+</div>
+
 <canvas id="barcodeCanvas" style="display:none;"></canvas>
 <div class="admin-chat-widget"><button class="chat-btn" onclick="toggleChatPanel()"><i class="fa-solid fa-comment-dots"></i><div class="notification-badge" id="chatBadge">0</div></button></div>
 <div class="chat-panel" id="chatPanel">
@@ -834,7 +948,26 @@
 <script>
   // ===================== GITHUB API CONFIGURATION =====================
   // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-  const API_URL = "https://script.google.com/macros/s/AKfycbwVT19WubM1ThkCkw-5y7SMXJhOJg37stEM2j_0dCFSGToeVfRsIY-kIgJITAxlmNs5/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbzT8B12seBbkD90rKGFQSgqQV0aanv98hjoCrN245xK0_JKSfFDM1zqx6FUaHAVLuPi/exec";
+
+
+  /* The rail replaces the old menu-first navigation, and keeps the current
+     screen marked so it is always clear where you are. */
+  function navGo(where) {
+      openPortal(where);
+      if(where === 'dash') { try { loadDashboard(); } catch(e) {} }
+      document.querySelectorAll('.sn-item').forEach(a =>
+          a.classList.toggle('active', a.getAttribute('data-go') === where));
+  }
+
+  function showShell(show) {
+      const sh = document.getElementById('appShell');
+      if(sh) sh.style.display = show ? 'flex' : 'none';
+      const u = document.getElementById('snUser');
+      if(u && typeof loggedInUser !== 'undefined' && loggedInUser) u.innerText = 'Logged in as ' + loggedInUser;
+      const q = document.getElementById('snQuality');
+      if(q) q.style.display = (typeof isMainAdmin === 'function' && isMainAdmin()) ? 'flex' : 'none';
+  }
 
   async function apiCall(action, params = {}) {
       try {
@@ -863,6 +996,12 @@
       return obj;
   }
   // ====================================================================
+
+  /* If a chart library fails to load, the numbers and tables must still work.
+     A harmless stand-in keeps one blocked CDN from taking the page down. */
+  if (typeof Chart === 'undefined') {
+    window.Chart = function () { this.destroy = function () {}; this.update = function () {}; this.data = { labels: [] }; };
+  }
 
   /* If the maps library is blocked or slow, the rest of the admin must still
      work - an unguarded call here used to kill the whole script. */
@@ -1036,6 +1175,7 @@
       
       loggedInUser = u;
       document.getElementById('loginScreen').style.display = 'none';
+      showShell(true);
       /* Main Admin picks Support or Quality first; everyone else goes
          straight into Support, exactly as before. */
       if(isMainAdmin()) {
@@ -1064,7 +1204,24 @@
       setInterval(checkNewCallsAlert, 10000);
   }
 
-  function openPortal(portal) { ['landingScreen','dashPortal','pwPortal','ctPortal','wcrPortal'].forEach(id=>document.getElementById(id).style.display='none'); if(portal==='home') document.getElementById('landingScreen').style.display='flex'; else document.getElementById(portal+'Portal').style.display='block'; if(portal==='ct') qlOpen(); if(portal==='pw' || portal==='wcr') pwSetToday(); }
+  function openPortal(portal) {
+      // Whatever route got us here, the shell must be on screen.
+      const sh = document.getElementById('appShell');
+      if(sh && sh.style.display === 'none') sh.style.display = 'flex';
+      ['landingScreen','dashPortal','pwPortal','ctPortal','wcrPortal','qualityPortal']
+        .forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; });
+      if(portal === 'home') { document.getElementById('landingScreen').style.display = 'flex'; }
+      else {
+          const el = document.getElementById(portal + 'Portal');
+          if(el) el.style.display = 'block';
+      }
+      if(portal === 'ct') qlOpen();
+      if(portal === 'pw' || portal === 'wcr') pwSetToday();
+      if(portal === 'quality' && typeof qRenderMasters === 'function') { try { qInit(); } catch(e) {} }
+      document.querySelectorAll('.sn-item').forEach(a =>
+          a.classList.toggle('active', a.getAttribute('data-go') === portal));
+      window.scrollTo(0, 0);
+  }
   
   function loadDashboard() {
      try { loadVisitReport(); } catch(e) {}
@@ -2912,7 +3069,7 @@
   /* The portal and Code.gs ship together. If the deployed script reports a
      different version (or no version at all), it was saved but never
      redeployed - which shows up as "Unknown action" on newer features. */
-  const EXPECTED_SCRIPT_VERSION = "2026-11-20-sv4";
+  const EXPECTED_SCRIPT_VERSION = "2026-11-20-sv5";
 
   function checkBackendVersion() {
       let box = document.getElementById('backendWarn');
@@ -3176,6 +3333,7 @@
       try { loadAiStats(); } catch (e) {}
       try { checkIndexHealth(); } catch (e) {}
       try { drvRefresh(); } catch (e) {}
+      try { blkRefresh(); } catch (e) {}
       apiCall('getProductStats').then(st => {
           document.getElementById('aiTiles').innerHTML =
             `<div class="q-tile" style="border-top:3px solid ${st.total?'#0984e3':'#e74c3c'};"><span>Products</span><b>${st.total}</b></div>
@@ -3207,6 +3365,56 @@
   }
 
   /* ---------- Knowledge Base ---------- */
+  function blkRefresh() {
+      const box = document.getElementById('blkList'); if(!box) return;
+      box.innerHTML = '<div style="font-size:11.5px; color:#8a94a6;">Loading…</div>';
+      apiCall('blk_list', {}).then(r => {
+          if(!r.items.length) {
+              box.innerHTML = '<div style="font-size:11.5px; color:#8a94a6;">Abhi koi extra block nahi hai.</div>';
+              return;
+          }
+          let h = '<table class="q-table"><thead><tr><th>Block</th><th style="width:90px;">Opens</th><th>Link</th><th style="width:150px;">Customer ko</th></tr></thead><tbody>';
+          r.items.forEach(b => {
+              h += `<tr><td><b>${escapeHtml(b.title)}</b>${b.subtitle ? `<div style="font-size:10.5px; color:#8a94a6;">${escapeHtml(b.subtitle)}</div>` : ''}</td>
+                    <td>${b.openAs === 'newtab' ? 'New tab' : 'In portal'}</td>
+                    <td><a href="${escapeHtml(b.url)}" target="_blank" rel="noopener noreferrer"
+                           style="font-size:11px; word-break:break-all;">${escapeHtml(b.url).slice(0,52)}…</a></td>
+                    <td>
+                      <button class="btn" style="width:auto; margin:0 5px 0 0; padding:4px 10px; font-size:10.5px; background:${b.enabled ? '#00b894' : '#95a5a6'};"
+                              onclick="blkToggle(${b.row})">${b.enabled ? 'Visible' : 'Hidden'}</button>
+                      <button class="btn" style="width:auto; margin:0; padding:4px 9px; font-size:10px; background:#e74c3c;"
+                              onclick="blkDelete(${b.row})">Del</button>
+                    </td></tr>`;
+          });
+          box.innerHTML = h + '</tbody></table>';
+      }).catch(e => { box.innerHTML = `<span style="color:#d63031;">${escapeHtml(e.message)}</span>`; });
+  }
+
+  function blkAdd() {
+      const item = { title: document.getElementById('blkTitle').value.trim(),
+                     subtitle: document.getElementById('blkSub').value.trim(),
+                     icon: document.getElementById('blkIcon').value,
+                     openAs: document.getElementById('blkOpen').value,
+                     url: document.getElementById('blkUrl').value.trim() };
+      apiCall('blk_add', { item })
+        .then(() => { ['blkTitle','blkSub','blkUrl'].forEach(i => document.getElementById(i).value = '');
+                      Swal.fire('Added', 'Customer portal par ye block ab dikhega.', 'success'); blkRefresh(); })
+        .catch(e => Swal.fire('Error', e.message, 'error'));
+  }
+
+  function blkToggle(row) {
+      apiCall('blk_toggle', { row }).then(m => { blkRefresh(); Swal.fire({ icon:'success', title:m, timer:1400, showConfirmButton:false }); })
+        .catch(e => Swal.fire('Error', e.message, 'error'));
+  }
+
+  function blkDelete(row) {
+      Swal.fire({ title: 'Remove this block?', icon: 'warning', showCancelButton: true,
+                  confirmButtonText: 'Remove', confirmButtonColor: '#d63031' }).then(r => {
+          if(!r.isConfirmed) return;
+          apiCall('blk_delete', { row }).then(() => blkRefresh()).catch(e => Swal.fire('Error', e.message, 'error'));
+      });
+  }
+
   function drvRefresh() {
       const box = document.getElementById('drvList'); if(!box) return;
       box.innerHTML = '<div style="font-size:11.5px; color:#8a94a6;">Loading…</div>';
