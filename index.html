@@ -1057,7 +1057,7 @@
         dbPage(model, [['Database Creation', 'openDbView()'], ['BP Database', 'openDbBp()'],
                        [sr.name, `openBpSeries('${id}')`], [model, '']], `
           <p style="color:var(--text-secondary); font-size:13.5px; margin:0 0 18px;">
-            Build the item list, then export it for ${escapeAsk(model)}.
+            Pick what you want to build for ${escapeAsk(model)}.
           </p>
           <div class="db-grid">${bpModelTiles(id, model)}</div>`, () => openBpModel(id, model));
     }
@@ -1201,8 +1201,7 @@
 
     const SPEC_2100 = {
       name: 'Item Database', file: 'BP_2100.csv', zeros: true,
-      unitGroup: 'bp2k', nameMax: 21,
-      pending: 'CSV is ready. The pendrive file for this series is waiting on one sample export with every box filled in, so that each value lands in the right place on the printer.',
+      unitGroup: 'bp2k', nameMax: 21, wbp: '2100',
       back: () => openBpModel('2k', bpModel),
       crumbs: () => bpCrumbs('Item Database'),
       cols: [
@@ -1238,13 +1237,18 @@
       ],
       show: [['code', 'Code'], ['dept', 'Department'], ['name', 'Item'],
              ['uom', 'Unit'], ['rate', 'Rate 1'], ['tax', 'Tax']],
-      auto: (it, i) => ({ sl: String(i + 1), rel: it.rel || '1', taxtype: it.taxtype || 'SALES' })
+      auto: (it, i) => {
+        const first = unitsFor('bp2k')[0];
+        return { sl: String(i + 1), rel: it.rel || '1', taxtype: it.taxtype || 'SALES',
+                 /* the printer always files a second unit; its own export uses
+                    the first unit on the list when nobody picked one */
+                 uom2: it.uom2 || (first ? first.name : '') };
+      }
     };
 
     const SPEC_1100 = {
       name: 'Item Database', file: 'BP_1100_Joy.csv', zeros: true,
-      unitGroup: 'bp2k', nameMax: 21,
-      pending: 'CSV is ready. The pendrive file for this series is waiting on one sample export with every box filled in, so that each value lands in the right place on the printer.',
+      unitGroup: 'bp2k', nameMax: 21, wbp: '1100',
       back: () => openBpModel('2k', bpModel),
       crumbs: () => bpCrumbs('Item Database'),
       cols: [
@@ -1279,7 +1283,7 @@
     /* Customer list for BP 2100. It never leaves the browser - the file is
        written here and downloaded, nothing is sent anywhere. */
     const SPEC_CUST = {
-      name: 'Customer Database', file: 'Customer_DB.csv', zeros: true,
+      name: 'Customer Database', file: 'Customer_DB.csv', zeros: true, wbp: 'cust',
       inModel: true,
       back: () => openBpModel('2k', bpModel),
       crumbs: () => bpCrumbs('Customer Database'),
@@ -2088,6 +2092,100 @@
         return buf;
     }
 
+    /* ---------- BP 2K pendrive files -------------------------------------
+       Same 512-byte container as Emerge, with a department table between the
+       units and the items. Money, stock and tax are 8-byte doubles. Tax is
+       stored three times: the whole rate, and then split in half for the two
+       halves the printer prints. Item names are written in capitals, which is
+       what the printer's own export does. */
+    function bp2kBlock(buf, at, bytes) {
+        for(let i = 0; i < bytes.length; i++) buf[at + i] = bytes[i];
+    }
+
+    function itBp2kWbp(list, depts, units, model) {
+        const BLK = 512, REC = 1024;
+        const total = BLK * 5 + list.length * REC + BLK;
+        const buf = new Uint8Array(total);
+        const dv  = new DataView(buf.buffer);
+        const un  = units.map(u => u.name);
+
+        bp2kBlock(buf, 0, [0x1B, 0x7B, 0x07]);
+        units.forEach((u, i) => {
+            const o = BLK + i * 13;
+            emText(buf, o, u.name, 9, 0);
+            emText(buf, o + 9, u.code, 2, 0);
+            buf[o + 11] = u.dec ? 1 : 0;
+            buf[o + 12] = u.dec ? (u.dp || 0) : 0;
+        });
+
+        bp2kBlock(buf, BLK * 2, [0x1B, 0x7B, 0x01, depts.length & 0xFF]);
+        depts.forEach((d, i) => emText(buf, BLK * 3 + i * 32, d, 32, 0));
+
+        bp2kBlock(buf, BLK * 4, [0x1B, 0x7B, 0x0A, list.length & 0xFF]);
+        const base = BLK * 5;
+
+        list.forEach((it, i) => {
+            const o = base + i * REC;
+            const name = String(it.name || '').toUpperCase().slice(0, 21);
+            buf[o] = name.length ? (name.charCodeAt(0) & 0xFF) : 0;
+            buf[o + 1] = 0x01;
+            const num = v => parseFloat(v) || 0;
+            const d = (off, v) => dv.setFloat64(o + off, num(v), true);
+
+            d(512, it.stock);
+            d(528, it.rate); d(536, it.rate2); d(544, it.rate3);
+            d(552, it.tax);  d(560, it.disc);
+            dv.setUint16(o + 576, i + 1, true);
+            const di = depts.indexOf(it.dept);
+            dv.setUint16(o + 578, (di < 0 ? 0 : di) + 1, true);
+            emText(buf, o + 580, name, 21, 0);
+            emText(buf, o + 601, it.code, 21, 0);
+            const u1 = un.indexOf(it.uom);
+            dv.setUint16(o + 622, (u1 < 0 ? 0 : u1) + 1, true);
+            const u2 = model === '2100' ? un.indexOf(it.uom2) : -1;
+            dv.setUint16(o + 634, (u2 < 0 ? 0 : u2) + 1, true);
+            d(664, it.cost);
+            d(672, num(it.tax) / 2); d(680, num(it.tax) / 2);
+            /* BP 2100 keeps the unit relation as a real number; BP 1100 Joy,
+               which has no second unit on its sheet, writes a plain 1 here. */
+            if(model === '2100') d(688, it.rel || 1);
+            else dv.setUint16(o + 688, 1, true);
+            emText(buf, o + 696, it.hsn, 16, 0);
+            d(712, it.cess); d(720, it.ws); d(728, it.mrp);
+        });
+
+        bp2kBlock(buf, base + list.length * REC, [0x1B, 0x7B, 0x0B]);
+        return buf;
+    }
+
+    /* ---------- Customer pendrive file -----------------------------------
+       CUSDBS.WBP: one command block, then 256 bytes per customer, then the
+       end marker. Nothing here is sent anywhere - the file is built in the
+       browser and saved straight to the pendrive. */
+    function itCustWbp(list) {
+        const BLK = 512, REC = 256;
+        const buf = new Uint8Array(BLK + list.length * REC + BLK);
+        const dv  = new DataView(buf.buffer);
+        bp2kBlock(buf, 0, [0x1B, 0x7B, 0x1A, list.length & 0xFF]);
+
+        list.forEach((c, i) => {
+            const o = BLK + i * REC;
+            const num = v => parseFloat(v) || 0;
+            dv.setFloat64(o, num(c.bal), true);
+            dv.setFloat64(o + 8, num(c.amt), true);
+            dv.setUint16(o + 16, i + 1, true);
+            dv.setUint16(o + 18, num(c.days), true);
+            emText(buf, o + 20, c.name, 21, 0);
+            emText(buf, o + 41, c.addr, 100, 0);
+            emText(buf, o + 141, c.phone, 16, 0);
+            dv.setUint16(o + 157, String(c.credit || 'YES').toUpperCase() === 'NO' ? 0 : 1, true);
+            emText(buf, o + 159, c.gstin, 16, 0);
+        });
+
+        bp2kBlock(buf, BLK + list.length * REC, [0x1B, 0x7B, 0x0B]);
+        return buf;
+    }
+
     function itExportWbp() {
         const sp = itSpec(), list = itList();
         if(!list.length) { toast('Add at least one item first', 'warn'); return; }
@@ -2095,6 +2193,17 @@
 
         if(sp.wbp === 'emerge') {
             itDownload('ITMDBS.WBP', itEmWbp(list, unitsFor('emerge'), 'add'));
+            toast('Saved ITMDBS.WBP - copy it to the pendrive root', 'ok');
+            return;
+        }
+        if(sp.wbp === 'cust') {
+            itDownload('CUSDBS.WBP', itCustWbp(list));
+            toast('Saved CUSDBS.WBP - copy it to the pendrive root', 'ok');
+            return;
+        }
+        if(sp.wbp === '2100' || sp.wbp === '1100') {
+            const depts = sp.wbp === '2100' ? deptNames() : [];
+            itDownload('ITMDBS.WBP', itBp2kWbp(list, depts, unitsFor('bp2k'), sp.wbp));
             toast('Saved ITMDBS.WBP - copy it to the pendrive root', 'ok');
             return;
         }
