@@ -272,6 +272,52 @@
                      margin-right:10px; white-space:nowrap; transition:background .15s; }
     .track-top-btn:hover { background:var(--accent-blue); color:#fff; }
     @media (max-width: 640px) { .track-top-btn span { display:none; } .track-top-btn { padding:8px 11px; } }
+    /* A 550px column is right for a short form, but the item builder is a
+       table - it needs the room. */
+    .form-container.db-wide { max-width: 1060px; }
+
+    /* ---------- Database Creation ---------- */
+    .db-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; }
+    .db-tile { border:1px solid #e3e8ef; border-radius:12px; padding:18px; background:#fff; cursor:pointer;
+               transition:border-color .15s, box-shadow .15s, transform .15s; }
+    .db-tile:hover { border-color:var(--accent-blue); box-shadow:0 4px 14px rgba(11,99,206,.10); transform:translateY(-2px); }
+    .db-tile .ic { width:40px; height:40px; border-radius:10px; display:flex; align-items:center; justify-content:center;
+                   font-size:17px; margin-bottom:11px; }
+    .db-tile h4 { margin:0 0 4px; font-size:14.5px; color:var(--text-primary); }
+    .db-tile p { margin:0; font-size:12px; color:var(--text-secondary); line-height:1.5; }
+    .db-crumb { font-size:12px; color:var(--text-secondary); margin-bottom:14px; }
+    .db-crumb a { color:var(--accent-blue); cursor:pointer; font-weight:600; }
+    .db-soon { opacity:.55; cursor:not-allowed; }
+    .db-soon:hover { border-color:#e3e8ef; box-shadow:none; transform:none; }
+
+    .it-bar { display:grid; grid-template-columns:2fr 1fr 1fr auto; gap:10px; align-items:end;
+              background:#f5f8fc; border:1px solid #e0e7f1; border-radius:11px; padding:14px; margin-bottom:12px; }
+    .it-bar label { display:block; font-size:11.5px; font-weight:700; color:var(--text-secondary);
+                    margin-bottom:5px; text-transform:uppercase; letter-spacing:.3px; }
+    .it-bar input, .it-bar select { width:100%; padding:10px 11px; border:1px solid #d7dee8; border-radius:8px; font-size:13.5px; }
+    .it-add { background:var(--accent-blue); color:#fff; border:none; border-radius:8px; padding:11px 20px;
+              font-size:13.5px; font-weight:700; cursor:pointer; white-space:nowrap; }
+    .it-add:hover { filter:brightness(1.08); }
+    .it-more { background:none; border:none; color:var(--accent-blue); font-size:12.5px; font-weight:600;
+               cursor:pointer; padding:0; margin-bottom:12px; }
+    .it-opt { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:11px;
+              border:1px dashed #d7dee8; border-radius:11px; padding:14px; margin-bottom:14px; }
+    .it-opt label { display:block; font-size:11px; font-weight:600; color:var(--text-secondary); margin-bottom:4px; }
+    .it-opt input, .it-opt select { width:100%; padding:8px 10px; border:1px solid #d7dee8; border-radius:7px; font-size:12.5px; }
+    .it-tbl { width:100%; border-collapse:collapse; font-size:12.5px; }
+    .it-tbl th { background:#eef3f9; text-align:left; padding:9px 10px; font-size:11px; text-transform:uppercase;
+                 letter-spacing:.3px; color:var(--text-secondary); position:sticky; top:0; }
+    .it-tbl td { padding:9px 10px; border-bottom:1px solid #eef1f5; }
+    .it-tbl tr:hover td { background:#fafbfd; }
+    .it-del { background:none; border:none; color:#d63031; cursor:pointer; font-size:13px; }
+    .it-empty { text-align:center; padding:34px 16px; color:var(--text-secondary); font-size:13px; }
+    .it-actions { display:flex; gap:10px; flex-wrap:wrap; margin:16px 0 0; }
+    .it-btn { border-radius:9px; padding:11px 18px; font-size:13.5px; font-weight:700; cursor:pointer; border:1.5px solid transparent; }
+    .it-primary { background:#00875a; color:#fff; }
+    .it-ghost { background:#fff; color:var(--accent-blue); border-color:var(--accent-blue); }
+    .it-danger { background:#fff; color:#d63031; border-color:#f0b2b2; }
+    @media (max-width: 620px) { .it-bar { grid-template-columns:1fr; } }
+
     .ask-rate { margin-top:9px; display:flex; gap:7px; align-items:center; font-size:11.5px; color:#8a94a6; }
     .ask-rate button { border:1px solid #dfe4ec; background:#fff; border-radius:7px; padding:3px 10px;
                        cursor:pointer; font-size:12.5px; line-height:1.4; }
@@ -371,11 +417,11 @@
               <p id="ui-card5-d">Ask anything about our products, features or price.</p>
               <div class="card-arrow">Ask Now <i class="fa-solid fa-arrow-right"></i></div>
           </div>
-          <div class="action-card" id="logoCard" style="display:none;" onclick="openLogoView()">
-              <div class="action-card-icon" style="background:#fdeef3; color:#e8117f;"><i class="fa-solid fa-image"></i></div>
-              <h3 id="ui-logo-t">Logo Converter</h3>
-              <p id="ui-logo-d">Upload Logo for BP Printer Utility</p>
-              <div class="card-arrow">Convert <i class="fa-solid fa-arrow-right"></i></div>
+          <div class="action-card" id="logoCard" style="display:none;" onclick="openDbView()">
+              <div class="action-card-icon" style="background:#fdeef3; color:#e8117f;"><i class="fa-solid fa-database"></i></div>
+              <h3 id="ui-logo-t">Database Creation</h3>
+              <p id="ui-logo-d">Build your logo, item, customer and supplier files ready to upload.</p>
+              <div class="card-arrow">Open <i class="fa-solid fa-arrow-right"></i></div>
           </div>
           <div id="customBlocks" style="display:contents;"></div>
           <div class="action-card" id="driverCard" style="display:none;" onclick="openDriverView()">
@@ -756,13 +802,359 @@
         if(card) card.style.display = (String(cfg.logoToolEnabled) === 'yes') ? '' : 'none';
     }
 
+    /* ---------- Database Creation ----------------------------------------
+       Shops have to hand their POS a CSV with 25-27 columns in an exact
+       order. Typing that in a spreadsheet is where mistakes happen, so this
+       asks for the three fields that are actually required and fills the rest
+       in the right places by itself. */
+    const UOMS = ['PCS','NOS','KGS','GMS','LTR','MLT','PAC','BTL','DOZ','BOX','MTR','SET'];
+
+    function dbPage(title, crumbs, body) {
+        document.getElementById('landingPage').style.display = 'none';
+        document.getElementById('formPage').style.display = 'block';
+        document.getElementById('formTitle').innerText = title;
+        document.querySelector('.form-container').classList.add('db-wide');
+        window.scrollTo(0, 0);
+        const trail = crumbs.map(c => c[1]
+            ? `<a onclick="${c[1]}">${escapeAsk(c[0])}</a>` : escapeAsk(c[0])).join(' <span style="color:#c7cfdb;">/</span> ');
+        document.getElementById('formContentArea').innerHTML =
+            `<div class="db-crumb">${trail}</div>` + body;
+    }
+
+    const dbTile = (icon, bg, fg, title, desc, click, soon) => `
+        <div class="db-tile ${soon ? 'db-soon' : ''}" ${soon ? '' : `onclick="${click}"`}>
+          <div class="ic" style="background:${bg}; color:${fg};"><i class="fa-solid ${icon}"></i></div>
+          <h4>${title}</h4><p>${desc}</p>
+          ${soon ? '<p style="margin-top:7px; font-weight:700; color:#b2bec3;">Coming soon</p>' : ''}
+        </div>`;
+
+    function openDbView() {
+        trackPortalVisit('logo');
+        dbPage('Database Creation', [['Database Creation', '']], `
+          <p style="color:var(--text-secondary); font-size:13.5px; margin:0 0 18px;">
+            Create the files your machine needs, ready to copy onto a pendrive.
+          </p>
+          <div class="db-grid">
+            ${dbTile('fa-image', '#fdeef3', '#e8117f', 'Logo for All BP Models',
+                     'Turn your logo into the exact file the printer expects.', 'openLogoView()')}
+            ${dbTile('fa-desktop', '#e8f0fe', '#0b63ce', 'POS Application Database',
+                     'Items, customers and suppliers for Retail or F&amp;B.', 'openDbPos()')}
+            ${dbTile('fa-print', '#eaf7f0', '#00875a', 'BP Database',
+                     'Item list for BP billing printers.', 'openDbBp()')}
+          </div>`);
+    }
+
+    function openDbPos() {
+        dbPage('POS Application Database',
+          [['Database Creation', 'openDbView()'], ['POS Application', '']], `
+          <p style="color:var(--text-secondary); font-size:13.5px; margin:0 0 18px;">
+            Which application are you building this for?
+          </p>
+          <div class="db-grid">
+            ${dbTile('fa-basket-shopping', '#e8f0fe', '#0b63ce', 'Retail Application',
+                     'Shops and stores — items with MRP, stock and barcodes.', "openDbApp('retail')")}
+            ${dbTile('fa-utensils', '#fff4e5', '#e17055', 'F&amp;B Application',
+                     'Restaurants and cafes — menu items, rates and kitchen codes.', "openDbApp('fnb')")}
+          </div>`);
+    }
+
+    function openDbApp(app) {
+        const name = app === 'fnb' ? 'F&B Application' : 'Retail Application';
+        dbPage(name, [['Database Creation', 'openDbView()'],
+                      ['POS Application', 'openDbPos()'], [name, '']], `
+          <p style="color:var(--text-secondary); font-size:13.5px; margin:0 0 18px;">
+            Build a list, then export it as the CSV your application imports.
+          </p>
+          <div class="db-grid">
+            ${dbTile('fa-box', '#e8f0fe', '#0b63ce', 'Item Database',
+                     app === 'fnb' ? 'Your menu — names, rates and kitchen codes.'
+                                   : 'Your products — price, tax, stock and barcode.',
+                     `openItemBuilder('${app}')`)}
+            ${dbTile('fa-users', '#f3effd', '#6c5ce7', 'Customer Database',
+                     'Your regular customers with contact and GST details.', '', true)}
+            ${dbTile('fa-truck', '#eaf7f0', '#00875a', 'Supplier Database',
+                     'Your suppliers with contact and GST details.', '', true)}
+          </div>`);
+    }
+
+    function openDbBp() {
+        dbPage('BP Database', [['Database Creation', 'openDbView()'], ['BP Database', '']], `
+          <div style="border:1px dashed #d7dee8; border-radius:12px; padding:26px; text-align:center;">
+            <i class="fa-solid fa-print" style="font-size:26px; color:#b2bec3;"></i>
+            <h4 style="margin:12px 0 6px; font-size:15px;">Coming soon</h4>
+            <p style="margin:0; font-size:13px; color:var(--text-secondary);">
+              The BP billing printer item format is being added. Until then, use
+              <a onclick="openDbPos()" style="color:var(--accent-blue); cursor:pointer; font-weight:600;">POS Application Database</a>.
+            </p>
+          </div>`);
+    }
+
+    /* The column order below is the file the application expects. It is kept
+       exactly as the sample files have it, spelling included, because the
+       importer matches on the header text. */
+    const DB_SPEC = {
+      retail: {
+        name: 'Retail', file: 'Items.csv',
+        headers: ['ITEM SHORT NAME','ITEM LONG NAME','SHORT Code','UOM','SECONDARY UOM','UOM CONVERSION',
+                  'RETAIL PRICE','MRP','WHOLE SALE PRICE','CGST RATE','SGST RATE','IGST RATE','CESS RATE',
+                  'CESS AMOUNT','ADDITIONAL CESS AMOUNT','PURCHASE RATE','HSN','QUANTITY','MINIMUM STOCK',
+                  'BARCODE','BRAND CODE','DEPARMENT CODE','CATEGORY CODE','FAVORITE','ACTIVE','IMAGEURL','ITEMCODE'],
+        required: [['short','ITEM SHORT NAME','Item name','text'],
+                   ['uom','UOM','Unit','uom'],
+                   ['retail','RETAIL PRICE','Retail price','number']],
+        optional: [['long','ITEM LONG NAME','Full name','text'],
+                   ['mrp','MRP','MRP','number'],
+                   ['wholesale','WHOLE SALE PRICE','Wholesale price','number'],
+                   ['purchase','PURCHASE RATE','Purchase rate','number'],
+                   ['cgst','CGST RATE','CGST %','number'],
+                   ['sgst','SGST RATE','SGST %','number'],
+                   ['igst','IGST RATE','IGST %','number'],
+                   ['secuom','SECONDARY UOM','Secondary unit','uom'],
+                   ['conv','UOM CONVERSION','Unit conversion','number'],
+                   ['qty','QUANTITY','Stock quantity','number'],
+                   ['minstock','MINIMUM STOCK','Minimum stock','number'],
+                   ['hsn','HSN','HSN code','text'],
+                   ['barcode','BARCODE','Barcode','text'],
+                   ['dept','DEPARMENT CODE','Department code','text'],
+                   ['cat','CATEGORY CODE','Category code','text'],
+                   ['brand','BRAND CODE','Brand code','text'],
+                   ['itemcode','ITEMCODE','Item code','text']],
+        fixed: { 'ACTIVE': '1', 'FAVORITE': '0' },
+        auto:  { 'SHORT Code': i => String(i + 1) }
+      },
+      fnb: {
+        name: 'F&B', file: 'FnB.csv',
+        headers: ['MENU CODE','ITEM SHORT NAME','ITEM LONG NAME','SUPPLY TYPE','RATE 1','RATE 2','RATE 3',
+                  'QUANTITY','UOM','CGST RATE','SGST RATE','IGST RATE','CESS RATE','CESS AMOUNT',
+                  'ADDITIONAL CESS AMOUNT','DISCOUNT PERCENT','DEPARTMENT CODE','CATEGORY CODE','KITCHEN CODE',
+                  'HSN','BAR CODE','MINIMUM STOCK','ACTIVE','ITEMCODE','PURCHASERATE'],
+        required: [['short','ITEM SHORT NAME','Menu item','text'],
+                   ['uom','UOM','Unit','uom'],
+                   ['rate1','RATE 1','Rate','number']],
+        optional: [['long','ITEM LONG NAME','Full name','text'],
+                   ['rate2','RATE 2','Rate 2 (AC / parcel)','number'],
+                   ['rate3','RATE 3','Rate 3','number'],
+                   ['dept','DEPARTMENT CODE','Department code','text'],
+                   ['kitchen','KITCHEN CODE','Kitchen code','text'],
+                   ['cat','CATEGORY CODE','Category code','text'],
+                   ['cgst','CGST RATE','CGST %','number'],
+                   ['sgst','SGST RATE','SGST %','number'],
+                   ['igst','IGST RATE','IGST %','number'],
+                   ['disc','DISCOUNT PERCENT','Discount %','number'],
+                   ['purchase','PURCHASERATE','Purchase rate','number'],
+                   ['hsn','HSN','HSN code','text'],
+                   ['barcode','BAR CODE','Barcode','text'],
+                   ['itemcode','ITEMCODE','Item code','text']],
+        fixed: { 'SUPPLY TYPE': 'G' },
+        auto:  { 'MENU CODE': i => String(i + 1) }
+      }
+    };
+
+    let dbApp = 'retail', dbRows = [];
+
+    function dbKey() { return 'wepDb_' + dbApp; }
+    function dbLoad() { try { dbRows = JSON.parse(localStorage.getItem(dbKey()) || '[]'); } catch(e) { dbRows = []; } }
+    function dbStore() { try { localStorage.setItem(dbKey(), JSON.stringify(dbRows)); } catch(e) {} }
+
+    function openItemBuilder(app) {
+        dbApp = app; dbLoad();
+        const sp = DB_SPEC[app];
+        const field = (f, cls) => {
+            const [k, col, label, type] = f;
+            /* Optional unit boxes start blank, otherwise a dropdown's first
+               value quietly lands in a column nobody asked to fill. */
+            const input = type === 'uom'
+              ? `<select id="it_${k}">${cls === 'req' ? '' : '<option value=""></option>'}` +
+                `${UOMS.map(u => `<option${(cls === 'req' && u === (app === 'fnb' ? 'PCS' : 'KGS')) ? ' selected' : ''}>${u}</option>`).join('')}</select>`
+              : `<input type="${type === 'number' ? 'number' : 'text'}" id="it_${k}" ${type === 'number' ? 'step="0.01" min="0"' : ''} placeholder="${label}">`;
+            return `<div><label>${label}${cls === 'req' ? ' *' : ''}</label>${input}</div>`;
+        };
+
+        dbPage(sp.name + ' — Item Database',
+          [['Database Creation', 'openDbView()'], ['POS Application', 'openDbPos()'],
+           [sp.name + ' Application', `openDbApp('${app}')`], ['Item Database', '']], `
+          <p style="color:var(--text-secondary); font-size:13.5px; margin:0 0 16px;">
+            Fill the three boxes and press Add. Everything else is optional — open
+            <b>More details</b> only when you need it.
+          </p>
+
+          <div class="it-bar">
+            ${sp.required.map(f => field(f, 'req')).join('')}
+            <button class="it-add" onclick="itAdd()"><i class="fa-solid fa-plus"></i> Add</button>
+          </div>
+
+          <button class="it-more" onclick="itToggleMore()">
+            <i class="fa-solid fa-sliders"></i> <span id="itMoreLbl">More details</span>
+          </button>
+          <div class="it-opt" id="itOpt" style="display:none;">
+            ${sp.optional.map(f => field(f, 'opt')).join('')}
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <b style="font-size:13.5px;">Items added: <span id="itCount">0</span></b>
+            <label style="font-size:12px; color:var(--text-secondary); cursor:pointer;">
+              <input type="file" id="itCsv" accept=".csv" style="display:none;" onchange="itImport(event)">
+              <span onclick="document.getElementById('itCsv').click()"
+                    style="color:var(--accent-blue); font-weight:600;">
+                <i class="fa-solid fa-file-import"></i> Load an existing CSV
+              </span>
+            </label>
+          </div>
+
+          <div style="border:1px solid #e3e8ef; border-radius:11px; overflow:auto; max-height:420px; background:#fff;">
+            <table class="it-tbl" id="itTbl"></table>
+          </div>
+
+          <div class="it-actions">
+            <button class="it-btn it-primary" onclick="itExport()">
+              <i class="fa-solid fa-file-csv"></i> Export CSV
+            </button>
+            <button class="it-btn it-danger" onclick="itClear()">Clear all</button>
+          </div>`);
+        itRender();
+    }
+
+    function itToggleMore() {
+        const box = document.getElementById('itOpt');
+        const on = box.style.display === 'none';
+        box.style.display = on ? 'grid' : 'none';
+        document.getElementById('itMoreLbl').innerText = on ? 'Hide details' : 'More details';
+    }
+
+    function itVal(k) { const e = document.getElementById('it_' + k); return e ? String(e.value).trim() : ''; }
+
+    function itAdd() {
+        const sp = DB_SPEC[dbApp];
+        const row = {};
+        for(const [k] of sp.required.concat(sp.optional)) row[k] = itVal(k);
+
+        const miss = sp.required.filter(f => !row[f[0]]).map(f => f[2]);
+        if(miss.length) return alert('Please fill: ' + miss.join(', '));
+
+        dbRows.push(row); dbStore(); itRender();
+        /* Keep the unit and the optional details - the next item is usually
+           similar, and retyping them is what makes bulk entry slow. */
+        for(const [k,,, type] of sp.required) if(type !== 'uom') document.getElementById('it_' + k).value = '';
+        document.getElementById('it_' + sp.required[0][0]).focus();
+    }
+
+    function itRemove(i) { dbRows.splice(i, 1); dbStore(); itRender(); }
+
+    function itRender() {
+        const sp = DB_SPEC[dbApp];
+        const t = document.getElementById('itTbl');
+        if(!t) return;
+        document.getElementById('itCount').innerText = dbRows.length;
+        if(!dbRows.length) {
+            t.innerHTML = `<tr><td><div class="it-empty">
+                No items yet. Add your first one above, or load a CSV you already have.</div></td></tr>`;
+            return;
+        }
+        const cols = sp.required.concat(sp.optional.slice(0, 2));
+        t.innerHTML = `<thead><tr><th style="width:44px;">#</th>
+            ${cols.map(c => `<th>${c[2]}</th>`).join('')}<th style="width:44px;"></th></tr></thead><tbody>` +
+          dbRows.map((r, i) => `<tr><td style="color:var(--text-secondary);">${i + 1}</td>
+            ${cols.map(c => `<td>${escapeAsk(r[c[0]] || '')}</td>`).join('')}
+            <td><button class="it-del" onclick="itRemove(${i})" title="Remove">
+              <i class="fa-solid fa-trash"></i></button></td></tr>`).join('') + '</tbody>';
+    }
+
+    function itClear() {
+        if(!dbRows.length) return;
+        if(!confirm('Remove all ' + dbRows.length + ' items?')) return;
+        dbRows = []; dbStore(); itRender();
+    }
+
+    /* Writes the columns in the order the application expects, leaving every
+       one we did not ask about empty rather than inventing a value. */
+    function itExport() {
+        if(!dbRows.length) return alert('Add at least one item first.');
+        const sp = DB_SPEC[dbApp];
+        const byCol = {};
+        for(const [k, col] of sp.required.concat(sp.optional)) byCol[col] = k;
+
+        const esc = v => {
+            const t = String(v == null ? '' : v);
+            return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
+        };
+
+        const lines = [sp.headers.join(',')];
+        dbRows.forEach((r, i) => {
+            /* Both sample files always carry a long name. If the shop did not
+               type a different one, the short name is what belongs there. */
+            if(!r.long && r.short) r = Object.assign({}, r, { long: r.short });
+            lines.push(sp.headers.map(col => {
+                if(sp.auto && sp.auto[col]) return esc(sp.auto[col](i));
+                if(sp.fixed && sp.fixed[col] !== undefined) return esc(sp.fixed[col]);
+                const k = byCol[col];
+                return k ? esc(r[k] || '') : '';
+            }).join(','));
+        });
+
+        const csv = lines.join('\n') + '\n';
+        lgSave(new TextEncoder().encode(csv), 'text/csv', sp.file);
+    }
+
+    /* Reads a file exported earlier so a list can be added to, not restarted. */
+    function itImport(ev) {
+        const f = ev.target.files && ev.target.files[0];
+        if(!f) return;
+        const sp = DB_SPEC[dbApp];
+        const rd = new FileReader();
+        rd.onload = e => {
+            const rows = itParseCsv(String(e.target.result));
+            if(rows.length < 2) return alert('That file has no items in it.');
+            const head = rows[0].map(h => h.trim());
+            const byCol = {};
+            for(const [k, col] of sp.required.concat(sp.optional)) {
+                const at = head.indexOf(col);
+                if(at > -1) byCol[k] = at;
+            }
+            if(byCol[sp.required[0][0]] === undefined)
+                return alert('This does not look like a ' + sp.name + ' item file.');
+
+            let added = 0;
+            for(let i = 1; i < rows.length; i++) {
+                const r = rows[i];
+                if(!r.length || !String(r[byCol[sp.required[0][0]]] || '').trim()) continue;
+                const row = {};
+                for(const k in byCol) row[k] = String(r[byCol[k]] || '').trim();
+                dbRows.push(row); added++;
+            }
+            dbStore(); itRender();
+            ev.target.value = '';
+            alert(added + ' item(s) loaded. You can keep adding and export when ready.');
+        };
+        rd.readAsText(f);
+    }
+
+    /* A small CSV reader that understands quoted fields and commas inside them. */
+    function itParseCsv(text) {
+        const out = []; let row = [], cell = '', q = false;
+        for(let i = 0; i < text.length; i++) {
+            const c = text[i];
+            if(q) {
+                if(c === '"') { if(text[i+1] === '"') { cell += '"'; i++; } else q = false; }
+                else cell += c;
+            } else if(c === '"') q = true;
+            else if(c === ',') { row.push(cell); cell = ''; }
+            else if(c === '\n') { row.push(cell); out.push(row); row = []; cell = ''; }
+            else if(c !== '\r') cell += c;
+        }
+        if(cell.length || row.length) { row.push(cell); out.push(row); }
+        return out.filter(r => r.length > 1 || (r[0] || '').trim());
+    }
+
     function openLogoView() {
         trackPortalVisit('logo');
         document.getElementById('landingPage').style.display = 'none';
         document.getElementById('formPage').style.display = 'block';
-        document.getElementById('formTitle').innerText = document.getElementById('ui-logo-t').innerText;
+        document.querySelector('.form-container').classList.add('db-wide');
+        document.getElementById('formTitle').innerText = 'Logo for All BP Models';
         window.scrollTo(0, 0);
         document.getElementById('formContentArea').innerHTML = `
+          <div class="db-crumb"><a onclick="openDbView()">Database Creation</a>
+            <span style="color:#c7cfdb;">/</span> Logo</div>
           ${logoCfg.note ? `<p style="color:var(--text-secondary); font-size:13.5px; margin:0 0 14px;">${escapeAsk(logoCfg.note)}</p>` : ''}
           <div class="pro-input-group">
             <label>1. Choose your Logo</label>
@@ -987,6 +1379,7 @@
     }
 
     function openBlockView(i) {
+        document.querySelector('.form-container').classList.remove('db-wide');
         const b = (window.__blocks || [])[i];
         if(!b) return;
         trackPortalVisit('block');
@@ -1020,6 +1413,7 @@
     }
 
     function openDriverView() {
+        document.querySelector('.form-container').classList.remove('db-wide');
         trackPortalVisit('driver');
         const t = uiText[currentLang];
         document.getElementById('landingPage').style.display = 'none';
@@ -1061,6 +1455,7 @@
     }
 
     function openAskView() {
+        document.querySelector('.form-container').classList.remove('db-wide');
         trackPortalVisit('ask');
         let hi = (currentLang === 'hi');
         /* same page shell the other forms use */
@@ -1176,6 +1571,7 @@
     }
 
     function openFormView(type) {
+        document.querySelector('.form-container').classList.remove('db-wide');
         trackPortalVisit(type === 'install' ? 'install'
                        : type === 'demo' ? 'demo'
                        : type === 'warranty' ? 'warranty' : 'track');
