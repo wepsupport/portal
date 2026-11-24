@@ -371,6 +371,12 @@
               <p id="ui-card5-d">Ask anything about our products, features or price.</p>
               <div class="card-arrow">Ask Now <i class="fa-solid fa-arrow-right"></i></div>
           </div>
+          <div class="action-card" id="logoCard" style="display:none;" onclick="openLogoView()">
+              <div class="action-card-icon" style="background:#fdeef3; color:#e8117f;"><i class="fa-solid fa-image"></i></div>
+              <h3 id="ui-logo-t">Logo Converter</h3>
+              <p id="ui-logo-d">Apna logo printer ke liye monochrome BMP me badliye.</p>
+              <div class="card-arrow">Convert <i class="fa-solid fa-arrow-right"></i></div>
+          </div>
           <div id="customBlocks" style="display:contents;"></div>
           <div class="action-card" id="driverCard" style="display:none;" onclick="openDriverView()">
               <div class="action-card-icon" style="background:#e8f0fe; color:#0b63ce;"><i class="fa-solid fa-download"></i></div>
@@ -486,7 +492,7 @@
   <script>
     // ===================== GITHUB API CONFIGURATION =====================
     // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-    const API_URL = "https://script.google.com/macros/s/AKfycbzT8B12seBbkD90rKGFQSgqQV0aanv98hjoCrN245xK0_JKSfFDM1zqx6FUaHAVLuPi/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbwEqt3xDok7d6s93FqTBeslgD00SAKdd86BJhdUJ2JPfYEtBXDOE9usRzZ5n4GFkA41/exec";
 
     async function apiCall(action, params = {}) {
         try {
@@ -634,6 +640,7 @@
         trackPortalVisit('portal');
         loadDriverLinks();
         loadCustomBlocks();
+        apiCall('settings_get', {}).then(initLogoTool).catch(() => {});
         const textToType = "WEPSOL";
         const typeElem = document.getElementById('typewriter-text');
         if(typeElem) {
@@ -730,6 +737,188 @@
     /* Extra blocks the admin switched on - a feedback form, a quiz, anything.
        They are ordinary cards here, and the page opens inside the portal so
        the customer never loses their place. */
+
+    /* ---------- Logo converter -------------------------------------------
+       Billing printers take a 1-bit (monochrome) BMP of an exact pixel size.
+       Doing that by hand means resizing in Paint and picking "Monochrome
+       Bitmap" from a Save-as list - easy to get wrong, and most customers
+       cannot. The whole conversion runs here in the browser: the picture is
+       never uploaded anywhere. */
+    let logoCfg = { w: 448, h: 326, note: '' };
+    let logoImg = null;
+
+    function initLogoTool(cfg) {
+        logoCfg.w = parseInt(cfg.logoToolWidth, 10) || 448;
+        logoCfg.h = parseInt(cfg.logoToolHeight, 10) || 326;
+        logoCfg.note = cfg.logoToolNote || '';
+        const card = document.getElementById('logoCard');
+        if(card) card.style.display = (String(cfg.logoToolEnabled) === 'yes') ? '' : 'none';
+    }
+
+    function openLogoView() {
+        trackPortalVisit('logo');
+        document.getElementById('landingPage').style.display = 'none';
+        document.getElementById('formPage').style.display = 'block';
+        document.getElementById('formTitle').innerText = document.getElementById('ui-logo-t').innerText;
+        window.scrollTo(0, 0);
+        document.getElementById('formContentArea').innerHTML = `
+          ${logoCfg.note ? `<p style="color:var(--text-secondary); font-size:13.5px; margin:0 0 14px;">${escapeAsk(logoCfg.note)}</p>` : ''}
+          <div class="pro-input-group">
+            <label>1. Apni logo image chuniye</label>
+            <input type="file" id="lgFile" accept="image/*" onchange="lgPick(event)">
+          </div>
+          <div id="lgWork" style="display:none;">
+            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:12px;">
+              <div class="pro-input-group" style="flex:1; min-width:120px; margin:0;">
+                <label>Width (px)</label>
+                <input type="number" id="lgW" value="${logoCfg.w}" min="8" max="2048" oninput="lgDraw()">
+              </div>
+              <div class="pro-input-group" style="flex:1; min-width:120px; margin:0;">
+                <label>Height (px)</label>
+                <input type="number" id="lgH" value="${logoCfg.h}" min="8" max="2048" oninput="lgDraw()">
+              </div>
+            </div>
+            <label style="font-size:12.5px; color:var(--text-secondary); display:block; margin-bottom:10px;">
+              <input type="checkbox" id="lgRatio" checked onchange="lgDraw()" style="width:auto; margin-right:6px;">
+              Shape na bigde (width se height apne aap)
+            </label>
+
+            <div class="pro-input-group">
+              <label>2. Kitna dark (threshold): <b id="lgTVal">128</b></label>
+              <input type="range" id="lgT" min="16" max="240" value="128" oninput="lgDraw()" style="width:100%;">
+              <div style="font-size:11.5px; color:var(--text-secondary);">Slider ghumakar dekhiye — jahan logo saaf dikhe wahi sahi hai.</div>
+            </div>
+            <div style="display:flex; gap:16px; flex-wrap:wrap; margin-bottom:14px; font-size:12.5px;">
+              <label><input type="checkbox" id="lgInv" onchange="lgDraw()" style="width:auto; margin-right:6px;">Ulta karein (black ⇄ white)</label>
+              <label><input type="checkbox" id="lgDith" onchange="lgDraw()" style="width:auto; margin-right:6px;">Photo mode (dithering)</label>
+            </div>
+
+            <label style="font-weight:700; font-size:13px;">Printer par aisa chhapega:</label>
+            <div style="border:1px solid #e3e8ef; border-radius:10px; padding:12px; background:#fff; overflow:auto; margin:7px 0 14px;">
+              <canvas id="lgCanvas" style="max-width:100%; image-rendering:pixelated; display:block; margin:0 auto;"></canvas>
+            </div>
+            <div id="lgInfo" style="font-size:12px; color:var(--text-secondary); margin-bottom:12px;"></div>
+            <button class="pro-submit-btn" onclick="lgDownload()">
+              <i class="fa-solid fa-download"></i> Download monochrome BMP
+            </button>
+          </div>`;
+    }
+
+    function lgPick(ev) {
+        const f = ev.target.files && ev.target.files[0];
+        if(!f) return;
+        const r = new FileReader();
+        r.onload = e => {
+            const im = new Image();
+            im.onload = () => {
+                logoImg = im;
+                document.getElementById('lgWork').style.display = 'block';
+                const keep = document.getElementById('lgRatio');
+                if(keep && keep.checked) {
+                    document.getElementById('lgH').value = Math.max(8, Math.round(logoCfg.w * im.height / im.width));
+                }
+                lgDraw();
+            };
+            im.src = e.target.result;
+        };
+        r.readAsDataURL(f);
+    }
+
+    /* Draws the picture at the target size and reduces it to pure black and
+       white, so the preview is exactly what the BMP will contain. */
+    function lgDraw() {
+        if(!logoImg) return;
+        let w = Math.max(8, Math.min(2048, parseInt(document.getElementById('lgW').value, 10) || logoCfg.w));
+        let h = Math.max(8, Math.min(2048, parseInt(document.getElementById('lgH').value, 10) || logoCfg.h));
+        if(document.getElementById('lgRatio').checked) {
+            h = Math.max(8, Math.round(w * logoImg.height / logoImg.width));
+            document.getElementById('lgH').value = h;
+        }
+        const t = parseInt(document.getElementById('lgT').value, 10);
+        const inv = document.getElementById('lgInv').checked;
+        const dith = document.getElementById('lgDith').checked;
+        document.getElementById('lgTVal').innerText = t;
+
+        const c = document.getElementById('lgCanvas');
+        c.width = w; c.height = h;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h);      // transparent areas print white
+        ctx.drawImage(logoImg, 0, 0, w, h);
+
+        const img = ctx.getImageData(0, 0, w, h);
+        const d = img.data;
+        const grey = new Float32Array(w * h);
+        for(let i = 0, p = 0; i < d.length; i += 4, p++) {
+            const a = d[i+3] / 255;
+            const g = 0.299*d[i] + 0.587*d[i+1] + 0.114*d[i+2];
+            grey[p] = g * a + 255 * (1 - a);
+        }
+
+        window.__lgBits = [];
+        for(let y = 0; y < h; y++) window.__lgBits.push(new Uint8Array(w));
+        let white = 0;
+
+        for(let y = 0; y < h; y++) {
+            for(let x = 0; x < w; x++) {
+                const p = y*w + x;
+                let on = grey[p] > t ? 1 : 0;
+                if(dith) {
+                    const err = grey[p] - (on ? 255 : 0);
+                    if(x+1 < w)            grey[p+1]     += err * 7/16;
+                    if(y+1 < h) {
+                        if(x > 0)          grey[p+w-1]   += err * 3/16;
+                                           grey[p+w]     += err * 5/16;
+                        if(x+1 < w)        grey[p+w+1]   += err * 1/16;
+                    }
+                }
+                if(inv) on = on ? 0 : 1;
+                window.__lgBits[y][x] = on;
+                if(on) white++;
+                const o = p*4, v = on ? 255 : 0;
+                d[o] = d[o+1] = d[o+2] = v; d[o+3] = 255;
+            }
+        }
+        ctx.putImageData(img, 0, 0);
+
+        const rowBytes = ((w + 31) >> 5) << 2;
+        const bytes = 62 + rowBytes * h;
+        document.getElementById('lgInfo').innerHTML =
+          `<b>${w} × ${h} px</b> · monochrome BMP · ${(bytes/1024).toFixed(1)} KB · ` +
+          `${Math.round((1 - white/(w*h)) * 100)}% ink`;
+    }
+
+    /* Writes a real 1-bit BMP: headers, a two-colour palette, then one bit
+       per pixel with rows bottom-up and padded to 4 bytes - the same file
+       Paint produces with "Monochrome Bitmap". */
+    function lgDownload() {
+        const bits = window.__lgBits;
+        if(!bits || !bits.length) return;
+        const h = bits.length, w = bits[0].length;
+        const rowBytes = ((w + 31) >> 5) << 2;
+        const pixSize = rowBytes * h, offset = 62, size = offset + pixSize;
+
+        const b = new Uint8Array(size), dv = new DataView(b.buffer);
+        b[0] = 0x42; b[1] = 0x4D;
+        dv.setUint32(2, size, true);  dv.setUint32(10, offset, true);
+        dv.setUint32(14, 40, true);   dv.setInt32(18, w, true); dv.setInt32(22, h, true);
+        dv.setUint16(26, 1, true);    dv.setUint16(28, 1, true);
+        dv.setUint32(30, 0, true);    dv.setUint32(34, pixSize, true);
+        dv.setInt32(38, 2835, true);  dv.setInt32(42, 2835, true);
+        dv.setUint32(46, 2, true);    dv.setUint32(50, 2, true);
+        b[58] = b[59] = b[60] = 255;                       // palette 1 = white
+
+        for(let y = 0; y < h; y++) {
+            const src = h - 1 - y, base = offset + y * rowBytes;
+            for(let x = 0; x < w; x++) if(bits[src][x]) b[base + (x >> 3)] |= (0x80 >> (x & 7));
+        }
+
+        const url = URL.createObjectURL(new Blob([b], { type: 'image/bmp' }));
+        const a = document.createElement('a');
+        a.href = url; a.download = 'logo_' + w + 'x' + h + '_mono.bmp';
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 2000);
+    }
+
     function loadCustomBlocks() {
         apiCall('blk_list', { onlyEnabled: true }).then(r => {
             const host = document.getElementById('customBlocks');
