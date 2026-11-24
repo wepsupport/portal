@@ -556,18 +556,19 @@
                  and finding "Monochrome Bitmap" in a Save-as list. This lets the
                  customer do it themselves, in their browser. -->
             <div class="card" style="margin-top:16px;">
-              <h3 style="margin:0 0 4px;"><i class="fa-solid fa-image" style="color:#e8117f;"></i> Logo Converter on the Customer Portal</h3>
+              <h3 style="margin:0 0 4px;"><i class="fa-solid fa-database" style="color:#e8117f;"></i> Database Creation on the Customer Portal</h3>
               <div style="font-size:11.5px; color:#636e72; margin-bottom:10px;">
-                Customer apna logo upload karega aur printer ke liye <b>monochrome BMP</b> seedha download kar lega.
-                Poora kaam uske browser me hota hai — image kahin upload nahi hoti.
+                Customer khud bana sakega: <b>printer ka logo</b> (monochrome BMP / pendrive .WBP) aur
+                <b>POS item database</b> (Retail aur F&amp;B ki CSV). Poora kaam uske browser me hota hai —
+                koi file kahin upload nahi hoti.
               </div>
               <label style="font-size:13px; cursor:pointer;">
                 <input type="checkbox" id="setLogoOn" style="width:auto; margin-right:7px; vertical-align:middle;">
-                Customer portal par Logo Converter dikhaiye
+                Customer portal par Database Creation dikhaiye
               </label>
               <div class="grid" style="margin-top:10px;">
-                <div><label>Default width (px)</label><input type="number" id="setLogoW" value="448" min="8" max="2048"></div>
-                <div><label>Default height (px)</label><input type="number" id="setLogoH" value="326" min="8" max="2048"></div>
+                <div><label>Logo width (px)</label><input type="number" id="setLogoW" value="448" min="8" max="2048"></div>
+                <div><label>Logo height (px)</label><input type="number" id="setLogoH" value="326" min="8" max="2048"></div>
               </div>
               <label>Customer ko dikhane wali line</label>
               <input type="text" id="setLogoNote" placeholder="e.g. Apna logo yahan se printer ke format me badal lijiye">
@@ -3496,7 +3497,7 @@
           logoToolNote:    document.getElementById('setLogoNote').value.trim(),
           logoToolFileName: (document.getElementById('setLogoFile').value.trim() || 'LOGODBS.WBP')
       }}).then(c => {
-          box.innerHTML = `<span style="color:#00875a; font-weight:600;">Saved — Logo Converter ${String(c.logoToolEnabled)==='yes'?'ab customer ko dikhega':'chhupa diya gaya'}.</span>`;
+          box.innerHTML = `<span style="color:#00875a; font-weight:600;">Saved — Database Creation ${String(c.logoToolEnabled)==='yes'?'ab customer ko dikhega':'chhupa diya gaya'}.</span>`;
       }).catch(e => { box.innerHTML = `<span style="color:#d63031;">${escapeHtml(e.message)}</span>`; });
   }
 
