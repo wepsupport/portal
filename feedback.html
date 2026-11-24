@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WeP Service &amp; Support — Regional Feedback Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brand: #004b8d;
+      --brand-dark: #003566;
+      --brand-tint: #f0f6fc;
+      --accent: #d92d20;
+      --bg: #f5f7fa;
+      --white: #ffffff;
+      --text-1: #0f172a;
+      --text-2: #475569;
+      --text-3: #64748b;
+      --border: #dde3ea;
+      --border-strong: #cbd5e1;
+      --success: #0f766e;
+      --success-bg: #f0fdfa;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text-1);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Sticky Top Navigation */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .navbar-inner {
+      max-width: 1140px;
+      margin: 0 auto;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      min-width: 0;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+
+    .brand-logo img {
+      height: 36px;
+      width: auto;
+      max-width: 118px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .v-divider {
+      width: 1px;
+      height: 26px;
+      background: var(--border);
+      flex-shrink: 0;
+    }
+
+    .dept-label {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
+
+    .dept-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--text-1);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .dept-sub {
+      font-size: 11.5px;
+      color: var(--brand);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .dept-sub:hover {
+      text-decoration: underline;
+    }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .site-link {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--brand);
+      background: var(--brand-tint);
+      border: 1px solid #cce0f5;
+      text-decoration: none;
+      padding: 6px 12px;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .site-link:hover {
+      background: var(--brand);
+      color: var(--white);
+      border-color: var(--brand);
+    }
+
+    .lang-pill {
+      display: inline-flex;
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2px;
+    }
+
+    .lang-btn {
+      border: none;
+      background: transparent;
+      padding: 6px 12px;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-2);
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      min-height: 32px;
+    }
+
+    .lang-btn.active {
+      background: var(--white);
+      color: var(--brand);
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
+    }
+
+    /* Mobile Progress Strip */
+    .mobile-strip {
+      display: none;
+      background: var(--white);
+      border-bottom: 1px solid var(--border);
+      padding: 10px 16px;
+    }
+
+    .mobile-strip-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-2);
+      margin-bottom: 6px;
+    }
+
+    .mobile-strip-link {
+      color: var(--brand);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    /* Workspace Grid */
+    .workspace {
+      max-width: 1140px;
+      margin: 26px auto 56px;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .sidebar {
+      position: sticky;
+      top: 84px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .side-panel {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 22px;
+    }
+
+    .kicker {
+      display: inline-block;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: var(--brand);
+      margin-bottom: 8px;
+    }
+
+    .side-panel h1 {
+      margin: 0 0 10px;
+      font-size: 19px;
+      font-weight: 700;
+      line-height: 1.32;
+      color: var(--text-1);
+      letter-spacing: -0.25px;
+    }
+
+    .side-panel p {
+      margin: 0;
+      font-size: 13px;
+      line-height: 1.6;
+      color: var(--text-2);
+    }
+
+    .progress-box {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-2);
+      margin-bottom: 8px;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: var(--brand);
+      border-radius: 99px;
+      transition: width 0.25s ease;
+    }
+
+    .step-list {
+      list-style: none;
+      margin: 16px 0 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12.5px;
+      color: var(--text-3);
+      font-weight: 500;
+    }
+
+    .step-dot {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 1.5px solid var(--border-strong);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10.5px;
+      font-weight: 700;
+      color: var(--text-3);
+      flex-shrink: 0;
+      background: var(--white);
+      transition: all 0.2s ease;
+    }
+
+    .step-item.done { color: var(--text-1); }
+    .step-item.done .step-dot {
+      background: var(--brand);
+      border-color: var(--brand);
+      color: var(--white);
+    }
+
+    .ops-note {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--brand);
+      border-radius: 8px;
+      padding: 14px 16px;
+      font-size: 12.5px;
+      color: var(--text-2);
+      line-height: 1.55;
+    }
+
+    .ops-note strong {
+      display: block;
+      color: var(--text-1);
+      margin-bottom: 4px;
+    }
+
+    /* Main Form Canvas */
+    .form-canvas {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+
+    .form-section {
+      padding: 28px 32px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .form-section:last-of-type { border-bottom: none; }
+
+    .sec-meta {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      color: var(--brand);
+      margin-bottom: 4px;
+    }
+
+    .sec-heading {
+      margin: 0 0 4px;
+      font-size: 16.5px;
+      font-weight: 700;
+      color: var(--text-1);
+      letter-spacing: -0.15px;
+    }
+
+    .sec-desc {
+      margin: 0 0 22px;
+      font-size: 13px;
+      color: var(--text-3);
+      line-height: 1.5;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .field { margin-bottom: 18px; }
+    .field:last-child { margin-bottom: 0; }
+
+    .field-label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-1);
+      margin-bottom: 6px;
+    }
+
+    .req { color: var(--accent); margin-left: 2px; }
+    .opt { font-weight: 400; font-size: 12px; color: var(--text-3); margin-left: 4px; }
+
+    input[type="text"],
+    input[type="tel"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 11px 12px;
+      font-size: 14px;
+      color: var(--text-1);
+      background: var(--white);
+      border: 1px solid var(--border-strong);
+      border-radius: 6px;
+      min-height: 44px;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    input::placeholder, textarea::placeholder { color: #94a3b8; }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--brand);
+      box-shadow: 0 0 0 3px rgba(0, 75, 141, 0.1);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 104px;
+      line-height: 1.5;
+    }
+
+    /* Rating Segmented Bar */
+    .rating-scale {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+    }
+
+    .rate-wrap { position: relative; }
+    .rate-wrap input { position: absolute; opacity: 0; pointer-events: none; }
+
+    .rate-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 6px;
+      min-height: 60px;
+      border: 1px solid var(--border-strong);
+      border-radius: 7px;
+      background: var(--white);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .rate-card:hover { border-color: var(--brand); background: #fafcff; }
+    .rate-num { font-size: 16px; font-weight: 700; color: var(--text-1); line-height: 1.2; }
+    .rate-txt { font-size: 11px; color: var(--text-3); margin-top: 3px; font-weight: 500; }
+
+    .rate-wrap input:checked + .rate-card {
+      border-color: var(--brand);
+      background: var(--brand-tint);
+      box-shadow: inset 0 0 0 1px var(--brand);
+    }
+    .rate-wrap input:checked + .rate-card .rate-num,
+    .rate-wrap input:checked + .rate-card .rate-txt { color: var(--brand-dark); }
+
+    /* Priority Pills */
+    .priority-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    .prio-wrap { position: relative; }
+    .prio-wrap input { position: absolute; opacity: 0; pointer-events: none; }
+
+    .prio-pill {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 11px 10px;
+      min-height: 44px;
+      border: 1px solid var(--border-strong);
+      border-radius: 7px;
+      background: var(--white);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-2);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-align: center;
+    }
+
+    .prio-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot-normal { background: #10b981; }
+    .dot-high { background: #f59e0b; }
+    .dot-critical { background: #ef4444; }
+
+    .prio-wrap input:checked + .prio-normal {
+      background: #ecfdf5; border-color: #10b981; color: #065f46;
+    }
+    .prio-wrap input:checked + .prio-high {
+      background: #fffbeb; border-color: #f59e0b; color: #92400e;
+    }
+    .prio-wrap input:checked + .prio-critical {
+      background: #fef2f2; border-color: #ef4444; color: #991b1b;
+    }
+
+    /* Product Selection Chips */
+    .chip-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .prod-chip {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 12px;
+      min-height: 46px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--white);
+      font-size: 13px;
+      color: var(--text-1);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .prod-chip:hover { border-color: var(--border-strong); }
+    .prod-chip.checked { border-color: var(--brand); background: var(--brand-tint); }
+    .prod-chip input { width: 17px; height: 17px; accent-color: var(--brand); flex-shrink: 0; margin: 0; }
+
+    /* Improvement Accordion Rows */
+    .imp-list {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .imp-row {
+      border-bottom: 1px solid var(--border);
+      background: var(--white);
+      transition: background 0.15s ease;
+    }
+    .imp-row:last-child { border-bottom: none; }
+    .imp-row.open { background: #f9fbfe; }
+
+    .imp-trigger {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 14px 16px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .imp-trigger input[type="checkbox"] {
+      margin-top: 2px;
+      width: 18px;
+      height: 18px;
+      accent-color: var(--brand);
+      flex-shrink: 0;
+      cursor: pointer;
+    }
+
+    .imp-info { flex: 1; min-width: 0; }
+    .imp-name { display: block; font-size: 13.5px; font-weight: 600; color: var(--text-1); }
+    .imp-sub { display: block; font-size: 12px; color: var(--text-3); margin-top: 2px; line-height: 1.4; }
+
+    .imp-tag {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--brand);
+      background: var(--brand-tint);
+      padding: 3px 8px;
+      border-radius: 4px;
+      display: none;
+      flex-shrink: 0;
+    }
+    .imp-row.open .imp-tag { display: inline-block; }
+
+    .imp-drawer {
+      display: none;
+      padding: 0 16px 16px 46px;
+    }
+    .imp-row.open .imp-drawer { display: block; }
+
+    .drawer-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--brand-dark);
+      margin-bottom: 6px;
+    }
+
+    .drawer-input {
+      min-height: 40px !important;
+      padding: 9px 11px !important;
+      font-size: 13.5px !important;
+      background: var(--white) !important;
+    }
+
+    /* Footer Submit Bar */
+    .form-footer {
+      padding: 20px 32px;
+      background: #fafbfc;
+      border-top: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .footer-hint { font-size: 12px; color: var(--text-3); }
+
+    .btn-submit {
+      padding: 12px 30px;
+      min-height: 46px;
+      background: var(--brand);
+      color: var(--white);
+      border: none;
+      border-radius: 6px;
+      font-size: 14.5px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+    .btn-submit:hover { background: var(--brand-dark); }
+    .btn-submit:disabled { background: #94a3b8; cursor: not-allowed; }
+
+    /* Success Receipt Screen */
+    .receipt-view {
+      display: none;
+      padding: 52px 24px;
+      text-align: center;
+    }
+
+    .receipt-icon {
+      width: 54px;
+      height: 54px;
+      margin: 0 auto 16px;
+      border-radius: 50%;
+      background: var(--success-bg);
+      border: 1px solid #99f6e4;
+      color: var(--success);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    .receipt-view h2 { margin: 0 0 8px; font-size: 20px; color: var(--text-1); }
+    .receipt-view p { margin: 0 auto 20px; max-width: 460px; font-size: 13.5px; color: var(--text-2); line-height: 1.6; }
+
+    .ref-row {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      margin-bottom: 24px;
+    }
+
+    .ref-code {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--brand-dark);
+    }
+
+    .btn-copy {
+      border: 1px solid var(--border-strong);
+      background: var(--white);
+      color: var(--text-2);
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .receipt-actions {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn-reset, .btn-portal-go {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 11px 22px;
+      min-height: 44px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .btn-reset {
+      background: var(--white);
+      color: var(--brand);
+      border: 1px solid var(--brand);
+    }
+    .btn-reset:hover { background: var(--brand-tint); }
+
+    .btn-portal-go {
+      background: var(--brand);
+      color: var(--white);
+      border: 1px solid var(--brand);
+    }
+    .btn-portal-go:hover { background: var(--brand-dark); }
+
+    /* Responsive Breakpoints */
+    @media (max-width: 920px) {
+      .workspace { grid-template-columns: 1fr; gap: 16px; margin: 16px auto 36px; padding: 0 16px; }
+      .sidebar { position: static; }
+      .progress-box, .ops-note { display: none; }
+      .mobile-strip { display: block; }
+    }
+
+    @media (max-width: 640px) {
+      .navbar-inner { padding: 10px 14px; }
+      .brand-logo img { height: 30px; }
+      .v-divider, .dept-label, .site-link { display: none; }
+      .workspace { padding: 0 10px; margin: 12px auto 32px; }
+      .side-panel { padding: 16px; }
+      .side-panel h1 { font-size: 17px; }
+      .form-section { padding: 20px 16px; }
+      .form-footer { padding: 16px; }
+      .grid-2, .chip-grid { grid-template-columns: 1fr; gap: 14px; }
+      .field { margin-bottom: 14px; }
+      input[type="text"], input[type="tel"], select, textarea, .drawer-input { font-size: 16px !important; }
+      .rating-scale { gap: 6px; }
+      .rate-card { padding: 10px 2px; min-height: 56px; }
+      .rate-num { font-size: 15px; }
+      .rate-txt { font-size: 9.5px; }
+      .priority-grid { grid-template-columns: 1fr; gap: 8px; }
+      .imp-trigger { padding: 12px; gap: 10px; }
+      .imp-tag { display: none !important; }
+      .imp-drawer { padding: 0 12px 14px 12px; }
+      .btn-submit, .btn-reset, .btn-portal-go { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Topbar -->
+  <header class="navbar">
+    <div class="navbar-inner">
+      <div class="brand-group">
+        <a href="https://wepsol-support.vercel.app/" target="_blank" rel="noopener" class="brand-logo">
+          <img
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSdeFo6dKT8cqYERzmuuHQ2N50akaaBtfrZHJtQvpOOmg&s"
+            alt="WeP Solutions"
+          />
+        </a>
+        <div class="v-divider"></div>
+        <div class="dept-label">
+          <span class="dept-title" id="navDept">Service &amp; Support Operations</span>
+          <a href="https://wepsol-support.vercel.app/" target="_blank" rel="noopener" class="dept-sub" id="navSub">Regional Service Improvement Portal ↗</a>
+        </div>
+      </div>
+
+      <div class="nav-actions">
+        <a href="https://wepsol-support.vercel.app/" target="_blank" rel="noopener" class="site-link" id="navPortalBtn">Support Portal ↗</a>
+        <div class="lang-pill" role="group" aria-label="Language Switcher">
+          <button type="button" class="lang-btn active" id="btnEn" onclick="setLang('en')">English</button>
+          <button type="button" class="lang-btn" id="btnHi" onclick="setLang('hi')">हिन्दी</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="mobile-strip">
+      <div class="mobile-strip-top">
+        <a href="https://wepsol-support.vercel.app/" target="_blank" rel="noopener" class="mobile-strip-link" id="mobPortalLink">Support Portal ↗</a>
+        <span><span id="mobProgLbl">Progress</span>: <strong id="mobProgPct">0%</strong></span>
+      </div>
+      <div class="progress-track">
+        <div class="progress-fill" id="mobProgFill"></div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Responsive Workspace -->
+  <main class="workspace">
+
+    <aside class="sidebar">
+      <div class="side-panel">
+        <span class="kicker" id="sideKicker">WeP Service Quality Initiative</span>
+        <h1 id="sideTitle">Regional Service &amp; ASP Network Feedback</h1>
+        <p id="sideDesc">Share ground-level feedback on Authorized Service Partner (ASP) coverage, repair turnaround time, spare parts availability, warranty payouts, and field support.</p>
+
+        <div class="progress-box">
+          <div class="progress-top">
+            <span id="progLabel">Form Completion</span>
+            <span id="progPct">0%</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progFill"></div>
+          </div>
+
+          <ul class="step-list">
+            <li class="step-item" id="st1"><span class="step-dot">1</span><span id="st1Txt">Partner &amp; Territory Details</span></li>
+            <li class="step-item" id="st2"><span class="step-dot">2</span><span id="st2Txt">Service Performance &amp; Priority</span></li>
+            <li class="step-item" id="st3"><span class="step-dot">3</span><span id="st3Txt">Area Suggestions &amp; Feedback</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="ops-note">
+        <strong id="opsHead">Direct Review by Central Service Team</strong>
+        <span id="opsBody">Each area suggestion, warranty payout input, and general feedback entry is recorded in separate structured columns for regional review.</span>
+      </div>
+    </aside>
+
+    <section class="form-canvas">
+      <form id="feedbackForm" novalidate>
+
+        <!-- Section 01 -->
+        <div class="form-section">
+          <div class="sec-meta" id="s1Meta">01 / Territory &amp; Contact</div>
+          <h2 class="sec-heading" id="s1Title">Partner / Team Information</h2>
+          <p class="sec-desc" id="s1Desc">Provide your contact and region details so the support team can coordinate regional improvements.</p>
+
+          <div class="grid-2">
+            <div class="field">
+              <label class="field-label" id="lRole">Submitted By <span class="req">*</span></label>
+              <select id="submittedBy" required>
+                <option value="" id="oRoleDef">Select role</option>
+                <option value="Dealer / Channel Partner" data-en="Authorized Dealer / Channel Partner" data-hi="अधिकृत डीलर / चैनल पार्टनर">Authorized Dealer / Channel Partner</option>
+                <option value="Sales Team Member" data-en="WeP Sales Team (RSM / ASM / Executive)" data-hi="WeP सेल्स टीम (RSM / ASM / एग्जीक्यूटिव)">WeP Sales Team (RSM / ASM / Executive)</option>
+                <option value="Distributor" data-en="Regional Distributor" data-hi="क्षेत्रीय डिस्ट्रीब्यूटर">Regional Distributor</option>
+                <option value="Other" data-en="Other Stakeholder" data-hi="अन्य">Other Stakeholder</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label class="field-label" id="lName">Full Name <span class="req">*</span></label>
+              <input type="text" id="fullName" placeholder="Enter your full name" required />
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label class="field-label" id="lMobile">Mobile / WhatsApp Number <span class="req">*</span></label>
+              <input type="tel" id="mobile" inputmode="numeric" pattern="[0-9]{10}" maxlength="10" placeholder="10-digit mobile number" required />
+            </div>
+
+            <div class="field">
+              <label class="field-label" id="lFirm">Firm / Dealership Name <span class="opt">(Optional)</span></label>
+              <input type="text" id="firmName" placeholder="Registered firm or dealership name" />
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label class="field-label" id="lState">State / Union Territory <span class="req">*</span></label>
+              <select id="state" required>
+                <option value="" id="oStateDef">Select state or UT</option>
+                <optgroup label="States" id="ogStates">
+                  <option value="Andhra Pradesh" data-zone="South">Andhra Pradesh</option>
+                  <option value="Arunachal Pradesh" data-zone="East">Arunachal Pradesh</option>
+                  <option value="Assam" data-zone="East">Assam</option>
+                  <option value="Bihar" data-zone="East">Bihar</option>
+                  <option value="Chhattisgarh" data-zone="Central">Chhattisgarh</option>
+                  <option value="Goa" data-zone="West">Goa</option>
+                  <option value="Gujarat" data-zone="West">Gujarat</option>
+                  <option value="Haryana" data-zone="North">Haryana</option>
+                  <option value="Himachal Pradesh" data-zone="North">Himachal Pradesh</option>
+                  <option value="Jharkhand" data-zone="East">Jharkhand</option>
+                  <option value="Karnataka" data-zone="South">Karnataka</option>
+                  <option value="Kerala" data-zone="South">Kerala</option>
+                  <option value="Madhya Pradesh" data-zone="Central">Madhya Pradesh</option>
+                  <option value="Maharashtra" data-zone="West">Maharashtra</option>
+                  <option value="Manipur" data-zone="East">Manipur</option>
+                  <option value="Meghalaya" data-zone="East">Meghalaya</option>
+                  <option value="Mizoram" data-zone="East">Mizoram</option>
+                  <option value="Nagaland" data-zone="East">Nagaland</option>
+                  <option value="Odisha" data-zone="East">Odisha</option>
+                  <option value="Punjab" data-zone="North">Punjab</option>
+                  <option value="Rajasthan" data-zone="North">Rajasthan</option>
+                  <option value="Sikkim" data-zone="East">Sikkim</option>
+                  <option value="Tamil Nadu" data-zone="South">Tamil Nadu</option>
+                  <option value="Telangana" data-zone="South">Telangana</option>
+                  <option value="Tripura" data-zone="East">Tripura</option>
+                  <option value="Uttar Pradesh" data-zone="North">Uttar Pradesh</option>
+                  <option value="Uttarakhand" data-zone="North">Uttarakhand</option>
+                  <option value="West Bengal" data-zone="East">West Bengal</option>
+                </optgroup>
+                <optgroup label="Union Territories" id="ogUts">
+                  <option value="Andaman and Nicobar Islands" data-zone="South">Andaman and Nicobar Islands</option>
+                  <option value="Chandigarh" data-zone="North">Chandigarh</option>
+                  <option value="Dadra and Nagar Haveli and Daman and Diu" data-zone="West">Dadra &amp; Nagar Haveli and Daman &amp; Diu</option>
+                  <option value="Delhi" data-zone="North">Delhi (NCT)</option>
+                  <option value="Jammu and Kashmir" data-zone="North">Jammu &amp; Kashmir</option>
+                  <option value="Ladakh" data-zone="North">Ladakh</option>
+                  <option value="Lakshadweep" data-zone="South">Lakshadweep</option>
+                  <option value="Puducherry" data-zone="South">Puducherry</option>
+                </optgroup>
+              </select>
+            </div>
+
+            <div class="field">
+              <label class="field-label" id="lRegion">Region / Zone <span class="req">*</span></label>
+              <select id="region" required>
+                <option value="" id="oZoneDef">Select zone</option>
+                <option value="North" data-en="North" data-hi="उत्तर (North)">North</option>
+                <option value="South" data-en="South" data-hi="दक्षिण (South)">South</option>
+                <option value="East" data-en="East" data-hi="पूर्व (East)">East</option>
+                <option value="West" data-en="West" data-hi="पश्चिम (West)">West</option>
+                <option value="Central" data-en="Central" data-hi="मध्य (Central)">Central</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" id="lCity">City / District <span class="req">*</span></label>
+            <input type="text" id="city" placeholder="Enter primary city or district" required />
+          </div>
+        </div>
+
+        <!-- Section 02 -->
+        <div class="form-section">
+          <div class="sec-meta" id="s2Meta">02 / Service Audit</div>
+          <h2 class="sec-heading" id="s2Title">Current Service Performance</h2>
+          <p class="sec-desc" id="s2Desc">Rate overall post-sales service quality, urgency level, and highlight affected product categories.</p>
+
+          <div class="field">
+            <label class="field-label" id="lRating">Overall Regional Service Rating <span class="req">*</span></label>
+            <div class="rating-scale">
+              <label class="rate-wrap">
+                <input type="radio" name="rating" value="1" required />
+                <div class="rate-card"><span class="rate-num">1</span><span class="rate-txt" id="rt1">Critical</span></div>
+              </label>
+              <label class="rate-wrap">
+                <input type="radio" name="rating" value="2" />
+                <div class="rate-card"><span class="rate-num">2</span><span class="rate-txt" id="rt2">Below Avg</span></div>
+              </label>
+              <label class="rate-wrap">
+                <input type="radio" name="rating" value="3" />
+                <div class="rate-card"><span class="rate-num">3</span><span class="rate-txt" id="rt3">Average</span></div>
+              </label>
+              <label class="rate-wrap">
+                <input type="radio" name="rating" value="4" />
+                <div class="rate-card"><span class="rate-num">4</span><span class="rate-txt" id="rt4">Good</span></div>
+              </label>
+              <label class="rate-wrap">
+                <input type="radio" name="rating" value="5" />
+                <div class="rate-card"><span class="rate-num">5</span><span class="rate-txt" id="rt5">Excellent</span></div>
+              </label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" id="lPriority">Action Priority / Urgency Level <span class="req">*</span></label>
+            <div class="priority-grid">
+              <label class="prio-wrap">
+                <input type="radio" name="priority" value="Normal" checked required />
+                <div class="prio-pill prio-normal"><span class="prio-dot dot-normal"></span><span id="prNorm">Normal Feedback</span></div>
+              </label>
+              <label class="prio-wrap">
+                <input type="radio" name="priority" value="High" />
+                <div class="prio-pill prio-high"><span class="prio-dot dot-high"></span><span id="prHigh">High Priority</span></div>
+              </label>
+              <label class="prio-wrap">
+                <input type="radio" name="priority" value="Critical" />
+                <div class="prio-pill prio-critical"><span class="prio-dot dot-critical"></span><span id="prCrit">Critical Escalation</span></div>
+              </label>
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" id="lProducts">Product Categories Facing Service Challenges</label>
+            <div class="chip-grid" id="productsGroup">
+              <label class="prod-chip"><input type="checkbox" value="Retail Billing Printers (BP Series / Joy / Emerge)" /><span class="t-prod" data-en="Retail Billing Printers (BP Series / Joy / Emerge)" data-hi="रिटेल बिलिंग प्रिंटर (BP सीरीज़ / Joy / Emerge)">Retail Billing Printers (BP Series / Joy / Emerge)</span></label>
+              <label class="prod-chip"><input type="checkbox" value="Thermal Receipt Printers (80mm / 58mm)" /><span class="t-prod" data-en="Thermal Receipt Printers (80mm / 58mm)" data-hi="थर्मल रिसीट प्रिंटर (80mm / 58mm)">Thermal Receipt Printers (80mm / 58mm)</span></label>
+              <label class="prod-chip"><input type="checkbox" value="Touch POS Terminals (Android / Windows)" /><span class="t-prod" data-en="Touch POS Terminals (Android / Windows)" data-hi="टच POS टर्मिनल (एंड्रॉइड / विंडोज)">Touch POS Terminals (Android / Windows)</span></label>
+              <label class="prod-chip"><input type="checkbox" value="Barcode Scanners, Cash Drawers &amp; Scales" /><span class="t-prod" data-en="Barcode Scanners, Cash Drawers &amp; Scales" data-hi="बारकोड स्कैनर, कैश ड्रॉअर एवं वेइंग स्केल">Barcode Scanners, Cash Drawers &amp; Scales</span></label>
+              <label class="prod-chip"><input type="checkbox" value="All Product Categories" /><span class="t-prod" data-en="All Product Categories" data-hi="सभी प्रोडक्ट श्रेणियां">All Product Categories</span></label>
+              <label class="prod-chip"><input type="checkbox" id="noProdIssue" value="No Product-Specific Issues" /><span class="t-prod" data-en="No Product-Specific Issues" data-hi="किसी प्रोडक्ट में कोई विशेष समस्या नहीं">No Product-Specific Issues</span></label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section 03 -->
+        <div class="form-section">
+          <div class="sec-meta" id="s3Meta">03 / Improvement Action Plan</div>
+          <h2 class="sec-heading" id="s3Title">Priority Gaps &amp; Separate Fix Suggestions</h2>
+          <p class="sec-desc" id="s3Desc">Select areas needing improvement. Each suggestion is logged in its own dedicated column in the report.</p>
+
+          <div class="field">
+            <label class="field-label" id="lImp">Key Service Improvement Areas</label>
+            <div class="imp-list" id="improvementsGroup">
+
+              <div class="imp-row" data-field="fixAsp">
+                <label class="imp-trigger">
+                  <input type="checkbox" value="New ASP Appointment / Coverage Gap" />
+                  <div class="imp-info">
+                    <span class="imp-name" data-en="New ASP Appointment / Coverage Gap" data-hi="नया सर्विस सेंटर (ASP) नियुक्त करना">New ASP Appointment / Coverage Gap</span>
+                    <span class="imp-sub" data-en="No Authorized Service Partner nearby or long travel distance for repair" data-hi="आसपास अधिकृत सर्विस पार्टनर नहीं है या दूरी बहुत अधिक है">No Authorized Service Partner nearby or long travel distance for repair</span>
+                  </div>
+                  <span class="imp-tag" data-en="Add Action" data-hi="सुझाव जोड़ें">Add Action</span>
+                </label>
+                <div class="imp-drawer">
+                  <label class="drawer-label" data-en="Suggestion for ASP coverage (Target city/cluster):" data-hi="ASP कवरेज के लिए सुझाव (लक्षित शहर / क्षेत्र):">Suggestion for ASP coverage (Target city/cluster):</label>
+                  <input type="text" class="drawer-input" data-en-ph="e.g. Appoint a local ASP in Nalagarh; approx. 20 units/month" data-hi-ph="उदा. नालागढ़ में नया ASP नियुक्त किया जाए" placeholder="e.g. Appoint a local ASP in Nalagarh; approx. 20 units/month" />
+                </div>
+              </div>
+
+              <div class="imp-row" data-field="fixTat">
+                <label class="imp-trigger">
+                  <input type="checkbox" value="Repair Turnaround Time (TAT)" />
+                  <div class="imp-info">
+                    <span class="imp-name" data-en="Repair Turnaround Time (TAT)" data-hi="रिपेयर टर्नअराउंड टाइम (TAT)">Repair Turnaround Time (TAT)</span>
+                    <span class="imp-sub" data-en="Delays in repair completion or return transit to dealer/customer" data-hi="मशीन रिपेयर होकर वापस मिलने में अधिक समय लगता है">Delays in repair completion or return transit to dealer/customer</span>
+                  </div>
+                  <span class="imp-tag" data-en="Add Action" data-hi="सुझाव जोड़ें">Add Action</span>
+                </label>
+                <div class="imp-drawer">
+                  <label class="drawer-label" data-en="Suggestion to reduce repair TAT:" data-hi="रिपेयर TAT कम करने के लिए सुझाव:">Suggestion to reduce repair TAT:</label>
+                  <input type="text" class="drawer-input" data-en-ph="e.g. Enable Level-1 repair at nearest hub or faster courier dispatch" data-hi-ph="उदा. नजदीकी हब पर लेवल-1 रिपेयर या तेज़ कूरियर डिस्पैच" placeholder="e.g. Enable Level-1 repair at nearest hub or faster courier dispatch" />
+                </div>
+              </div>
+
+              <div class="imp-row" data-field="fixParts">
+                <label class="imp-trigger">
+                  <input type="checkbox" value="Spare Parts &amp; Printhead Availability" />
+                  <div class="imp-info">
+                    <span class="imp-name" data-en="Spare Parts &amp; Printhead Availability" data-hi="स्पेयर पार्ट्स एवं प्रिंटहेड की उपलब्धता">Spare Parts &amp; Printhead Availability</span>
+                    <span class="imp-sub" data-en="Stock-outs of printheads, cutters, PCBs, batteries, or power adapters" data-hi="प्रिंटहेड, कटर, PCB, बैटरी या एडॉप्टर समय पर उपलब्ध नहीं होते">Stock-outs of printheads, cutters, PCBs, batteries, or power adapters</span>
+                  </div>
+                  <span class="imp-tag" data-en="Add Action" data-hi="सुझाव जोड़ें">Add Action</span>
+                </label>
+                <div class="imp-drawer">
+                  <label class="drawer-label" data-en="Suggestion for spare parts stocking:" data-hi="स्पेयर पार्ट्स स्टॉक सुधारने के लिए सुझाव:">Suggestion for spare parts stocking:</label>
+                  <input type="text" class="drawer-input" data-en-ph="e.g. Maintain buffer stock of 2-inch printheads and adapters at regional ASP" data-hi-ph="उदा. क्षेत्रीय ASP पर 2-इंच प्रिंटहेड व एडॉप्टर का बफ़र स्टॉक रखा जाए" placeholder="e.g. Maintain buffer stock of 2-inch printheads and adapters at regional ASP" />
+                </div>
+              </div>
+
+              <div class="imp-row" data-field="fixOnsite">
+                <label class="imp-trigger">
+                  <input type="checkbox" value="On-Site Installation &amp; Field Support" />
+                  <div class="imp-info">
+                    <span class="imp-name" data-en="On-Site Installation &amp; Field Support" data-hi="ऑन-साइट इंस्टॉलेशन एवं फ़ील्ड सपोर्ट">On-Site Installation &amp; Field Support</span>
+                    <span class="imp-sub" data-en="Delayed field engineer visits for POS setup or breakdown resolution" data-hi="POS इंस्टॉलेशन या ब्रेकडाउन के लिए फ़ील्ड विज़िट में देरी">Delayed field engineer visits for POS setup or breakdown resolution</span>
+                  </div>
+                  <span class="imp-tag" data-en="Add Action" data-hi="सुझाव जोड़ें">Add Action</span>
+                </label>
+                <div class="imp-drawer">
+                  <label class="drawer-label" data-en="Suggestion for field engineer support:" data-hi="फ़ील्ड विज़िट सुधारने के लिए सुझाव:">Suggestion for field engineer support:</label>
+                  <input type="text" class="drawer-input" data-en-ph="e.g. Scheduled weekly technician visit for nearby market towns" data-hi-ph="उदा. आसपास के प्रमुख बाज़ारों में साप्ताहिक इंजीनियर विज़िट" placeholder="e.g. Scheduled weekly technician visit for nearby market towns" />
+                </div>
+              </div>
+
+              <div class="imp-row" data-field="fixTraining">
+                <label class="imp-trigger">
+                  <input type="checkbox" value="Technical Training &amp; Diagnostics" />
+                  <div class="imp-info">
+                    <span class="imp-name" data-en="Technical Training &amp; Diagnostics" data-hi="तकनीकी ट्रेनिंग एवं डायग्नोस्टिक्स">Technical Training &amp; Diagnostics</span>
+                    <span class="imp-sub" data-en="Local ASP/dealer technicians need training on new models &amp; firmware" data-hi="नए मॉडलों, फर्मवेयर और ट्रबलशूटिंग पर स्थानीय तकनीशियनों को ट्रेनिंग चाहिए">Local ASP/dealer technicians need training on new models &amp; firmware</span>
+                  </div>
+                  <span class="imp-tag" data-en="Add Action" data-hi="सुझाव जोड़ें">Add Action</span>
+                </label>
+                <div class="imp-drawer">
+                  <label class="drawer-label" data-en="Topics or product models needed for training:" data-hi="किन मॉडल या विषयों पर ट्रेनिंग चाहिए?">Topics or product models needed for training:</label>
+                  <input type="text" class="drawer-input" data-en-ph="e.g. Hands-on PCB troubleshooting, Emerge/BP &amp; Android POS firmware" data-hi-ph="उदा. Emerge/BP और Android POS ट्रबलशूटिंग ट्रेनिंग" placeholder="e.g. Hands-on PCB troubleshooting, Emerge/BP &amp; Android POS firmware" />
+                </div>
+              </div>
+
+              <div class="imp-row" data-field="fixComm">
+                <label class="imp-trigger">
+                  <input type="checkbox" value="Support Desk &amp; Status Communication" />
+                  <div class="imp-info">
+                    <span class="imp-name" data-en="Support Desk &amp; Status Communication" data-hi="सपोर्ट डेस्क एवं टिकट अपडेट कम्युनिकेशन">Support Desk &amp; Status Communication</span>
+                    <span class="imp-sub" data-en="Toll-free / WhatsApp response time or visibility on repair status" data-hi="टोल-फ़्री / व्हाट्सएप रिस्पॉन्स समय या रिपेयर स्टेटस अपडेट में कमी">Toll-free / WhatsApp response time or visibility on repair status</span>
+                  </div>
+                  <span class="imp-tag" data-en="Add Action" data-hi="सुझाव जोड़ें">Add Action</span>
+                </label>
+                <div class="imp-drawer">
+                  <label class="drawer-label" data-en="Suggestion to improve support communication:" data-hi="सपोर्ट कम्युनिकेशन बेहतर करने के लिए सुझाव:">Suggestion to improve support communication:</label>
+                  <input type="text" class="drawer-input" data-en-ph="e.g. Automated WhatsApp alerts at unit receipt &amp; dispatch" data-hi-ph="उदा. मशीन रिसीव और डिस्पैच होने पर व्हाट्सएप अपडेट" placeholder="e.g. Automated WhatsApp alerts at unit receipt &amp; dispatch" />
+                </div>
+              </div>
+
+              <div class="imp-row" data-field="fixDoa">
+                <label class="imp-trigger">
+                  <input type="checkbox" value="DOA &amp; Warranty Claim Process" />
+                  <div class="imp-info">
+                    <span class="imp-name" data-en="DOA &amp; Warranty Claim Process" data-hi="DOA एवं वारंटी रिप्लेसमेंट प्रक्रिया">DOA &amp; Warranty Claim Process</span>
+                    <span class="imp-sub" data-en="Delays in DOA verification, approval, or replacement dispatch" data-hi="DOA सत्यापन, अप्रूवल या रिप्लेसमेंट डिस्पैच में देरी">Delays in DOA verification, approval, or replacement dispatch</span>
+                  </div>
+                  <span class="imp-tag" data-en="Add Action" data-hi="सुझाव जोड़ें">Add Action</span>
+                </label>
+                <div class="imp-drawer">
+                  <label class="drawer-label" data-en="Suggestion for DOA / warranty workflow:" data-hi="वारंटी / DOA प्रक्रिया सुधारने के लिए सुझाव:">Suggestion for DOA / warranty workflow:</label>
+                  <input type="text" class="drawer-input" data-en-ph="e.g. Faster video-based DOA approval before unit transit" data-hi-ph="उदा. वीडियो वेरिफिकेशन के आधार पर त्वरित DOA अप्रूवल" placeholder="e.g. Faster video-based DOA approval before unit transit" />
+                </div>
+              </div>
+
+              <!-- NEW: Warranty Complaint Payout -->
+              <div class="imp-row" data-field="fixPayout">
+                <label class="imp-trigger">
+                  <input type="checkbox" value="Payout for Warranty Complaints" />
+                  <div class="imp-info">
+                    <span class="imp-name" data-en="Payout for Warranty Complaints" data-hi="वारंटी कम्प्लेंट पेआउट एवं सेटलमेंट">Payout for Warranty Complaints</span>
+                    <span class="imp-sub" data-en="Service payout rates, warranty claim settlement delays, or credit note clearance" data-hi="वारंटी कम्प्लेंट पेआउट रेट, क्लेम सेटलमेंट में देरी या क्रेडिट नोट क्लियरेंस">Service payout rates, warranty claim settlement delays, or credit note clearance</span>
+                  </div>
+                  <span class="imp-tag" data-en="Add Action" data-hi="सुझाव जोड़ें">Add Action</span>
+                </label>
+                <div class="imp-drawer">
+                  <label class="drawer-label" data-en="Suggestion for warranty complaint payout &amp; settlement:" data-hi="वारंटी कम्प्लेंट पेआउट एवं सेटलमेंट के लिए सुझाव:">Suggestion for warranty complaint payout &amp; settlement:</label>
+                  <input type="text" class="drawer-input" data-en-ph="e.g. Fixed monthly settlement cycle, revised call payout rate, or faster claim statement" data-hi-ph="उदा. तय मासिक पेआउट साइकिल, कॉल रेट रिवीज़न या समय पर क्लेम स्टेटमेंट" placeholder="e.g. Fixed monthly settlement cycle, revised call payout rate, or faster claim statement" />
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label class="field-label" id="lAsp">Proposed Location for New ASP <span class="opt">(Optional)</span></label>
+              <input type="text" id="newAsp" placeholder="City / town name (or type No)" />
+            </div>
+
+            <div class="field">
+              <label class="field-label" id="lTech">Local Service Partner / Technician Reference <span class="opt">(Optional)</span></label>
+              <input type="text" id="techRef" placeholder="Shop name, contact person &amp; mobile" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label class="field-label" id="lSug">General Service Feedback / Open Escalations <span class="req">*</span></label>
+            <textarea id="generalFeedback" placeholder="Share overall feedback on regional service operations or mention any pending ticket numbers..." required></textarea>
+          </div>
+        </div>
+
+        <!-- Submit Footer -->
+        <div class="form-footer">
+          <span class="footer-hint" id="fHint">Fields marked with * are mandatory.</span>
+          <button type="submit" class="btn-submit" id="submitBtn">Submit Regional Feedback</button>
+        </div>
+      </form>
+
+      <!-- Confirmation Receipt -->
+      <div class="receipt-view" id="receiptView">
+        <div class="receipt-icon">✓</div>
+        <h2 id="rcTitle">Feedback Recorded Successfully</h2>
+        <p id="rcDesc">Thank you for sharing your regional service inputs. Your feedback and suggestions have been logged for review by the WeP Service &amp; Support Operations team.</p>
+        <div class="ref-row">
+          <span class="ref-code" id="refId">WEP-SRV-0000</span>
+          <button type="button" class="btn-copy" id="btnCopy" onclick="copyRef()">Copy</button>
+        </div>
+        <div class="receipt-actions">
+          <button type="button" class="btn-reset" id="btnReset" onclick="resetFormView()">Submit Another Response</button>
+          <a href="https://wepsol-support.vercel.app/" target="_blank" rel="noopener" class="btn-portal-go" id="btnGoPortal">Open Support Portal ↗</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    // STEP: Paste your Google Apps Script Web App URL here before deploying to Vercel
+    const APPS_SCRIPT_URL = "PASTE_YOUR_WEB_APP_URL_HERE";
+
+    const TEXT = {
+      en: {
+        navDept: "Service & Support Operations",
+        navSub: "Regional Service Improvement Portal ↗",
+        navPortalBtn: "Support Portal ↗",
+        mobPortalLink: "Support Portal ↗",
+        mobProgLbl: "Progress",
+        sideKicker: "WeP Service Quality Initiative",
+        sideTitle: "Regional Service & ASP Network Feedback",
+        sideDesc: "Share ground-level feedback on Authorized Service Partner (ASP) coverage, repair turnaround time, spare parts availability, warranty payouts, and field support.",
+        progLabel: "Form Completion",
+        st1Txt: "Partner & Territory Details",
+        st2Txt: "Service Performance & Priority",
+        st3Txt: "Area Suggestions & Feedback",
+        opsHead: "Direct Review by Central Service Team",
+        opsBody: "Each area suggestion, warranty payout input, and general feedback entry is recorded in separate structured columns for regional review.",
+        s1Meta: "01 / Territory & Contact",
+        s1Title: "Partner / Team Information",
+        s1Desc: "Provide your contact and region details so the support team can coordinate regional improvements.",
+        lRole: 'Submitted By <span class="req">*</span>',
+        oRoleDef: "Select role",
+        lName: 'Full Name <span class="req">*</span>',
+        phName: "Enter your full name",
+        lMobile: 'Mobile / WhatsApp Number <span class="req">*</span>',
+        phMobile: "10-digit mobile number",
+        lFirm: 'Firm / Dealership Name <span class="opt">(Optional)</span>',
+        phFirm: "Registered firm or dealership name",
+        lState: 'State / Union Territory <span class="req">*</span>',
+        oStateDef: "Select state or UT",
+        ogStates: "States",
+        ogUts: "Union Territories",
+        lRegion: 'Region / Zone <span class="req">*</span>',
+        oZoneDef: "Select zone",
+        lCity: 'City / District <span class="req">*</span>',
+        phCity: "Enter primary city or district",
+        s2Meta: "02 / Service Audit",
+        s2Title: "Current Service Performance",
+        s2Desc: "Rate overall post-sales service quality, urgency level, and highlight affected product categories.",
+        lRating: 'Overall Regional Service Rating <span class="req">*</span>',
+        rt1: "Critical", rt2: "Below Avg", rt3: "Average", rt4: "Good", rt5: "Excellent",
+        lPriority: 'Action Priority / Urgency Level <span class="req">*</span>',
+        prNorm: "Normal Feedback", prHigh: "High Priority", prCrit: "Critical Escalation",
+        lProducts: "Product Categories Facing Service Challenges",
+        s3Meta: "03 / Improvement Action Plan",
+        s3Title: "Priority Gaps & Separate Fix Suggestions",
+        s3Desc: "Select areas needing improvement. Each suggestion is logged in its own dedicated column in the report.",
+        lImp: "Key Service Improvement Areas",
+        lAsp: 'Proposed Location for New ASP <span class="opt">(Optional)</span>',
+        phAsp: "City / town name (or type No)",
+        lTech: 'Local Service Partner / Technician Reference <span class="opt">(Optional)</span>',
+        phTech: "Shop name, contact person & mobile",
+        lSug: 'General Service Feedback / Open Escalations <span class="req">*</span>',
+        phSug: "Share overall feedback on regional service operations or mention any pending ticket numbers...",
+        fHint: "Fields marked with * are mandatory.",
+        submitBtn: "Submit Regional Feedback",
+        submitting: "Submitting...",
+        rcTitle: "Feedback Recorded Successfully",
+        rcDesc: "Thank you for sharing your regional service inputs. Your feedback and suggestions have been logged for review by the WeP Service & Support Operations team.",
+        btnReset: "Submit Another Response",
+        btnGoPortal: "Open Support Portal ↗",
+        btnCopy: "Copy",
+        btnCopied: "Copied!",
+        errMobile: "Please enter a valid 10-digit mobile number.",
+        errRequired: "Please fill all required fields marked with *.",
+        errUrl: "Apps Script Web App URL is not configured yet in index.html."
+      },
+      hi: {
+        navDept: "सर्विस एवं सपोर्ट ऑपरेशंस",
+        navSub: "क्षेत्रीय सेवा सुधार पोर्टल ↗",
+        navPortalBtn: "सपोर्ट पोर्टल ↗",
+        mobPortalLink: "सपोर्ट पोर्टल ↗",
+        mobProgLbl: "पूर्णता",
+        sideKicker: "WeP सेवा गुणवत्ता पहल",
+        sideTitle: "क्षेत्रीय सेवा एवं ASP नेटवर्क फ़ीडबैक",
+        sideDesc: "अपने क्षेत्र में अधिकृत सर्विस पार्टनर (ASP) कवरेज, रिपेयर समय (TAT), स्पेयर पार्ट्स उपलब्धता, वारंटी पेआउट और फ़ील्ड सपोर्ट से जुड़ा वास्तविक फ़ीडबैक साझा करें।",
+        progLabel: "फ़ॉर्म पूर्णता",
+        st1Txt: "पार्टनर एवं क्षेत्र विवरण",
+        st2Txt: "सेवा प्रदर्शन एवं प्राथमिकता",
+        st3Txt: "क्षेत्रवार सुझाव एवं फ़ीडबैक",
+        opsHead: "केंद्रीय सर्विस टीम द्वारा सीधी समीक्षा",
+        opsBody: "प्रत्येक सुधार सुझाव, वारंटी पेआउट इनपुट और सामान्य फ़ीडबैक अलग-अलग कॉलम में दर्ज होता है ताकि क्षेत्रीय समीक्षा आसानी से की जा सके।",
+        s1Meta: "01 / क्षेत्र एवं संपर्क",
+        s1Title: "पार्टनर / टीम विवरण",
+        s1Desc: "अपना संपर्क और क्षेत्र विवरण दर्ज करें ताकि सर्विस टीम क्षेत्रीय सुधार पर फॉलो-अप कर सके।",
+        lRole: 'फ़ीडबैक देने वाले <span class="req">*</span>',
+        oRoleDef: "भूमिका चुनें",
+        lName: 'पूरा नाम <span class="req">*</span>',
+        phName: "अपना पूरा नाम दर्ज करें",
+        lMobile: 'मोबाइल / व्हाट्सएप नंबर <span class="req">*</span>',
+        phMobile: "10 अंकों का मोबाइल नंबर",
+        lFirm: 'फ़र्म / डीलरशिप का नाम <span class="opt">(वैकल्पिक)</span>',
+        phFirm: "पंजीकृत फ़र्म या डीलरशिप का नाम",
+        lState: 'राज्य / केंद्र शासित प्रदेश <span class="req">*</span>',
+        oStateDef: "राज्य या केंद्र शासित प्रदेश चुनें",
+        ogStates: "राज्य",
+        ogUts: "केंद्र शासित प्रदेश",
+        lRegion: 'क्षेत्र / ज़ोन <span class="req">*</span>',
+        oZoneDef: "ज़ोन चुनें",
+        lCity: 'शहर / ज़िला <span class="req">*</span>',
+        phCity: "प्रमुख शहर या ज़िले का नाम लिखें",
+        s2Meta: "02 / सेवा ऑडिट",
+        s2Title: "वर्तमान सेवा प्रदर्शन",
+        s2Desc: "अपने क्षेत्र में आफ्टर-सेल्स सर्विस गुणवत्ता, प्राथमिकता स्तर और प्रभावित प्रोडक्ट श्रेणियां चुनें।",
+        lRating: 'समग्र क्षेत्रीय सेवा रेटिंग <span class="req">*</span>',
+        rt1: "गंभीर", rt2: "कमज़ोर", rt3: "औसत", rt4: "अच्छा", rt5: "उत्कृष्ट",
+        lPriority: 'एक्शन प्राथमिकता / तात्कालिकता <span class="req">*</span>',
+        prNorm: "सामान्य फ़ीडबैक", prHigh: "उच्च प्राथमिकता", prCrit: "तत्काल एस्केलेशन",
+        lProducts: "किन प्रोडक्ट श्रेणियों की सर्विस में चुनौती आ रही है?",
+        s3Meta: "03 / सुधार कार्य योजना",
+        s3Title: "प्रमुख कमियां एवं अलग-अलग सुधार सुझाव",
+        s3Desc: "सुधार के क्षेत्र चुनें। प्रत्येक क्षेत्र का सुझाव रिपोर्ट में अपने अलग कॉलम में दर्ज किया जाएगा।",
+        lImp: "प्रमुख सेवा सुधार क्षेत्र",
+        lAsp: 'नए ASP के लिए प्रस्तावित शहर / स्थान <span class="opt">(वैकल्पिक)</span>',
+        phAsp: "शहर / कस्बे का नाम (या 'नहीं' लिखें)",
+        lTech: 'स्थानीय सर्विस पार्टनर / तकनीशियन रेफ़रेंस <span class="opt">(वैकल्पिक)</span>',
+        phTech: "दुकान का नाम, संपर्क व्यक्ति एवं मोबाइल नंबर",
+        lSug: 'सामान्य सेवा फ़ीडबैक / लंबित एस्केलेशन <span class="req">*</span>',
+        phSug: "अपने क्षेत्र की सर्विस के बारे में समग्र फ़ीडबैक या कोई लंबित टिकट नंबर लिखें...",
+        fHint: "* चिह्नित फ़ील्ड भरना अनिवार्य है।",
+        submitBtn: "क्षेत्रीय फ़ीडबैक सबमिट करें",
+        submitting: "सबमिट किया जा रहा है...",
+        rcTitle: "फ़ीडबैक सफलतापूर्वक दर्ज हो गया",
+        rcDesc: "अपना क्षेत्रीय फ़ीडबैक और सुझाव साझा करने के लिए धन्यवाद। आपकी जानकारी WeP सर्विस एवं सपोर्ट ऑपरेशंस टीम की समीक्षा के लिए दर्ज कर ली गई है।",
+        btnReset: "एक और फ़ीडबैक दर्ज करें",
+        btnGoPortal: "सपोर्ट पोर्टल खोलें ↗",
+        btnCopy: "कॉपी",
+        btnCopied: "कॉपी हो गया!",
+        errMobile: "कृपया 10 अंकों का सही मोबाइल नंबर दर्ज करें।",
+        errRequired: "कृपया * चिह्नित सभी अनिवार्य फ़ील्ड भरें।",
+        errUrl: "index.html में Apps Script Web App URL सेट नहीं किया गया है।"
+      }
+    };
+
+    let lang = 'en';
+
+    function setLang(code) {
+      lang = code;
+      document.getElementById('btnEn').classList.toggle('active', code === 'en');
+      document.getElementById('btnHi').classList.toggle('active', code === 'hi');
+      const t = TEXT[code];
+
+      const textIds = [
+        'navDept','navSub','navPortalBtn','mobPortalLink','mobProgLbl','sideKicker','sideTitle','sideDesc','progLabel',
+        'st1Txt','st2Txt','st3Txt','opsHead','opsBody',
+        's1Meta','s1Title','s1Desc','oRoleDef','oStateDef','oZoneDef',
+        's2Meta','s2Title','s2Desc','rt1','rt2','rt3','rt4','rt5','prNorm','prHigh','prCrit','lProducts',
+        's3Meta','s3Title','s3Desc','lImp','fHint','submitBtn',
+        'rcTitle','rcDesc','btnReset','btnGoPortal','btnCopy'
+      ];
+      textIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = t[id];
+      });
+
+      const htmlIds = ['lRole','lName','lMobile','lFirm','lState','lRegion','lCity','lRating','lPriority','lAsp','lTech','lSug'];
+      htmlIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.innerHTML = t[id];
+      });
+
+      document.getElementById('ogStates').label = t.ogStates;
+      document.getElementById('ogUts').label = t.ogUts;
+      document.getElementById('fullName').placeholder = t.phName;
+      document.getElementById('mobile').placeholder = t.phMobile;
+      document.getElementById('firmName').placeholder = t.phFirm;
+      document.getElementById('city').placeholder = t.phCity;
+      document.getElementById('newAsp').placeholder = t.phAsp;
+      document.getElementById('techRef').placeholder = t.phTech;
+      document.getElementById('generalFeedback').placeholder = t.phSug;
+
+      document.querySelectorAll('#submittedBy option[data-en], #region option[data-en]').forEach(opt => {
+        opt.textContent = opt.getAttribute('data-' + code);
+      });
+      document.querySelectorAll('.t-prod, .imp-name, .imp-sub, .imp-tag, .drawer-label').forEach(el => {
+        if (el.hasAttribute('data-' + code)) el.textContent = el.getAttribute('data-' + code);
+      });
+      document.querySelectorAll('.drawer-input').forEach(inp => {
+        const ph = inp.getAttribute('data-' + code + '-ph');
+        if (ph) inp.placeholder = ph;
+      });
+    }
+
+    // Keep mobile strictly digits
+    document.getElementById('mobile').addEventListener('input', function() {
+      this.value = this.value.replace(/\D/g, '').slice(0, 10);
+    });
+
+    // Auto-select Zone on State change
+    document.getElementById('state').addEventListener('change', function() {
+      const zone = this.options[this.selectedIndex].getAttribute('data-zone');
+      if (zone) document.getElementById('region').value = zone;
+      updateProgress();
+    });
+
+    // Smart product chip toggle (No Issues vs Specific Products)
+    const noIssueCb = document.getElementById('noProdIssue');
+    document.querySelectorAll('#productsGroup input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', function() {
+        if (this === noIssueCb && this.checked) {
+          document.querySelectorAll('#productsGroup input[type="checkbox"]').forEach(other => {
+            if (other !== noIssueCb) {
+              other.checked = false;
+              other.closest('.prod-chip').classList.remove('checked');
+            }
+          });
+        } else if (this !== noIssueCb && this.checked && noIssueCb) {
+          noIssueCb.checked = false;
+          noIssueCb.closest('.prod-chip').classList.remove('checked');
+        }
+        this.closest('.prod-chip').classList.toggle('checked', this.checked);
+        updateProgress();
+      });
+    });
+
+    // Improvement row accordion drawer
+    document.querySelectorAll('.imp-trigger input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', function() {
+        const row = this.closest('.imp-row');
+        row.classList.toggle('open', this.checked);
+        if (this.checked) {
+          const inp = row.querySelector('.drawer-input');
+          if (inp) setTimeout(() => inp.focus(), 60);
+        }
+        updateProgress();
+      });
+    });
+
+    function updateProgress() {
+      const s1Done = Boolean(
+        document.getElementById('submittedBy').value &&
+        document.getElementById('fullName').value.trim() &&
+        /^[0-9]{10}$/.test(document.getElementById('mobile').value.trim()) &&
+        document.getElementById('state').value &&
+        document.getElementById('region').value &&
+        document.getElementById('city').value.trim()
+      );
+      const s2Done = Boolean(document.querySelector('input[name="rating"]:checked'));
+      const s3Done = Boolean(document.getElementById('generalFeedback').value.trim());
+
+      document.getElementById('st1').classList.toggle('done', s1Done);
+      document.getElementById('st2').classList.toggle('done', s2Done);
+      document.getElementById('st3').classList.toggle('done', s3Done);
+
+      const checks = [
+        Boolean(document.getElementById('submittedBy').value),
+        Boolean(document.getElementById('fullName').value.trim()),
+        /^[0-9]{10}$/.test(document.getElementById('mobile').value.trim()),
+        Boolean(document.getElementById('state').value),
+        Boolean(document.getElementById('region').value),
+        Boolean(document.getElementById('city').value.trim()),
+        s2Done,
+        s3Done
+      ];
+      const pct = Math.round((checks.filter(Boolean).length / checks.length) * 100);
+      document.getElementById('progPct').textContent = pct + '%';
+      document.getElementById('progFill').style.width = pct + '%';
+      document.getElementById('mobProgPct').textContent = pct + '%';
+      document.getElementById('mobProgFill').style.width = pct + '%';
+    }
+
+    document.getElementById('feedbackForm').addEventListener('input', updateProgress);
+    document.getElementById('feedbackForm').addEventListener('change', updateProgress);
+
+    function collectChecked(containerId) {
+      return Array.from(document.querySelectorAll('#' + containerId + ' input[type="checkbox"]:checked'))
+        .map(el => el.value)
+        .join(', ');
+    }
+
+    function collectSeparateSuggestions() {
+      const map = {
+        fixAsp: '',
+        fixTat: '',
+        fixParts: '',
+        fixOnsite: '',
+        fixTraining: '',
+        fixComm: '',
+        fixDoa: '',
+        fixPayout: ''
+      };
+      document.querySelectorAll('#improvementsGroup .imp-row').forEach(row => {
+        const key = row.getAttribute('data-field');
+        const cb = row.querySelector('.imp-trigger input[type="checkbox"]');
+        const val = row.querySelector('.drawer-input').value.trim();
+        if (key && cb.checked && val) {
+          map[key] = val;
+        }
+      });
+      return map;
+    }
+
+    function copyRef() {
+      const refText = document.getElementById('refId').textContent;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(refText).then(() => {
+          const btn = document.getElementById('btnCopy');
+          btn.textContent = TEXT[lang].btnCopied;
+          setTimeout(() => { btn.textContent = TEXT[lang].btnCopy; }, 1800);
+        });
+      }
+    }
+
+    function showSuccess(refCode) {
+      document.getElementById('refId').textContent = refCode || 'SUBMITTED';
+      document.getElementById('feedbackForm').style.display = 'none';
+      document.getElementById('receiptView').style.display = 'block';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetFormView() {
+      document.getElementById('feedbackForm').reset();
+      document.querySelectorAll('.prod-chip').forEach(c => c.classList.remove('checked'));
+      document.querySelectorAll('.imp-row').forEach(r => r.classList.remove('open'));
+      document.getElementById('receiptView').style.display = 'none';
+      document.getElementById('feedbackForm').style.display = 'block';
+      updateProgress();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.getElementById('feedbackForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const t = TEXT[lang];
+      const mobileVal = document.getElementById('mobile').value.trim();
+
+      if (!/^[0-9]{10}$/.test(mobileVal)) {
+        alert(t.errMobile);
+        document.getElementById('mobile').focus();
+        return;
+      }
+
+      if (!this.checkValidity()) {
+        alert(t.errRequired);
+        this.reportValidity();
+        return;
+      }
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = t.submitting;
+
+      const fixes = collectSeparateSuggestions();
+      const payload = {
+        priority: document.querySelector('input[name="priority"]:checked').value,
+        submittedBy: document.getElementById('submittedBy').value,
+        fullName: document.getElementById('fullName').value.trim(),
+        mobile: mobileVal,
+        firmName: document.getElementById('firmName').value.trim(),
+        region: document.getElementById('region').value,
+        state: document.getElementById('state').value,
+        city: document.getElementById('city').value.trim(),
+        rating: document.querySelector('input[name="rating"]:checked').value,
+        products: collectChecked('productsGroup'),
+        improvements: collectChecked('improvementsGroup'),
+        fixAsp: fixes.fixAsp,
+        fixTat: fixes.fixTat,
+        fixParts: fixes.fixParts,
+        fixOnsite: fixes.fixOnsite,
+        fixTraining: fixes.fixTraining,
+        fixComm: fixes.fixComm,
+        fixDoa: fixes.fixDoa,
+        fixPayout: fixes.fixPayout,
+        newAsp: document.getElementById('newAsp').value.trim(),
+        techRef: document.getElementById('techRef').value.trim(),
+        generalFeedback: document.getElementById('generalFeedback').value.trim()
+      };
+
+      // Mode 1: Running directly inside Google Apps Script
+      if (typeof google !== 'undefined' && google.script && google.script.run) {
+        google.script.run
+          .withSuccessHandler(function(res) {
+            showSuccess(res && res.refId ? res.refId : 'SUBMITTED');
+            btn.disabled = false;
+            btn.textContent = t.submitBtn;
+          })
+          .withFailureHandler(function(err) {
+            alert('Submission Error: ' + err.message);
+            btn.disabled = false;
+            btn.textContent = t.submitBtn;
+          })
+          .submitFeedback(payload);
+        return;
+      }
+
+      // Mode 2: Hosted on Vercel (or any external web host)
+      if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes('PASTE_YOUR_WEB_APP_URL')) {
+        alert(t.errUrl);
+        btn.disabled = false;
+        btn.textContent = t.submitBtn;
+        return;
+      }
+
+      try {
+        const res = await fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (data && data.status === 'success') {
+          showSuccess(data.refId);
+        } else {
+          throw new Error((data && data.message) || 'Unknown server error');
+        }
+      } catch (err) {
+        alert('Submission Error: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = t.submitBtn;
+      }
+    });
+  </script>
+</body>
+</html>
