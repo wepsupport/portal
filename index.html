@@ -276,6 +276,33 @@
        table - it needs the room. */
     .form-container.db-wide { max-width: 1060px; }
 
+    /* A browser alert box says "wepsol-support.vercel.app says" above the
+       message and looks like a warning. These say what happened, in the
+       portal's own voice, and get out of the way. */
+    .toast-wrap { position:fixed; left:50%; bottom:26px; transform:translateX(-50%);
+                  z-index:9999; display:flex; flex-direction:column; gap:9px; align-items:center;
+                  pointer-events:none; width:min(92vw,460px); }
+    .toast { background:#132033; color:#fff; border-radius:11px; padding:13px 17px; font-size:13.5px;
+             line-height:1.5; box-shadow:0 10px 30px rgba(10,20,40,.26); display:flex; gap:11px;
+             align-items:flex-start; width:100%; animation:toastIn .22s ease-out; }
+    .toast i { font-size:15px; margin-top:1px; flex:none; }
+    .toast.ok   { background:#0c6b4f; }
+    .toast.warn { background:#8a5a00; }
+    .toast.err  { background:#9b2226; }
+    @keyframes toastIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:none; } }
+
+    .ask-back { position:fixed; inset:0; background:rgba(16,24,40,.45); z-index:9998;
+                display:flex; align-items:center; justify-content:center; padding:20px; }
+    .ask-box { background:#fff; border-radius:16px; padding:26px; width:min(94vw,400px);
+               box-shadow:0 24px 60px rgba(10,20,40,.28); animation:toastIn .18s ease-out; }
+    .ask-box h4 { margin:0 0 7px; font-size:16.5px; color:var(--text-primary); }
+    .ask-box p { margin:0 0 20px; font-size:13.5px; color:var(--text-secondary); line-height:1.6; }
+    .ask-row { display:flex; gap:10px; justify-content:flex-end; }
+    .ask-row button { border-radius:9px; padding:10px 18px; font-size:13.5px; font-weight:700; cursor:pointer; border:1.5px solid transparent; }
+    .ask-no  { background:#fff; color:var(--text-secondary); border-color:#d7dee8; }
+    .ask-yes { background:#d63031; color:#fff; }
+
+
     /* ---------- Database Creation ---------- */
     .db-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px; }
     .db-tile { border:1px solid #e3e8ef; border-radius:12px; padding:18px; background:#fff; cursor:pointer;
@@ -294,7 +321,8 @@
               background:#f5f8fc; border:1px solid #e0e7f1; border-radius:11px; padding:14px; margin-bottom:12px; }
     .it-bar label { display:block; font-size:11.5px; font-weight:700; color:var(--text-secondary);
                     margin-bottom:5px; text-transform:uppercase; letter-spacing:.3px; }
-    .it-bar input, .it-bar select { width:100%; padding:10px 11px; border:1px solid #d7dee8; border-radius:8px; font-size:13.5px; }
+    .it-bar input, .it-bar select { width:100%; padding:10px 11px; border:1px solid #d7dee8; border-radius:8px;
+                                    font-size:13.5px; background:#fff; height:42px; box-sizing:border-box; }
     .it-add { background:var(--accent-blue); color:#fff; border:none; border-radius:8px; padding:11px 20px;
               font-size:13.5px; font-weight:700; cursor:pointer; white-space:nowrap; }
     .it-add:hover { filter:brightness(1.08); }
@@ -303,7 +331,8 @@
     .it-opt { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:11px;
               border:1px dashed #d7dee8; border-radius:11px; padding:14px; margin-bottom:14px; }
     .it-opt label { display:block; font-size:11px; font-weight:600; color:var(--text-secondary); margin-bottom:4px; }
-    .it-opt input, .it-opt select { width:100%; padding:8px 10px; border:1px solid #d7dee8; border-radius:7px; font-size:12.5px; }
+    .it-opt input, .it-opt select { width:100%; padding:8px 10px; border:1px solid #d7dee8; border-radius:7px;
+                                    font-size:12.5px; background:#fff; height:36px; box-sizing:border-box; }
     .it-tbl { width:100%; border-collapse:collapse; font-size:12.5px; }
     .it-tbl th { background:#eef3f9; text-align:left; padding:9px 10px; font-size:11px; text-transform:uppercase;
                  letter-spacing:.3px; color:var(--text-secondary); position:sticky; top:0; }
@@ -536,6 +565,54 @@
   </div>
 
   <script>
+
+    /* ---------- Messages ----------------------------------------------
+       A small toast in the corner instead of the browser's alert box, and a
+       styled Yes/No sheet instead of confirm(). */
+    function toast(msg, kind) {
+        let wrap = document.querySelector('.toast-wrap');
+        if(!wrap) {
+            wrap = document.createElement('div');
+            wrap.className = 'toast-wrap';
+            document.body.appendChild(wrap);
+        }
+        const icon = kind === 'ok'   ? 'fa-circle-check'
+                   : kind === 'err'  ? 'fa-circle-exclamation'
+                   : kind === 'warn' ? 'fa-triangle-exclamation'
+                                     : 'fa-circle-info';
+        const el = document.createElement('div');
+        el.className = 'toast ' + (kind || '');
+        el.innerHTML = `<i class="fa-solid ${icon}"></i><div>${escapeAsk(msg)}</div>`;
+        wrap.appendChild(el);
+        setTimeout(() => {
+            el.style.transition = 'opacity .25s';
+            el.style.opacity = '0';
+            setTimeout(() => el.remove(), 260);
+        }, kind === 'err' ? 4200 : 2800);
+    }
+
+    /* Replaces confirm() for actions that cannot be undone. */
+    function askConfirm(title, text, yesLabel) {
+        return new Promise(resolve => {
+            const back = document.createElement('div');
+            back.className = 'ask-back';
+            back.innerHTML =
+                '<div class="ask-box">' +
+                  '<h4>' + escapeAsk(title) + '</h4>' +
+                  '<p>' + escapeAsk(text) + '</p>' +
+                  '<div class="ask-row">' +
+                    '<button class="ask-no">Cancel</button>' +
+                    '<button class="ask-yes">' + escapeAsk(yesLabel || 'Yes') + '</button>' +
+                  '</div>' +
+                '</div>';
+            const done = v => { back.remove(); resolve(v); };
+            back.querySelector('.ask-no').onclick  = () => done(false);
+            back.querySelector('.ask-yes').onclick = () => done(true);
+            back.onclick = e => { if(e.target === back) done(false); };
+            document.body.appendChild(back);
+        });
+    }
+
     // ===================== GITHUB API CONFIGURATION =====================
     // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
     const API_URL = "https://script.google.com/macros/s/AKfycbwEqt3xDok7d6s93FqTBeslgD00SAKdd86BJhdUJ2JPfYEtBXDOE9usRzZ5n4GFkA41/exec";
@@ -891,332 +968,542 @@
           </div>`, () => openDbApp(app));
     }
 
+    /* BP billing printers. The series decides the file format, so the model is
+       asked for first. */
+    const BP_SERIES = [
+      { id: 'plus',   name: 'BP Plus Series',   icon: 'fa-plus',
+        models: ['BP Joy Plus', 'BP 85T Plus', 'BP 25T Plus', 'BP Ultra Pro'] },
+      { id: 'emerge', name: 'BP Emerge Series', icon: 'fa-bolt',
+        models: ['BP Emerge Basic', 'BP Emerge 25T Edge', 'BP Emerge 25T'] },
+      { id: '2k',     name: 'BP 2K Series',     icon: 'fa-print',
+        models: ['BP 2100', 'BP 2100 Joy', 'BP 1100 Joy'] }
+    ];
+    let bpModel = '';
+    let bpSeriesId = 'plus';
+
     function openDbBp() {
         dbPage('BP Database', [['Database Creation', 'openDbView()'], ['BP Database', '']], `
-          <div style="border:1px dashed #d7dee8; border-radius:12px; padding:26px; text-align:center;">
-            <i class="fa-solid fa-print" style="font-size:26px; color:#b2bec3;"></i>
-            <h4 style="margin:12px 0 6px; font-size:15px;">Coming soon</h4>
-            <p style="margin:0; font-size:13px; color:var(--text-secondary);">
-              The BP billing printer item format is being added. Until then, use
-              <a onclick="openDbPos()" style="color:var(--accent-blue); cursor:pointer; font-weight:600;">POS Application Database</a>.
-            </p>
+          <p style="color:var(--text-secondary); font-size:13.5px; margin:0 0 18px;">
+            Choose your printer series.
+          </p>
+          <div class="db-grid">
+            ${BP_SERIES.map(sr => dbTile(sr.icon, '#eaf7f0', '#00875a', sr.name,
+                sr.models.join(' · '), `openBpSeries('${sr.id}')`)).join('')}
           </div>`, openDbBp);
     }
 
-    /* The column order below is the file the application expects. It is kept
-       exactly as the sample files have it, spelling included, because the
-       importer matches on the header text. */
+    function openBpSeries(id) {
+        bpSeriesId = id;
+        const sr = BP_SERIES.find(x => x.id === id);
+        const ready = id === 'plus';
+        dbPage(sr.name, [['Database Creation', 'openDbView()'], ['BP Database', 'openDbBp()'], [sr.name, '']], `
+          <p style="color:var(--text-secondary); font-size:13.5px; margin:0 0 18px;">
+            Which model are you building this for?
+          </p>
+          <div class="db-grid">
+            ${sr.models.map(m => dbTile('fa-print', '#e8f0fe', '#0b63ce', m,
+                ready ? 'Build the item database for this model.' : 'Item format is being added.',
+                `openBpModel('${id}', ${JSON.stringify(m).replace(/"/g, '&quot;')})`, !ready)).join('')}
+          </div>`, () => openBpSeries(id));
+    }
+
+    function openBpModel(id, model) {
+        bpModel = model;
+        bpSeriesId = id;
+        const sr = BP_SERIES.find(x => x.id === id);
+        dbPage(model, [['Database Creation', 'openDbView()'], ['BP Database', 'openDbBp()'],
+                       [sr.name, `openBpSeries('${id}')`], [model, '']], `
+          <p style="color:var(--text-secondary); font-size:13.5px; margin:0 0 18px;">
+            Build the item list, then export it for ${escapeAsk(model)}.
+          </p>
+          <div class="db-grid">
+            ${dbTile('fa-box', '#e8f0fe', '#0b63ce', 'Item Database',
+                     'Item name, unit, rate and tax.', "openItemBuilder('bp')")}
+          </div>`, () => openBpModel(id, model));
+    }
+
+
+    /* ---------- Item builder ---------------------------------------------
+       One screen builds the list; the spec below decides which columns the
+       file ends up with, so Retail, F&B and BP all share the same UI.
+       Each column is [header in the file, key on the item]. The header text
+       is copied from the sample files byte for byte - including the
+       "DEPARMENT CODE" spelling, which the Retail application expects. */
+    const BP_UNITS = ['Packet', 'Litre', 'Millilitre', 'Gram', 'Kilogram'];
+
     const DB_SPEC = {
       retail: {
-        name: 'Retail', file: 'Items.csv',
-        headers: ['ITEM SHORT NAME','ITEM LONG NAME','SHORT Code','UOM','SECONDARY UOM','UOM CONVERSION',
-                  'RETAIL PRICE','MRP','WHOLE SALE PRICE','CGST RATE','SGST RATE','IGST RATE','CESS RATE',
-                  'CESS AMOUNT','ADDITIONAL CESS AMOUNT','PURCHASE RATE','HSN','QUANTITY','MINIMUM STOCK',
-                  'BARCODE','BRAND CODE','DEPARMENT CODE','CATEGORY CODE','FAVORITE','ACTIVE','IMAGEURL','ITEMCODE'],
-        required: [['short','ITEM SHORT NAME','Item name','text'],
-                   ['uom','UOM','Unit','uom'],
-                   ['retail','RETAIL PRICE','Retail price','number']],
-        optional: [['long','ITEM LONG NAME','Full name','text'],
-                   ['mrp','MRP','MRP','number'],
-                   ['wholesale','WHOLE SALE PRICE','Wholesale price','number'],
-                   ['purchase','PURCHASE RATE','Purchase rate','number'],
-                   ['cgst','CGST RATE','CGST %','number'],
-                   ['sgst','SGST RATE','SGST %','number'],
-                   ['igst','IGST RATE','IGST %','number'],
-                   ['secuom','SECONDARY UOM','Secondary unit','uom'],
-                   ['conv','UOM CONVERSION','Unit conversion','number'],
-                   ['qty','QUANTITY','Stock quantity','number'],
-                   ['minstock','MINIMUM STOCK','Minimum stock','number'],
-                   ['hsn','HSN','HSN code','text'],
-                   ['barcode','BARCODE','Barcode','text'],
-                   ['dept','DEPARMENT CODE','Department code','text'],
-                   ['cat','CATEGORY CODE','Category code','text'],
-                   ['brand','BRAND CODE','Brand code','text'],
-                   ['itemcode','ITEMCODE','Item code','text']],
-        fixed: { 'ACTIVE': '1', 'FAVORITE': '0' },
-        auto:  { 'SHORT Code': i => String(i + 1) }
+        name: 'Item Database', file: 'Items.csv', uoms: UOMS, zeros: false,
+        back: () => openDbApp('retail'),
+        crumbs: [['Database Creation', 'openDbView()'], ['POS Application', 'openDbPos()'],
+                 ['Retail Application', "openDbApp('retail')"], ['Item Database', '']],
+        cols: [
+          ['ITEM SHORT NAME', 'name'], ['ITEM LONG NAME', 'long'], ['SHORT Code', 'short'],
+          ['UOM', 'uom'], ['SECONDARY UOM', 'uom2'], ['UOM CONVERSION', 'conv'],
+          ['RETAIL PRICE', 'rate'], ['MRP', 'mrp'], ['WHOLE SALE PRICE', 'ws'],
+          ['CGST RATE', 'cgst'], ['SGST RATE', 'sgst'], ['IGST RATE', 'igst'],
+          ['CESS RATE', 'cess'], ['CESS AMOUNT', 'cessamt'], ['ADDITIONAL CESS AMOUNT', 'acess'],
+          ['PURCHASE RATE', 'purchase'], ['HSN', 'hsn'], ['QUANTITY', 'qty'],
+          ['MINIMUM STOCK', 'min'], ['BARCODE', 'barcode'], ['BRAND CODE', 'brand'],
+          ['DEPARMENT CODE', 'dept'], ['CATEGORY CODE', 'cat'], ['FAVORITE', 'fav'],
+          ['ACTIVE', 'active'], ['IMAGEURL', 'img'], ['ITEMCODE', 'code']
+        ],
+        req: [
+          { k: 'name', label: 'Item Short Name', ph: 'Rice' },
+          { k: 'uom',  label: 'UOM', type: 'sel', opts: UOMS },
+          { k: 'rate', label: 'Retail Price', ph: '0.00', type: 'num' }
+        ],
+        opt: [
+          { k: 'long', label: 'Item Long Name' },
+          { k: 'mrp', label: 'MRP', type: 'num' },
+          { k: 'ws', label: 'Wholesale Price', type: 'num' },
+          { k: 'purchase', label: 'Purchase Rate', type: 'num' },
+          { k: 'cgst', label: 'CGST %', type: 'num' },
+          { k: 'sgst', label: 'SGST %', type: 'num' },
+          { k: 'igst', label: 'IGST %', type: 'num' },
+          { k: 'hsn', label: 'HSN' },
+          { k: 'qty', label: 'Quantity', type: 'num' },
+          { k: 'min', label: 'Minimum Stock', type: 'num' },
+          { k: 'barcode', label: 'Barcode' },
+          { k: 'uom2', label: 'Secondary UOM', type: 'sel', opts: UOMS },
+          { k: 'conv', label: 'UOM Conversion', type: 'num' },
+          { k: 'dept', label: 'Department Code' },
+          { k: 'cat', label: 'Category Code' },
+          { k: 'code', label: 'Item Code' }
+        ],
+        show: [['name', 'Item'], ['uom', 'UOM'], ['rate', 'Retail Price'],
+               ['mrp', 'MRP'], ['hsn', 'HSN']],
+        auto: (it, i) => ({
+          long: it.long || it.name,
+          short: it.short || String(i + 1),
+          fav: it.fav || '0',
+          active: it.active || '1'
+        })
       },
+
       fnb: {
-        name: 'F&B', file: 'FnB.csv',
-        headers: ['MENU CODE','ITEM SHORT NAME','ITEM LONG NAME','SUPPLY TYPE','RATE 1','RATE 2','RATE 3',
-                  'QUANTITY','UOM','CGST RATE','SGST RATE','IGST RATE','CESS RATE','CESS AMOUNT',
-                  'ADDITIONAL CESS AMOUNT','DISCOUNT PERCENT','DEPARTMENT CODE','CATEGORY CODE','KITCHEN CODE',
-                  'HSN','BAR CODE','MINIMUM STOCK','ACTIVE','ITEMCODE','PURCHASERATE'],
-        required: [['short','ITEM SHORT NAME','Menu item','text'],
-                   ['uom','UOM','Unit','uom'],
-                   ['rate1','RATE 1','Rate','number']],
-        optional: [['long','ITEM LONG NAME','Full name','text'],
-                   ['rate2','RATE 2','Rate 2 (AC / parcel)','number'],
-                   ['rate3','RATE 3','Rate 3','number'],
-                   ['dept','DEPARTMENT CODE','Department code','text'],
-                   ['kitchen','KITCHEN CODE','Kitchen code','text'],
-                   ['cat','CATEGORY CODE','Category code','text'],
-                   ['cgst','CGST RATE','CGST %','number'],
-                   ['sgst','SGST RATE','SGST %','number'],
-                   ['igst','IGST RATE','IGST %','number'],
-                   ['disc','DISCOUNT PERCENT','Discount %','number'],
-                   ['purchase','PURCHASERATE','Purchase rate','number'],
-                   ['hsn','HSN','HSN code','text'],
-                   ['barcode','BAR CODE','Barcode','text'],
-                   ['itemcode','ITEMCODE','Item code','text']],
-        fixed: { 'SUPPLY TYPE': 'G' },
-        auto:  { 'MENU CODE': i => String(i + 1) }
+        name: 'Item Database', file: 'FnB.csv', uoms: UOMS, zeros: false,
+        back: () => openDbApp('fnb'),
+        crumbs: [['Database Creation', 'openDbView()'], ['POS Application', 'openDbPos()'],
+                 ['F&B Application', "openDbApp('fnb')"], ['Item Database', '']],
+        cols: [
+          ['MENU CODE', 'menu'], ['ITEM SHORT NAME', 'name'], ['ITEM LONG NAME', 'long'],
+          ['SUPPLY TYPE', 'supply'], ['RATE 1', 'rate'], ['RATE 2', 'rate2'],
+          ['RATE 3', 'rate3'], ['QUANTITY', 'qty'], ['UOM', 'uom'],
+          ['CGST RATE', 'cgst'], ['SGST RATE', 'sgst'], ['IGST RATE', 'igst'],
+          ['CESS RATE', 'cess'], ['CESS AMOUNT', 'cessamt'], ['ADDITIONAL CESS AMOUNT', 'acess'],
+          ['DISCOUNT PERCENT', 'disc'], ['DEPARTMENT CODE', 'dept'], ['CATEGORY CODE', 'cat'],
+          ['KITCHEN CODE', 'kitchen'], ['HSN', 'hsn'], ['BAR CODE', 'barcode'],
+          ['MINIMUM STOCK', 'min'], ['ACTIVE', 'active'], ['ITEMCODE', 'code'],
+          ['PURCHASERATE', 'purchase']
+        ],
+        req: [
+          { k: 'name', label: 'Item Short Name', ph: 'Filter Coffee' },
+          { k: 'uom',  label: 'UOM', type: 'sel', opts: UOMS },
+          { k: 'rate', label: 'Rate 1', ph: '0.00', type: 'num' }
+        ],
+        opt: [
+          { k: 'long', label: 'Item Long Name' },
+          { k: 'supply', label: 'Supply Type', type: 'sel', opts: ['G', 'S'] },
+          { k: 'rate2', label: 'Rate 2', type: 'num' },
+          { k: 'rate3', label: 'Rate 3', type: 'num' },
+          { k: 'kitchen', label: 'Kitchen Code' },
+          { k: 'dept', label: 'Department Code' },
+          { k: 'cat', label: 'Category Code' },
+          { k: 'cgst', label: 'CGST %', type: 'num' },
+          { k: 'sgst', label: 'SGST %', type: 'num' },
+          { k: 'igst', label: 'IGST %', type: 'num' },
+          { k: 'disc', label: 'Discount %', type: 'num' },
+          { k: 'hsn', label: 'HSN' },
+          { k: 'barcode', label: 'Bar Code' },
+          { k: 'qty', label: 'Quantity', type: 'num' },
+          { k: 'min', label: 'Minimum Stock', type: 'num' },
+          { k: 'purchase', label: 'Purchase Rate', type: 'num' },
+          { k: 'code', label: 'Item Code' }
+        ],
+        show: [['menu', 'Menu Code'], ['name', 'Item'], ['uom', 'UOM'],
+               ['rate', 'Rate 1'], ['kitchen', 'Kitchen']],
+        auto: (it, i) => ({
+          menu: it.menu || String(i + 1),
+          long: it.long || it.name,
+          supply: it.supply || 'G'
+        })
+      },
+
+      /* BP billing printers. Every numeric cell is written, so a blank
+         becomes 0 rather than an empty cell - that is what the sample file
+         from the printer looks like. */
+      bp: {
+        name: 'Item Database', file: 'DB.csv', uoms: BP_UNITS, zeros: true, wbp: true,
+        back: () => openDbBp(),
+        crumbs: () => [['Database Creation', 'openDbView()'], ['BP Database', 'openDbBp()'],
+                       [bpSeriesName(), `openBpSeries('${bpSeriesId}')`],
+                       [bpModel || 'Model', `openBpModel('${bpSeriesId}', ${JSON.stringify(bpModel || '')})`],
+                       ['Item Database', '']],
+        cols: [
+          ['ItemCode', 'code'], ['ItemName', 'name'], ['ItemUnit', 'uom'],
+          ['Rate1', 'rate'], ['Rate2', 'rate2'], ['Rate3', 'rate3'],
+          ['Discount', 'disc'], ['Tax1', 'tax1'], ['Tax2', 'tax2']
+        ],
+        num: ['rate', 'rate2', 'rate3', 'disc', 'tax1', 'tax2'],
+        req: [
+          { k: 'name', label: 'Item Name', ph: 'PEN', max: 16 },
+          { k: 'uom',  label: 'Unit', type: 'sel', opts: BP_UNITS },
+          { k: 'rate', label: 'Rate 1', ph: '0.00', type: 'num' }
+        ],
+        opt: [
+          { k: 'rate2', label: 'Rate 2', type: 'num' },
+          { k: 'rate3', label: 'Rate 3', type: 'num' },
+          { k: 'tax1', label: 'Tax 1 %', type: 'num' },
+          { k: 'tax2', label: 'Tax 2 %', type: 'num' },
+          { k: 'disc', label: 'Discount %', type: 'num' },
+          { k: 'code', label: 'Item Code' }
+        ],
+        show: [['code', 'Code'], ['name', 'Item'], ['uom', 'Unit'],
+               ['rate', 'Rate 1'], ['tax1', 'Tax 1']],
+        auto: (it, i) => ({ code: it.code || String(i + 1) })
       }
     };
 
-    let dbApp = 'retail', dbRows = [];
+    let itApp  = 'retail';
+    let itEdIx = -1;                       // -1 = adding, otherwise editing a row
+    const itData = { retail: [], fnb: [], bp: [] };
 
-    function dbKey() { return 'wepDb_' + dbApp; }
-    function dbLoad() { try { dbRows = JSON.parse(localStorage.getItem(dbKey()) || '[]'); } catch(e) { dbRows = []; } }
-    function dbStore() { try { localStorage.setItem(dbKey(), JSON.stringify(dbRows)); } catch(e) {} }
+    const itSpec = () => DB_SPEC[itApp];
+    const itList = () => itData[itApp];
+
+    function bpSeriesName() {
+        const sr = BP_SERIES.find(x => x.id === bpSeriesId);
+        return sr ? sr.name : 'BP Database';
+    }
+
+    /* One field, used for both the three required ones and the optional grid. */
+    function itField(f, big) {
+        const id = 'it_' + f.k;
+        if(f.type === 'sel') {
+            /* Starts blank on purpose: a select that opens on its first option
+               silently writes a unit nobody chose. */
+            const opts = `<option value="">${big ? 'Select' : ''}</option>` +
+                f.opts.map(o => `<option value="${o}">${o}</option>`).join('');
+            return `<div><label for="${id}">${f.label}</label><select id="${id}">${opts}</select></div>`;
+        }
+        return `<div><label for="${id}">${f.label}</label>` +
+               `<input id="${id}" type="${f.type === 'num' ? 'number' : 'text'}"` +
+               `${f.type === 'num' ? ' step="any"' : ''}` +
+               `${f.max ? ` maxlength="${f.max}"` : ''}` +
+               ` placeholder="${f.ph || ''}" autocomplete="off"></div>`;
+    }
 
     function openItemBuilder(app) {
-        dbApp = app; dbLoad(); itEditing = -1;
-        const sp = DB_SPEC[app];
-        const field = (f, cls) => {
-            const [k, col, label, type] = f;
-            /* Optional unit boxes start blank, otherwise a dropdown's first
-               value quietly lands in a column nobody asked to fill. */
-            const input = type === 'uom'
-              ? `<select id="it_${k}">${cls === 'req' ? '' : '<option value=""></option>'}` +
-                `${UOMS.map(u => `<option${(cls === 'req' && u === (app === 'fnb' ? 'PCS' : 'KGS')) ? ' selected' : ''}>${u}</option>`).join('')}</select>`
-              : `<input type="${type === 'number' ? 'number' : 'text'}" id="it_${k}" ${type === 'number' ? 'step="0.01" min="0"' : ''} placeholder="${label}">`;
-            return `<div><label>${label}${cls === 'req' ? ' *' : ''}</label>${input}</div>`;
-        };
+        itApp  = app;
+        itEdIx = -1;
+        const sp = itSpec();
+        const crumbs = typeof sp.crumbs === 'function' ? sp.crumbs() : sp.crumbs;
+        const title = app === 'bp' && bpModel ? bpModel + ' - Item Database' : sp.name;
 
-        dbPage(sp.name + ' — Item Database',
-          [['Database Creation', 'openDbView()'], ['POS Application', 'openDbPos()'],
-           [sp.name + ' Application', `openDbApp('${app}')`], ['Item Database', '']], `
+        dbPage(title, crumbs, `
           <p style="color:var(--text-secondary); font-size:13.5px; margin:0 0 16px;">
-            Fill the three boxes and press Add. Everything else is optional — open
-            <b>More details</b> only when you need it.
+            Fill the three boxes and press Add. Everything else is optional -
+            the file is built with the remaining columns in the right places.
           </p>
 
-          <div class="it-bar" id="itBar">
-            ${sp.required.map(f => field(f, 'req')).join('')}
-            <div style="display:flex; gap:8px;">
-              <button class="it-add" id="itAddBtn" onclick="itAdd()"><i class="fa-solid fa-plus"></i> Add</button>
-              <button class="it-add" id="itCancelBtn" onclick="itCancelEdit()"
-                      style="display:none; background:#fff; color:var(--text-secondary); border:1.5px solid #d7dee8;">Cancel</button>
-            </div>
+          <div class="it-bar">
+            ${sp.req.map(f => itField(f, true)).join('')}
+            <button class="it-add" id="itAddBtn" onclick="itAdd()">
+              <i class="fa-solid fa-plus"></i> Add
+            </button>
           </div>
 
           <button class="it-more" onclick="itToggleMore()">
-            <i class="fa-solid fa-sliders"></i> <span id="itMoreLbl">More details</span>
+            <i class="fa-solid fa-sliders"></i> <span id="itMoreTxt">More fields</span>
           </button>
           <div class="it-opt" id="itOpt" style="display:none;">
-            ${sp.optional.map(f => field(f, 'opt')).join('')}
+            ${sp.opt.map(f => itField(f)).join('')}
           </div>
 
-          <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;
-                      flex-wrap:wrap; margin-bottom:9px;">
-            <b style="font-size:13.5px;">Items added: <span id="itCount">0</span></b>
-            <div>
-              <input type="file" id="itCsv" accept=".csv" style="display:none;" onchange="itImport(event)">
-              <button class="it-btn it-ghost" style="padding:9px 15px; font-size:12.5px;"
-                      onclick="document.getElementById('itCsv').click()">
-                <i class="fa-solid fa-file-import"></i> Upload existing CSV
-              </button>
-            </div>
-          </div>
-          <div style="font-size:11.5px; color:var(--text-secondary); margin-bottom:9px;">
-            Already have a file? Upload it to see every item here, change what you need, and export again.
-            Tap any row to edit it.
-          </div>
-
-          <div style="border:1px solid #e3e8ef; border-radius:11px; overflow:auto; max-height:420px; background:#fff;">
-            <table class="it-tbl" id="itTbl"></table>
-          </div>
+          <div id="itTableWrap" style="margin-top:18px;"></div>
 
           <div class="it-actions">
             <button class="it-btn it-primary" onclick="itExport()">
-              <i class="fa-solid fa-file-csv"></i> Export CSV
+              <i class="fa-solid fa-file-csv"></i> Download CSV
             </button>
-            <button class="it-btn it-danger" onclick="itClear()">Clear all</button>
+            ${sp.wbp ? `<button class="it-btn it-primary" onclick="itExportWbp()">
+              <i class="fa-solid fa-usb"></i> Download Pendrive File
+            </button>` : ''}
+            <button class="it-btn it-ghost" onclick="document.getElementById('itFile').click()">
+              <i class="fa-solid fa-file-import"></i> Upload existing CSV
+            </button>
+            <button class="it-btn it-danger" onclick="itClear()">
+              <i class="fa-solid fa-trash"></i> Clear all
+            </button>
+            <input type="file" id="itFile" accept=".csv,text/csv" style="display:none;"
+                   onchange="itImport(this)">
           </div>`, () => openItemBuilder(app));
+
         itRender();
     }
 
     function itToggleMore() {
         const box = document.getElementById('itOpt');
-        const on = box.style.display === 'none';
+        const on  = box.style.display === 'none';
         box.style.display = on ? 'grid' : 'none';
-        document.getElementById('itMoreLbl').innerText = on ? 'Hide details' : 'More details';
+        document.getElementById('itMoreTxt').innerText = on ? 'Hide extra fields' : 'More fields';
     }
 
-    function itVal(k) { const e = document.getElementById('it_' + k); return e ? String(e.value).trim() : ''; }
-    function itSet(k, v) { const e = document.getElementById('it_' + k); if(e) e.value = v == null ? '' : v; }
+    function itRead() {
+        const sp = itSpec(), it = {};
+        sp.req.concat(sp.opt).forEach(f => {
+            const el = document.getElementById('it_' + f.k);
+            if(el) it[f.k] = String(el.value || '').trim();
+        });
+        return it;
+    }
 
-    let itEditing = -1;      // -1 means we are adding a new item
+    function itWrite(it) {
+        const sp = itSpec();
+        sp.req.concat(sp.opt).forEach(f => {
+            const el = document.getElementById('it_' + f.k);
+            if(el) el.value = it && it[f.k] != null ? it[f.k] : '';
+        });
+    }
 
     function itAdd() {
-        const sp = DB_SPEC[dbApp];
-        const row = {};
-        for(const [k] of sp.required.concat(sp.optional)) row[k] = itVal(k);
+        const sp = itSpec(), it = itRead();
+        const missing = sp.req.filter(f => !it[f.k]).map(f => f.label);
+        if(missing.length) { toast('Still needed: ' + missing.join(', '), 'warn'); return; }
 
-        const miss = sp.required.filter(f => !row[f[0]]).map(f => f[2]);
-        if(miss.length) return alert('Please fill: ' + miss.join(', '));
+        if(itEdIx >= 0) { itList()[itEdIx] = it; toast('Item updated', 'ok'); itCancelEdit(); }
+        else            { itList().push(it);     toast('Item added', 'ok'); itWrite(null); }
 
-        if(itEditing > -1) { dbRows[itEditing] = row; itCancelEdit(true); }
-        else {
-            dbRows.push(row);
-            /* Keep the unit and the optional details - the next item is usually
-               similar, and retyping them is what makes bulk entry slow. */
-            for(const [k,,, type] of sp.required) if(type !== 'uom') itSet(k, '');
-        }
-        dbStore(); itRender();
-        document.getElementById('it_' + sp.required[0][0]).focus();
+        itRender();
+        const first = document.getElementById('it_' + sp.req[0].k);
+        if(first) first.focus();
     }
 
-    /* Puts a saved item back into the form so it can be corrected, rather
-       than deleted and typed again. */
     function itEdit(i) {
-        const sp = DB_SPEC[dbApp], r = dbRows[i];
-        if(!r) return;
-        itEditing = i;
-        for(const [k] of sp.required.concat(sp.optional)) itSet(k, r[k]);
-
-        // show the optional block if this item uses any of it
-        const used = sp.optional.some(f => String(r[f[0]] || '').trim());
-        const opt = document.getElementById('itOpt');
-        if(used && opt.style.display === 'none') itToggleMore();
-
-        document.getElementById('itAddBtn').innerHTML = '<i class="fa-solid fa-check"></i> Update';
-        document.getElementById('itCancelBtn').style.display = '';
-        document.getElementById('itBar').style.background = '#fff6e8';
-        document.getElementById('itBar').style.borderColor = '#f0c38a';
+        const it = itList()[i];
+        if(!it) return;
+        itEdIx = i;
+        itWrite(it);
+        document.getElementById('itOpt').style.display = 'grid';
+        document.getElementById('itMoreTxt').innerText = 'Hide extra fields';
+        const btn = document.getElementById('itAddBtn');
+        btn.innerHTML = '<i class="fa-solid fa-check"></i> Update';
+        btn.style.background = '#00875a';
         itRender();
-        document.getElementById('itBar').scrollIntoView({ behavior: 'smooth', block: 'center' });
-        document.getElementById('it_' + sp.required[0][0]).focus();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    function itCancelEdit(keepValues) {
-        const sp = DB_SPEC[dbApp];
-        itEditing = -1;
-        if(!keepValues) for(const [k,,, type] of sp.required.concat(sp.optional))
-            if(type !== 'uom') itSet(k, '');
-        document.getElementById('itAddBtn').innerHTML = '<i class="fa-solid fa-plus"></i> Add';
-        document.getElementById('itCancelBtn').style.display = 'none';
-        document.getElementById('itBar').style.background = '';
-        document.getElementById('itBar').style.borderColor = '';
+    function itCancelEdit() {
+        itEdIx = -1;
+        itWrite(null);
+        const btn = document.getElementById('itAddBtn');
+        if(btn) { btn.innerHTML = '<i class="fa-solid fa-plus"></i> Add'; btn.style.background = ''; }
         itRender();
     }
 
-    function itRemove(i, ev) {
-        if(ev) ev.stopPropagation();
-        dbRows.splice(i, 1);
-        if(itEditing === i) itCancelEdit();
-        else if(itEditing > i) itEditing--;
-        dbStore(); itRender();
+    async function itRemove(i) {
+        const it = itList()[i];
+        if(!it) return;
+        if(!await askConfirm('Remove item', 'Remove "' + (it.name || '') + '" from the list?', 'Remove')) return;
+        itList().splice(i, 1);
+        if(itEdIx === i) { itCancelEdit(); return; }
+        if(itEdIx > i) itEdIx--;
+        itRender();
+        toast('Item removed', 'ok');
     }
 
     function itRender() {
-        const sp = DB_SPEC[dbApp];
-        const t = document.getElementById('itTbl');
-        if(!t) return;
-        document.getElementById('itCount').innerText = dbRows.length;
-        if(!dbRows.length) {
-            t.innerHTML = `<tr><td><div class="it-empty">
-                No items yet. Add your first one above, or load a CSV you already have.</div></td></tr>`;
+        const sp = itSpec(), list = itList(), wrap = document.getElementById('itTableWrap');
+        if(!wrap) return;
+
+        if(!list.length) {
+            wrap.innerHTML = `<div class="it-empty">
+                <i class="fa-regular fa-rectangle-list" style="font-size:26px; display:block; margin-bottom:8px; color:#c7cfdb;"></i>
+                No items yet. Add your first one above, or upload a CSV you already have.
+              </div>`;
             return;
         }
-        const cols = sp.required.concat(sp.optional.slice(0, 2));
-        t.innerHTML = `<thead><tr><th style="width:44px;">#</th>
-            ${cols.map(c => `<th>${c[2]}</th>`).join('')}<th style="width:78px;"></th></tr></thead><tbody>` +
-          dbRows.map((r, i) => `<tr onclick="itEdit(${i})" style="cursor:pointer;${i === itEditing ? 'background:#fff6e8;' : ''}">
-            <td style="color:var(--text-secondary);">${i + 1}</td>
-            ${cols.map(c => `<td>${escapeAsk(r[c[0]] || '')}</td>`).join('')}
-            <td style="white-space:nowrap;">
-              <button class="it-del" style="color:var(--accent-blue);" onclick="itEdit(${i})" title="Edit">
-                <i class="fa-solid fa-pen"></i></button>
-              <button class="it-del" onclick="itRemove(${i}, event)" title="Remove">
-                <i class="fa-solid fa-trash"></i></button></td></tr>`).join('') + '</tbody>';
+
+        const rows = list.map((it, i) => {
+            const auto = sp.auto ? sp.auto(it, i) : {};
+            const cell = k => escapeAsk(String(it[k] != null && it[k] !== '' ? it[k] : (auto[k] || '')));
+            return `<tr${i === itEdIx ? ' style="background:#eef7ff;"' : ''}>
+                <td style="color:var(--text-secondary);">${i + 1}</td>
+                ${sp.show.map(c => `<td>${cell(c[0])}</td>`).join('')}
+                <td style="white-space:nowrap;">
+                  <button class="it-del" style="color:var(--accent-blue);" title="Edit"
+                          onclick="itEdit(${i})"><i class="fa-solid fa-pen"></i></button>
+                  <button class="it-del" title="Remove"
+                          onclick="itRemove(${i})"><i class="fa-solid fa-trash"></i></button>
+                </td></tr>`;
+        }).join('');
+
+        wrap.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+            <strong style="font-size:13.5px;">${list.length} item${list.length > 1 ? 's' : ''}</strong>
+            ${itEdIx >= 0 ? '<button class="it-more" onclick="itCancelEdit()">Cancel edit</button>' : ''}
+          </div>
+          <div style="overflow-x:auto; border:1px solid #e3e8ef; border-radius:10px;">
+            <table class="it-tbl">
+              <thead><tr><th>#</th>${sp.show.map(c => `<th>${c[1]}</th>`).join('')}<th></th></tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>`;
     }
 
-    function itClear() {
-        if(!dbRows.length) return;
-        if(!confirm('Remove all ' + dbRows.length + ' items?')) return;
-        dbRows = []; itCancelEdit(); dbStore(); itRender();
+    async function itClear() {
+        if(!itList().length) { toast('The list is already empty'); return; }
+        if(!await askConfirm('Clear the list',
+            'All ' + itList().length + ' items will be removed. This cannot be undone.', 'Clear all')) return;
+        itData[itApp] = [];
+        itCancelEdit();
+        toast('List cleared', 'ok');
     }
 
-    /* Writes the columns in the order the application expects, leaving every
-       one we did not ask about empty rather than inventing a value. */
+    /* ---------- CSV ------------------------------------------------------ */
+    function itCsvCell(v) {
+        const s = v == null ? '' : String(v);
+        return /[",\n\r]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    }
+
+    function itRowFor(it, i) {
+        const sp = itSpec(), auto = sp.auto ? sp.auto(it, i) : {};
+        return sp.cols.map(([h, k]) => {
+            let v = it[k] != null && it[k] !== '' ? it[k] : (auto[k] != null ? auto[k] : '');
+            /* BP writes a 0 where the others leave the cell empty. */
+            if(v === '' && sp.zeros && sp.num && sp.num.indexOf(k) >= 0) v = '0';
+            return v;
+        });
+    }
+
+    function itDownload(name, data, mime) {
+        const blob = data instanceof Uint8Array
+            ? new Blob([data], { type: mime || 'application/octet-stream' })
+            : new Blob(['﻿' + data], { type: mime || 'text/csv;charset=utf-8' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = name;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 400);
+    }
+
     function itExport() {
-        if(!dbRows.length) return alert('Add at least one item first.');
-        const sp = DB_SPEC[dbApp];
-        const byCol = {};
-        for(const [k, col] of sp.required.concat(sp.optional)) byCol[col] = k;
+        const sp = itSpec(), list = itList();
+        if(!list.length) { toast('Add at least one item first', 'warn'); return; }
+        const csv = [sp.cols.map(c => c[0]).join(',')]
+            .concat(list.map((it, i) => itRowFor(it, i).map(itCsvCell).join(',')))
+            .join('\r\n');
+        itDownload(sp.file, csv);
+        toast(list.length + ' items saved to ' + sp.file, 'ok');
+    }
 
-        const esc = v => {
-            const t = String(v == null ? '' : v);
-            return /[",\n]/.test(t) ? '"' + t.replace(/"/g, '""') + '"' : t;
+    /* Splits one CSV line, honouring "quoted, fields". */
+    function itSplitLine(line) {
+        const out = []; let cur = '', q = false;
+        for(let i = 0; i < line.length; i++) {
+            const c = line[i];
+            if(q) {
+                if(c === '"' && line[i + 1] === '"') { cur += '"'; i++; }
+                else if(c === '"') q = false;
+                else cur += c;
+            } else if(c === '"') q = true;
+            else if(c === ',') { out.push(cur); cur = ''; }
+            else cur += c;
+        }
+        out.push(cur);
+        return out;
+    }
+
+    function itParseCsv(text) {
+        const sp = itSpec();
+        const lines = text.replace(/^﻿/, '').split(/\r?\n/).filter(l => l.trim() !== '');
+        if(lines.length < 2) return { items: [], err: 'The file has no rows under the heading.' };
+
+        const head = itSplitLine(lines[0]).map(h => h.trim().toUpperCase());
+        const idx  = {};
+        sp.cols.forEach(([h, k]) => {
+            const at = head.indexOf(h.toUpperCase());
+            if(at >= 0) idx[k] = at;
+        });
+        if(idx.name == null)
+            return { items: [], err: 'This does not look like a ' + (itApp === 'bp' ? 'BP' : itApp.toUpperCase()) +
+                                     ' file - the item name column is missing.' };
+
+        const items = lines.slice(1).map(l => {
+            const c = itSplitLine(l), it = {};
+            Object.keys(idx).forEach(k => { it[k] = String(c[idx[k]] == null ? '' : c[idx[k]]).trim(); });
+            return it;
+        }).filter(it => it.name);
+
+        return { items: items, err: items.length ? '' : 'No items with a name were found in the file.' };
+    }
+
+    function itImport(input) {
+        const file = input.files && input.files[0];
+        input.value = '';
+        if(!file) return;
+        const rd = new FileReader();
+        rd.onload = () => {
+            const res = itParseCsv(String(rd.result || ''));
+            if(res.err) { toast(res.err, 'err'); return; }
+            itData[itApp] = res.items;
+            itCancelEdit();
+            toast(res.items.length + ' items loaded - edit any row below', 'ok');
         };
+        rd.onerror = () => toast('That file could not be read', 'err');
+        rd.readAsText(file);
+    }
 
-        const lines = [sp.headers.join(',')];
-        dbRows.forEach((r, i) => {
-            /* Both sample files always carry a long name. If the shop did not
-               type a different one, the short name is what belongs there. */
-            if(!r.long && r.short) r = Object.assign({}, r, { long: r.short });
-            lines.push(sp.headers.map(col => {
-                if(sp.auto && sp.auto[col]) return esc(sp.auto[col](i));
-                if(sp.fixed && sp.fixed[col] !== undefined) return esc(sp.fixed[col]);
-                const k = byCol[col];
-                return k ? esc(r[k] || '') : '';
-            }).join(','));
+    /* ---------- BP pendrive file ----------------------------------------
+       Matches the ITMDBS.WBP the printer writes: a five-entry unit table,
+       then one 111-byte record per item, then the end marker. Prices and tax
+       are whole numbers scaled by 100. */
+    function itBpWbp(list) {
+        const bytes = [0x1B, 0x7B, 0x07];
+        [['Pk', 0], ['Lt', 1], ['Ml', 1], ['Gm', 1], ['Kg', 1]].forEach(u => {
+            bytes.push(u[0].charCodeAt(0), u[0].charCodeAt(1), u[1]);
+        });
+        bytes.push(0x1B, 0x7B, 0x01, list.length & 0xFF);
+
+        const p2 = v => Math.round((parseFloat(v) || 0) * 100);
+
+        list.forEach((it, i) => {
+            const rec = new Uint8Array(111);
+            const nm = String(it.name || '').toUpperCase().slice(0, 16);
+            for(let j = 0; j < 16; j++) rec[55 + j] = j < nm.length ? nm.charCodeAt(j) & 0xFF : 0x20;
+
+            const le16 = (o, v) => { rec[o] = v & 0xFF; rec[o + 1] = (v >> 8) & 0xFF; };
+            const le32 = (o, v) => { rec[o] = v & 0xFF; rec[o + 1] = (v >> 8) & 0xFF;
+                                     rec[o + 2] = (v >> 16) & 0xFF; rec[o + 3] = (v >>> 24) & 0xFF; };
+            le16(71, p2(it.tax1));
+            le16(73, p2(it.tax2));
+            le32(75, p2(it.rate));
+            le32(79, p2(it.rate2));
+            le32(83, p2(it.rate3));
+
+            const u = BP_UNITS.indexOf(it.uom);
+            rec[87] = (u < 0 ? 0 : u) + 1;
+
+            const code = String(it.code || (i + 1));
+            for(let j = 0; j < code.length && j < 23; j++) rec[88 + j] = code.charCodeAt(j) & 0xFF;
+
+            for(let j = 0; j < 111; j++) bytes.push(rec[j]);
         });
 
-        const csv = lines.join('\n') + '\n';
-        lgSave(new TextEncoder().encode(csv), 'text/csv', sp.file);
+        bytes.push(0x1B, 0x7B, 0x11);
+        return new Uint8Array(bytes);
     }
 
-    /* Reads a file exported earlier so a list can be added to, not restarted. */
-    function itImport(ev) {
-        const f = ev.target.files && ev.target.files[0];
-        if(!f) return;
-        const sp = DB_SPEC[dbApp];
-        const rd = new FileReader();
-        rd.onload = e => {
-            const rows = itParseCsv(String(e.target.result));
-            if(rows.length < 2) return alert('That file has no items in it.');
-            const head = rows[0].map(h => h.trim());
-            const byCol = {};
-            for(const [k, col] of sp.required.concat(sp.optional)) {
-                const at = head.indexOf(col);
-                if(at > -1) byCol[k] = at;
-            }
-            if(byCol[sp.required[0][0]] === undefined)
-                return alert('This does not look like a ' + sp.name + ' item file.');
-
-            let added = 0;
-            for(let i = 1; i < rows.length; i++) {
-                const r = rows[i];
-                if(!r.length || !String(r[byCol[sp.required[0][0]]] || '').trim()) continue;
-                const row = {};
-                for(const k in byCol) row[k] = String(r[byCol[k]] || '').trim();
-                dbRows.push(row); added++;
-            }
-            dbStore(); itRender();
-            ev.target.value = '';
-            alert(added + ' item(s) loaded. You can keep adding and export when ready.');
-        };
-        rd.readAsText(f);
-    }
-
-    /* A small CSV reader that understands quoted fields and commas inside them. */
-    function itParseCsv(text) {
-        const out = []; let row = [], cell = '', q = false;
-        for(let i = 0; i < text.length; i++) {
-            const c = text[i];
-            if(q) {
-                if(c === '"') { if(text[i+1] === '"') { cell += '"'; i++; } else q = false; }
-                else cell += c;
-            } else if(c === '"') q = true;
-            else if(c === ',') { row.push(cell); cell = ''; }
-            else if(c === '\n') { row.push(cell); out.push(row); row = []; cell = ''; }
-            else if(c !== '\r') cell += c;
-        }
-        if(cell.length || row.length) { row.push(cell); out.push(row); }
-        return out.filter(r => r.length > 1 || (r[0] || '').trim());
+    function itExportWbp() {
+        const list = itList();
+        if(!list.length) { toast('Add at least one item first', 'warn'); return; }
+        if(list.length > 255) { toast('A pendrive file holds up to 255 items', 'warn'); return; }
+        const long = list.filter(it => String(it.name || '').length > 16).length;
+        itDownload('ITMDBS.WBP', itBpWbp(list));
+        toast(long ? 'Saved ITMDBS.WBP - ' + long + ' long name(s) were shortened to 16 characters'
+                   : 'Saved ITMDBS.WBP - copy it to the pendrive root', 'ok');
     }
 
     function openLogoView() {
