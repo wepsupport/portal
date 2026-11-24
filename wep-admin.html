@@ -27,6 +27,15 @@
     .landing-card { background: #fff; padding: 20px; border-radius: 10px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); text-align: center; width: 100%; max-width: 400px; margin-bottom: 12px; cursor: pointer; transition: transform 0.2s; border-top: 8px solid #ccc; }
     .landing-card:hover { transform: translateY(-5px); } .card-pw { border-top-color: var(--brand); } .card-ct { border-top-color: var(--brand2); } .card-wcr { border-top-color: var(--brand3); } .card-dash { border-top-color: #2c3e50; }
     .container { max-width: 900px; background: #fff; margin: auto; border-radius: 8px; border-top: 5px solid var(--brand); box-shadow: 0 4px 15px rgba(0,0,0,0.1); } .container-ct { border-top-color: var(--brand2); } .container-wcr { border-top-color: var(--brand3); } .container-dash { border-top-color: #2c3e50; }
+    /* Reports and dashboards are read across, not filled in, so they get the
+       whole screen. Entry forms stay narrow - a 1700px-wide text field is
+       harder to use, not easier. */
+    .container-ct, .container-dash { max-width: min(1700px, 97vw); }
+    #ct-quick, #ct-new, #ct-bulk { max-width: 1000px; margin: 0 auto; }
+    #ct-reports table, #ctReportRes table { width: 100%; table-layout: auto; }
+    #ct-reports td, #ct-reports th { word-break: break-word; }
+    @media (max-width: 1100px) { .dash-row { flex-wrap: wrap; } .dash-row > * { min-width: 260px; flex: 1 1 100%; } }
+    .dash-row { flex-wrap: wrap; align-items: stretch; }
     .header-nav { padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-radius: 8px 8px 0 0; } .back-btn { background: #333; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; }
     .tabs { display: flex; background: #f1f2f6; border-bottom: 1px solid #dcdde1; overflow-x: auto; } .tab { flex: 1; padding: 12px; text-align: center; cursor: pointer; font-weight: 700; font-size: 12px; text-transform: uppercase; color: #7f8fa6; min-width: 120px; } .pw-tab.active { background: #fff; color: var(--brand); border-bottom: 3px solid var(--brand); } .ct-tab.active { background: #fff; color: var(--brand2); border-bottom: 3px solid var(--brand2); } .wcr-tab.active { background: #fff; color: var(--brand3); border-bottom: 3px solid var(--brand3); }
     .content { padding: 20px; display: none; } .content.active { display: block; } .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; } label { font-size: 12px; font-weight: 700; color: #2f3640; display: block; margin-bottom: 4px; } input, select, textarea { width: 100%; padding: 8px; border: 1px solid #dcdde1; border-radius: 4px; font-size: 13px; background: #fbfbfb; box-sizing: border-box; }
@@ -241,7 +250,18 @@
             <div class="stat-card" style="border-top: 4px solid #0b63ce;"><h3 id="d-vis">0</h3><p>Customers Today</p></div>
         </div>
 
-        <!-- Who opened the customer portal, and what they clicked. -->
+        <div class="dash-row">
+          <div class="chart-container" style="flex:1; min-width:0;"><canvas id="empChart" height="150"></canvas></div>
+          <div class="chart-container" style="flex:1; min-width:0;"><canvas id="mainChart" height="150"></canvas></div>
+        </div>
+
+        <div class="dash-row">
+          <div class="chart-container" style="flex:2; min-width:0;"><canvas id="visitTrendChart" height="120"></canvas></div>
+          <div class="chart-container" style="flex:1; min-width:0;"><canvas id="clickChart" height="120"></canvas></div>
+        </div>
+
+        <!-- Who opened the customer portal, and what they clicked. The day-by-day
+             table is behind a toggle: it is long, and most days nobody needs it. -->
         <div class="card" style="margin-bottom:18px;">
           <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
             <h3 style="margin:0;"><i class="fa-solid fa-users" style="color:#0b63ce;"></i> Customer Portal Visits</h3>
@@ -251,13 +271,17 @@
                 <option value="30" selected>Last 30 days</option>
                 <option value="90">Last 90 days</option>
               </select>
-              <button class="btn btn-dark" style="width:auto; margin:0; padding:6px 14px; font-size:12px;" onclick="loadVisitReport()">Refresh</button>
+              <button class="btn btn-dark" style="width:auto; margin:0; padding:6px 12px; font-size:12px;" onclick="toggleVisitTable()">
+                <span id="visitTableLbl">Date-wise</span>
+              </button>
+              <button class="btn btn-dark" style="width:auto; margin:0; padding:6px 12px; font-size:12px;" onclick="loadVisitReport()">Refresh</button>
             </div>
           </div>
           <div id="visitRes" style="margin-top:11px; font-size:13px; color:#555;">Loading…</div>
+          <div id="visitTableWrap" style="display:none; margin-top:10px;"></div>
         </div>
         <div class="dash-row">
-          <div class="stat-card" style="text-align:left; flex: 1; border-top: 4px solid #8e44ad;">
+          <div class="stat-card" style="text-align:left; flex:0 0 330px; min-width:300px; border-top: 4px solid #8e44ad;">
             <div id="backendWarn" style="display:none; background:#fff3e0; border:1px solid #f0b27a; border-radius:7px; padding:10px 13px; margin-bottom:12px; font-size:12px; color:#b9770e;"></div>
             <h4 style="margin:0 0 5px 0; color:#2c3e50;">🖼️ Customer Portal Promo Banner</h4>
             <p style="text-transform:none; font-weight:normal; margin-bottom:14px; font-size:12px;">Pick a marketing image. It pops up on the Customer Portal and closes on its own after 10 seconds, or the customer can close it.</p>
@@ -377,6 +401,35 @@
               <div id="kbList" style="margin-top:12px;"></div>
             </div>
 
+            <!-- Links the customer portal offers as downloads. The section only
+                 appears for customers once something is added here. -->
+            <div class="card" style="margin-top:16px;">
+              <h3 style="margin:0 0 4px;"><i class="fa-solid fa-download" style="color:#0984e3;"></i> Driver &amp; Utility downloads</h3>
+              <div style="font-size:11.5px; color:#636e72; margin-bottom:10px;">
+                Yahan link daalte hi customer portal par "Driver &amp; Utility" ka section apne aap dikhne lagega.
+                Khali rahe to customer ko wo card nahi dikhta.
+              </div>
+              <div class="grid">
+                <div><label>Name</label><input type="text" id="drvTitle" placeholder="e.g. BP 2100 Windows Driver"></div>
+                <div><label>Model</label><input type="text" id="drvModel" placeholder="e.g. BP-2100 (ya All Models)"></div>
+              </div>
+              <div class="grid">
+                <div><label>Type</label>
+                  <select id="drvType"><option>Driver</option><option>Utility</option><option>Manual</option><option>Firmware</option></select>
+                </div>
+                <div><label>Note (optional)</label><input type="text" id="drvNotes" placeholder="e.g. Windows 10 / 11, 64-bit"></div>
+              </div>
+              <label>Link</label>
+              <input type="text" id="drvUrl" placeholder="https://… (Drive, website ya kahin bhi ka public link)">
+              <div style="display:flex; gap:9px; flex-wrap:wrap; margin-top:10px;">
+                <button class="btn" style="width:auto; margin:0; padding:9px 18px; background:#0984e3;" onclick="drvAdd()">
+                  <i class="fa-solid fa-plus"></i> Add download
+                </button>
+                <button class="btn btn-dark" style="width:auto; margin:0; padding:9px 16px;" onclick="drvRefresh()">Refresh</button>
+              </div>
+              <div id="drvList" style="margin-top:12px;"></div>
+            </div>
+
             <div style="background:#f8f9fa; border:1px solid #dcdde1; border-radius:8px; padding:13px;">
               <label style="font-size:11.5px;">4. Try a question</label>
               <div style="display:flex; gap:9px; flex-wrap:wrap; margin-top:7px;">
@@ -390,7 +443,6 @@
         </div>
 
         </div>
-        <div class="dash-row"><div class="chart-container" style="flex:1;"><canvas id="empChart"></canvas></div><div class="chart-container" style="flex:1;"><canvas id="mainChart"></canvas></div></div>
     </div>
   </div>
 </div>
@@ -454,7 +506,7 @@
       <div class="tab ct-tab" onclick="showCtTab('ct-bulk', this); bulkInit();">📋 Bulk Upload</div>
       <div class="tab ct-tab" onclick="showCtTab('ct-pending', this); ctLoadPending();">Pending Calls</div>
       <div class="tab ct-tab" onclick="showCtTab('ct-reports', this)">Reports</div>
-      <div class="tab ct-tab" onclick="showCtTab('ct-dash', this); ctLoadDashboard();">Dashboard</div>
+      <div class="tab ct-tab" onclick="showCtTab('ct-dash', this);">Dashboard</div>
   </div>
   
   <!-- ========= QUICK CALL LOG: minimum fields, maximum speed ========= -->
@@ -782,7 +834,7 @@
 <script>
   // ===================== GITHUB API CONFIGURATION =====================
   // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-  const API_URL = "https://script.google.com/macros/s/AKfycbw1VbFG9PGnQ3nhJGTH8cpSMN8xHMK7SYkYVSADnQohyiR_ipir87FOBD2C9-_OE0lM/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbwVT19WubM1ThkCkw-5y7SMXJhOJg37stEM2j_0dCFSGToeVfRsIY-kIgJITAxlmNs5/exec";
 
   async function apiCall(action, params = {}) {
       try {
@@ -812,7 +864,15 @@
   }
   // ====================================================================
 
-  google.charts.load('current', {'packages':['geochart']});
+  /* If the maps library is blocked or slow, the rest of the admin must still
+     work - an unguarded call here used to kill the whole script. */
+  var googleChartsReady = false;
+  try {
+    if (typeof google !== 'undefined' && google.charts) {
+      google.charts.load('current', {'packages':['geochart']});
+      googleChartsReady = true;
+    }
+  } catch (e) { googleChartsReady = false; }
 
   let barChartInst=null, empChartInst=null;
   let ctChartW=null, ctChartM=null, ctChartH=null, ctChartP=null, ctChartC=null;
@@ -1914,19 +1974,22 @@
       document.getElementById('ctReportRes').innerHTML="Loading..."; 
       apiCall('ct_getClosedReport', {startStr: s, endStr: e, userFilter: u}).then(data=>{ 
           if(!data.length) return document.getElementById('ctReportRes').innerHTML="No records."; 
-          let html=`<b>Total: ${data.length}</b><table><tr><th>Date</th><th>Customer, Task & Contact</th><th>Issue/Action</th><th>TAT/By</th></tr>`; 
+          let html=`<b>Total: ${data.length}</b><table><tr><th style="width:120px;">Logged</th><th style="width:120px;">Closed</th><th style="width:200px;">Customer, Task & Contact</th><th>Issue/Action</th><th style="width:120px;">TAT/By</th></tr>`; 
           data.forEach(c=>{ 
               let showTask=c.taskId?`<span style="color:#e74c3c;">${c.taskId}</span><br>`:''; 
-              html+=`<tr><td>${c.date}</td><td><b>${showTask}${c.name}</b><br><small style="color:#0984e3; font-weight:bold;">📞 ${c.contact}</small><br><small>${c.model}</small></td><td><small>Iss: ${c.issue}</small><br><span style="color:green">Act: ${formatAction(c.action)}</span></td><td>${c.tat}<br>By: ${c.handledBy}</td></tr>`; 
+              html+=`<tr><td>${c.date}</td><td>${c.closedDate || '<span style="color:#b2bec3;">—</span>'}</td><td><b>${showTask}${c.name}</b><br><small style="color:#0984e3; font-weight:bold;">📞 ${c.contact}</small><br><small>${c.model}</small></td><td><small>Iss: ${c.issue}</small><br><span style="color:green">Act: ${formatAction(c.action)}</span></td><td>${c.tat}<br>By: ${c.handledBy}</td></tr>`; 
           }); 
           document.getElementById('ctReportRes').innerHTML=html+"</table>"; 
       }).catch(e=>{ document.getElementById('ctReportRes').innerHTML="Error."; }); 
   }
 
   // --- INTERNAL DASHBOARD LOGIC ---
+  let ctDashLoaded = false;
+
   function ctLoadDashboard() {
       let s = document.getElementById('ctDashFrom') ? document.getElementById('ctDashFrom').value : "";
       let e = document.getElementById('ctDashTo') ? document.getElementById('ctDashTo').value : "";
+      ctDashLoaded = true;
 
       Swal.fire({title:'Loading Call Data...', didOpen:()=>Swal.showLoading()});
       apiCall('ct_getDashboardStats', {startStr: s, endStr: e}).then(stats => {
@@ -1948,6 +2011,8 @@
           ctChartP = new Chart(document.getElementById('ctChartProblem').getContext('2d'), { type: 'doughnut', data: { labels: Object.keys(stats.problems), datasets: [{ data: Object.values(stats.problems), backgroundColor: ['#f1c40f','#e67e22','#e74c3c','#3498db','#1abc9c','#9b59b6','#95a5a6'] }] }, options: { plugins: { title: { display: true, text: 'Problem Categories' } }, onClick: (evt, elements) => { if (elements.length > 0) { const index = elements[0].index; const label = ctChartP.data.labels[index]; showProblemDetails(label); } } } });
           ctChartC = new Chart(document.getElementById('ctChartCallType').getContext('2d'), { type: 'doughnut', data: { labels: Object.keys(stats.callTypes), datasets: [{ data: Object.values(stats.callTypes), backgroundColor: ['#0984e3','#27ae60','#e67e22','#ff0073','#2c3e50'] }] }, options: { plugins: { title: { display: true, text: 'Call Categories (Click for details)' } }, onClick: (evt, elements) => { if (elements.length > 0) { const index = elements[0].index; const label = ctChartC.data.labels[index]; showCallTypeDetails(label); } } } });
 
+          if(!googleChartsReady) { document.getElementById('ctMapContainer').innerHTML =
+              '<div style="padding:20px; color:#8a94a6; font-size:12px;">Map library load nahi hui.</div>'; return; }
           google.charts.setOnLoadCallback(() => {
               var data = new google.visualization.DataTable(); data.addColumn('string', 'State'); data.addColumn('number', 'Calls');
               for(let state in stats.states) { data.addRow([state, stats.states[state]]); }
@@ -2847,7 +2912,7 @@
   /* The portal and Code.gs ship together. If the deployed script reports a
      different version (or no version at all), it was saved but never
      redeployed - which shows up as "Unknown action" on newer features. */
-  const EXPECTED_SCRIPT_VERSION = "2026-11-20-sv2";
+  const EXPECTED_SCRIPT_VERSION = "2026-11-20-sv4";
 
   function checkBackendVersion() {
       let box = document.getElementById('backendWarn');
@@ -2866,73 +2931,12 @@
 
   /* ---------- AI assistant + product catalogue (admin) ---------- */
   /* Date-wise visit counts - how many customers opened the portal each day. */
-  function loadVisitReport() {
-      const box = document.getElementById('visitRes');
-      if(!box) return;
-      const days = document.getElementById('visitDays').value;
-      box.innerHTML = 'Loading…';
-      apiCall('getVisitReport', { days: days }).then(v => {
-          if(!v.rows.length) {
-              box.innerHTML = 'Abhi tak koi visit record nahi hua. Customer portal khulne par yahan count aana shuru ho jayega.';
-              return;
-          }
-          const tile = (label, value) =>
-            `<div style="flex:1; min-width:110px; background:#fff; border:1px solid #d7e3f7; border-radius:7px; padding:9px 12px;">
-               <div style="font-size:20px; font-weight:700; color:#0b63ce;">${value}</div>
-               <div style="font-size:11px; color:#7a8699;">${label}</div></div>`;
-
-          const labels = v.labels || {};
-          const keys = Object.keys(labels);
-
-          let html = `<div style="display:flex; gap:9px; flex-wrap:wrap; margin-bottom:11px;">
-              ${tile('Aaj aaye', v.today)}
-              ${tile('Portal opens', v.totalPortal)}
-              ${tile('Chatbot opens', v.totalChatbot)}
-              ${tile('Questions asked', v.totalQuestions)}
-            </div>`;
-
-          /* Which link each customer actually clicked. */
-          if(keys.length) {
-              html += `<div style="display:flex; gap:9px; flex-wrap:wrap; margin-bottom:13px;">`;
-              keys.forEach(k => {
-                  html += `<div style="flex:1; min-width:105px; background:#fff; border:1px solid #e3e8ef; border-radius:7px; padding:8px 11px;">
-                             <div style="font-size:17px; font-weight:700; color:#2d3436;">${(v.actions||{})[k] || 0}</div>
-                             <div style="font-size:11px; color:#7a8699;">${escapeHtml(labels[k])} clicks</div></div>`;
-              });
-              html += '</div>';
-          }
-
-          html += `<div style="overflow-x:auto;"><table style="width:100%; border-collapse:collapse; background:#fff; font-size:12.5px;">
-              <tr style="background:#dbe7fb;">
-                <th style="padding:7px 9px; text-align:left;">Date</th>
-                <th style="padding:7px 9px; text-align:center;">Portal<br>opens</th>
-                <th style="padding:7px 9px; text-align:center;">Chatbot</th>
-                <th style="padding:7px 9px; text-align:center;">Questions</th>
-                ${keys.map(k => `<th style="padding:7px 9px; text-align:center;">${escapeHtml(labels[k])}</th>`).join('')}
-              </tr>`;
-          v.rows.forEach(r => {
-              html += `<tr style="border-bottom:1px solid #eef1f4;">
-                  <td style="padding:6px 9px;">${escapeHtml(r.date)}</td>
-                  <td style="padding:6px 9px; text-align:center; font-weight:600;">${r.portal}</td>
-                  <td style="padding:6px 9px; text-align:center;">${r.chatbot}</td>
-                  <td style="padding:6px 9px; text-align:center;">${r.questions}</td>
-                  ${keys.map(k => `<td style="padding:6px 9px; text-align:center;">${(r.actions||{})[k] || 0}</td>`).join('')}
-                  </tr>`;
-          });
-          box.innerHTML = html + '</table></div>';
-          const tileToday = document.getElementById('d-vis');
-          if(tileToday) tileToday.innerText = v.today;
-      }).catch(e => { box.innerHTML = `<span style="color:#d63031;">${escapeHtml(e.message)}</span>`; });
-  }
-
   function escapeHtml(t) {
       return String(t == null ? '' : t)
         .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
-  /* The whole point of the log: see what was asked, and turn the gaps into
-     Knowledge Base entries without leaving this screen. */
   /* When an answer looks wrong, this says why: how much was searched, whether
      the meaning index was used, and which sections came closest. */
   function diagnoseAi() {
@@ -2974,8 +2978,10 @@
       }).catch(e => Swal.fire('Error', e.message, 'error'));
   }
 
+  /* What customers actually asked, and which questions nobody could answer. */
   function loadAiStats() {
       const box = document.getElementById('statsBody');
+      if(!box) return;
       const days = document.getElementById('statsDays').value;
       box.innerHTML = 'Loading…';
       apiCall('ai_stats', { days: days }).then(s => {
@@ -3028,6 +3034,106 @@
       }).catch(e => { box.innerHTML = `<span style="color:#d63031;">${escapeHtml(e.message)}</span>`; });
   }
 
+  let visitTrendInst = null, clickInst = null, lastVisit = null;
+
+  /* The table of every day is long and mostly unread, so it stays behind a
+     toggle. The tiles and the charts carry the day-to-day picture. */
+  function toggleVisitTable() {
+      const wrap = document.getElementById('visitTableWrap');
+      const lbl  = document.getElementById('visitTableLbl');
+      const show = wrap.style.display === 'none';
+      wrap.style.display = show ? 'block' : 'none';
+      lbl.innerText = show ? 'Hide table' : 'Date-wise';
+      if(show && lastVisit) renderVisitTable(lastVisit);
+  }
+
+  function renderVisitTable(v) {
+      const labels = v.labels || {}, keys = Object.keys(labels);
+      let html = `<div style="overflow-x:auto;"><table style="width:100%; border-collapse:collapse; background:#fff; font-size:12.5px;">
+          <tr style="background:#dbe7fb;">
+            <th style="padding:7px 9px; text-align:left;">Date</th>
+            <th style="padding:7px 9px;">Portal</th><th style="padding:7px 9px;">Chatbot</th>
+            <th style="padding:7px 9px;">Questions</th>
+            ${keys.map(k => `<th style="padding:7px 9px;">${escapeHtml(labels[k])}</th>`).join('')}
+          </tr>`;
+      v.rows.forEach(r => {
+          html += `<tr style="border-bottom:1px solid #eef1f4;">
+              <td style="padding:6px 9px;">${escapeHtml(r.date)}</td>
+              <td style="padding:6px 9px; text-align:center; font-weight:600;">${r.portal}</td>
+              <td style="padding:6px 9px; text-align:center;">${r.chatbot}</td>
+              <td style="padding:6px 9px; text-align:center;">${r.questions}</td>
+              ${keys.map(k => `<td style="padding:6px 9px; text-align:center;">${(r.actions||{})[k] || 0}</td>`).join('')}
+            </tr>`;
+      });
+      document.getElementById('visitTableWrap').innerHTML = html + '</table></div>';
+  }
+
+  /* Two charts tell the story the table used to: how traffic moved, and what
+     people came for. */
+  function drawVisitCharts(v) {
+      if(typeof Chart === 'undefined') return;
+      const rows = (v.rows || []).slice().reverse();          // oldest first reads better
+      const labels = rows.map(r => r.date.slice(5));
+
+      if(visitTrendInst) visitTrendInst.destroy();
+      visitTrendInst = new Chart(document.getElementById('visitTrendChart').getContext('2d'), {
+          type: 'line',
+          data: { labels, datasets: [
+              { label: 'Portal opens', data: rows.map(r => r.portal), borderColor: '#0b63ce',
+                backgroundColor: 'rgba(11,99,206,.12)', fill: true, tension: .32 },
+              { label: 'Questions asked', data: rows.map(r => r.questions), borderColor: '#6c5ce7',
+                backgroundColor: 'rgba(108,92,231,.10)', fill: true, tension: .32 } ] },
+          options: { responsive: true, maintainAspectRatio: false,
+              plugins: { title: { display: true, text: 'Customer traffic' }, legend: { position: 'bottom' } },
+              scales: { y: { beginAtZero: true, ticks: { precision: 0 } } } }
+      });
+
+      const lab = v.labels || {}, keys = Object.keys(lab);
+      if(clickInst) clickInst.destroy();
+      clickInst = new Chart(document.getElementById('clickChart').getContext('2d'), {
+          type: 'doughnut',
+          data: { labels: keys.map(k => lab[k]),
+                  datasets: [{ data: keys.map(k => (v.actions || {})[k] || 0),
+                    backgroundColor: ['#0b63ce','#00b894','#e17055','#6c5ce7','#fdcb6e'] }] },
+          options: { responsive: true, maintainAspectRatio: false, cutout: '55%',
+              plugins: { title: { display: true, text: 'What customers clicked' },
+                         legend: { position: 'bottom', labels: { boxWidth: 11, font: { size: 10 } } } } }
+      });
+  }
+
+  function loadVisitReport() {
+      const box = document.getElementById('visitRes');
+      if(!box) return;
+      const days = document.getElementById('visitDays').value;
+      box.innerHTML = 'Loading…';
+      apiCall('getVisitReport', { days: days }).then(v => {
+          lastVisit = v;
+          if(!v.rows.length) {
+              box.innerHTML = 'Abhi tak koi visit record nahi hua. Customer portal khulne par yahan count aana shuru ho jayega.';
+              return;
+          }
+          const tile = (label, value) =>
+            `<div style="flex:1; min-width:104px; background:#fff; border:1px solid #d7e3f7; border-radius:7px; padding:9px 12px;">
+               <div style="font-size:20px; font-weight:700; color:#0b63ce;">${value}</div>
+               <div style="font-size:11px; color:#7a8699;">${label}</div></div>`;
+
+          const lab = v.labels || {}, keys = Object.keys(lab);
+          let html = `<div style="display:flex; gap:9px; flex-wrap:wrap;">
+              ${tile('Aaj aaye', v.today)}
+              ${tile('Portal opens', v.totalPortal)}
+              ${tile('Chatbot opens', v.totalChatbot)}
+              ${tile('Questions asked', v.totalQuestions)}
+              ${keys.map(k => tile(lab[k], (v.actions || {})[k] || 0)).join('')}
+            </div>`;
+          box.innerHTML = html;
+
+          const tileToday = document.getElementById('d-vis');
+          if(tileToday) tileToday.innerText = v.today;
+          drawVisitCharts(v);
+          if(document.getElementById('visitTableWrap').style.display !== 'none') renderVisitTable(v);
+      }).catch(e => { box.innerHTML = `<span style="color:#d63031;">${escapeHtml(e.message)}</span>`; });
+  }
+
   /* Turns an unanswered question straight into a Knowledge Base entry. */
   function kbAnswerGap(question) {
       Swal.fire({
@@ -3069,6 +3175,7 @@
   function loadAiPanel() {
       try { loadAiStats(); } catch (e) {}
       try { checkIndexHealth(); } catch (e) {}
+      try { drvRefresh(); } catch (e) {}
       apiCall('getProductStats').then(st => {
           document.getElementById('aiTiles').innerHTML =
             `<div class="q-tile" style="border-top:3px solid ${st.total?'#0984e3':'#e74c3c'};"><span>Products</span><b>${st.total}</b></div>
@@ -3100,6 +3207,52 @@
   }
 
   /* ---------- Knowledge Base ---------- */
+  function drvRefresh() {
+      const box = document.getElementById('drvList'); if(!box) return;
+      box.innerHTML = '<div style="font-size:11.5px; color:#8a94a6;">Loading…</div>';
+      apiCall('drv_list', {}).then(r => {
+          if(!r.items.length) {
+              box.innerHTML = '<div style="font-size:11.5px; color:#8a94a6;">Abhi koi download nahi hai — customer portal par ye section chhupa rahega.</div>';
+              return;
+          }
+          let h = '<table class="q-table"><thead><tr><th>Name</th><th style="width:150px;">Model</th><th style="width:90px;">Type</th><th>Link</th><th style="width:50px;"></th></tr></thead><tbody>';
+          r.items.forEach(d => {
+              h += `<tr><td><b>${escapeHtml(d.title)}</b>${d.notes ? `<div style="font-size:10.5px; color:#8a94a6;">${escapeHtml(d.notes)}</div>` : ''}</td>
+                    <td>${escapeHtml(d.model)}</td><td>${escapeHtml(d.type)}</td>
+                    <td><a href="${escapeHtml(d.url)}" target="_blank" rel="noopener noreferrer"
+                           style="font-size:11px; word-break:break-all;">${escapeHtml(d.url).slice(0,60)}…</a></td>
+                    <td><button class="btn" style="width:auto; margin:0; padding:4px 9px; font-size:10px; background:#e74c3c;"
+                        onclick="drvDelete(${d.row})">Del</button></td></tr>`;
+          });
+          box.innerHTML = h + '</tbody></table>';
+      }).catch(e => { box.innerHTML = `<span style="color:#d63031;">${escapeHtml(e.message)}</span>`; });
+  }
+
+  function drvAdd() {
+      const item = { title: document.getElementById('drvTitle').value.trim(),
+                     model: document.getElementById('drvModel').value.trim() || 'All Models',
+                     type:  document.getElementById('drvType').value,
+                     notes: document.getElementById('drvNotes').value.trim(),
+                     url:   document.getElementById('drvUrl').value.trim() };
+      apiCall('drv_add', { item })
+        .then(() => { ['drvTitle','drvModel','drvNotes','drvUrl'].forEach(i => document.getElementById(i).value = '');
+                      Swal.fire('Added', 'Customer portal par ab ye download dikhega.', 'success'); drvRefresh(); })
+        .catch(e => Swal.fire('Error', e.message, 'error'));
+  }
+
+  function drvDelete(row) {
+      Swal.fire({ title: 'Remove this download?', icon: 'warning', showCancelButton: true,
+                  confirmButtonText: 'Remove', confirmButtonColor: '#d63031' }).then(r => {
+          if(!r.isConfirmed) return;
+          apiCall('drv_delete', { row }).then(() => drvRefresh()).catch(e => Swal.fire('Error', e.message, 'error'));
+      });
+  }
+
+  function kbTogglePreview() {
+      const on = document.getElementById('kbShowPreview').checked;
+      document.querySelectorAll('.kb-preview').forEach(e => { e.style.display = on ? 'block' : 'none'; });
+  }
+
   function kbRefresh() {
       let box = document.getElementById('kbList'); if(!box) return;
       box.innerHTML = '<div style="font-size:11.5px; color:#8a94a6;">Loading…</div>';
@@ -3113,10 +3266,13 @@
               if(!groups[base]) groups[base] = { model: it.model, category: it.category, updated: it.updated, n: 0, preview: it.preview };
               groups[base].n++;
           });
-          let h = '<table class="q-table"><thead><tr><th>Title</th><th style="width:130px;">Model</th><th style="width:130px;">Category</th><th style="width:60px;">Parts</th><th style="width:50px;"></th></tr></thead><tbody>';
+          let h = `<div style="margin-bottom:7px;"><label style="font-size:11.5px; color:#636e72; cursor:pointer;">
+                     <input type="checkbox" id="kbShowPreview" onchange="kbTogglePreview()" style="width:auto; margin-right:5px; vertical-align:middle;">
+                     Show the text under each title</label></div>`;
+          h += '<table class="q-table"><thead><tr><th>Title</th><th style="width:130px;">Model</th><th style="width:130px;">Category</th><th style="width:60px;">Parts</th><th style="width:50px;"></th></tr></thead><tbody>';
           Object.keys(groups).forEach(t => {
               let g = groups[t];
-              h += `<tr><td><b>${t}</b><div style="font-size:10.5px; color:#8a94a6; margin-top:2px;">${g.preview}…</div></td>
+              h += `<tr><td><b>${t}</b><div class="kb-preview" style="display:none; font-size:10.5px; color:#8a94a6; margin-top:2px;">${g.preview}…</div></td>
                     <td>${g.model}</td><td>${g.category}</td><td>${g.n}</td>
                     <td><button class="btn" style="width:auto; margin:0; padding:4px 9px; font-size:10px; background:#e74c3c;"
                         onclick="kbDelete('${t.replace(/'/g,"\\'")}')">Del</button></td></tr>`;
