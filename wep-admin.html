@@ -259,7 +259,16 @@
     .pw-mini:hover { background: var(--brand); color: #fff; border-color: var(--brand); }
     .pw-empty { text-align: center; color: #8d99ae; padding: 34px 16px; font-size: 13px; background: #fafbfc; border: 1px dashed #dde3e8; border-radius: 10px; }
     .pw-legacy-note { background: #f6f7f9; border-left: 4px solid #95a5a6; padding: 11px 15px; border-radius: 8px; margin-bottom: 12px; }
-  </style>
+  
+    /* Database section switches */
+    .db-row { display:flex; align-items:flex-start; gap:10px; padding:10px 12px; border:1px solid #e6e9ef;
+              border-radius:9px; margin-bottom:8px; cursor:pointer; background:#fff; transition:.15s; }
+    .db-row:hover { border-color:#c9d4e4; background:#fbfcfe; }
+    .db-row input { width:auto; margin:2px 0 0; flex:none; }
+    .db-row span { display:block; font-size:13px; line-height:1.45; }
+    .db-row em { display:block; font-style:normal; font-size:11px; color:#8a94a6; }
+    .db-row.db-sub { margin-left:26px; border-style:dashed; }
+</style>
 </head>
 <body onload="initApp()">
 
@@ -292,6 +301,7 @@
       <a class="sn-item" data-go="pw"      onclick="navGo('pw')"><i class="fa-solid fa-screwdriver-wrench"></i><span>Post Warranty</span></a>
       <a class="sn-item" data-go="wcr"     onclick="navGo('wcr')"><i class="fa-solid fa-recycle"></i><span>WCR Defective</span></a>
       <a class="sn-item" data-go="quality" id="snQuality" style="display:none;" onclick="navGo('quality')"><i class="fa-solid fa-clipboard-check"></i><span>Quality</span></a>
+      <a class="sn-item" data-go="db"      onclick="navGo('db')"><i class="fa-solid fa-database"></i><span>Database</span></a>
       <a class="sn-item" data-go="home"    onclick="navGo('home')"><i class="fa-solid fa-grip"></i><span>All Sections</span></a>
     </nav>
     <div class="sn-foot">
@@ -552,35 +562,17 @@
               <div id="blkList" style="margin-top:12px;"></div>
             </div>
 
-            <!-- Converting a logo to a 1-bit BMP by hand means resizing in Paint
-                 and finding "Monochrome Bitmap" in a Save-as list. This lets the
-                 customer do it themselves, in their browser. -->
+            <!-- The Database Creation controls now live in their own
+                 section in the rail, so this card just points at it. -->
             <div class="card" style="margin-top:16px;">
-              <h3 style="margin:0 0 4px;"><i class="fa-solid fa-database" style="color:#e8117f;"></i> Database Creation on the Customer Portal</h3>
+              <h3 style="margin:0 0 4px;"><i class="fa-solid fa-database" style="color:#e8117f;"></i> Database Creation</h3>
               <div style="font-size:11.5px; color:#636e72; margin-bottom:10px;">
-                Customer khud bana sakega: <b>printer ka logo</b> (monochrome BMP / pendrive .WBP) aur
-                <b>POS item database</b> (Retail aur F&amp;B ki CSV). Poora kaam uske browser me hota hai —
-                koi file kahin upload nahi hoti.
+                Customer khud bana sakega: <b>printer ka logo</b>, <b>POS ka item database</b> aur
+                <b>BP printers ka database</b>. Poora kaam uske browser me hota hai.
               </div>
-              <label style="font-size:13px; cursor:pointer;">
-                <input type="checkbox" id="setLogoOn" style="width:auto; margin-right:7px; vertical-align:middle;">
-                Customer portal par Database Creation dikhaiye
-              </label>
-              <div class="grid" style="margin-top:10px;">
-                <div><label>Logo width (px)</label><input type="number" id="setLogoW" value="448" min="8" max="2048"></div>
-                <div><label>Logo height (px)</label><input type="number" id="setLogoH" value="326" min="8" max="2048"></div>
-              </div>
-              <label>Customer ko dikhane wali line</label>
-              <input type="text" id="setLogoNote" placeholder="e.g. Apna logo yahan se printer ke format me badal lijiye">
-              <label>Pendrive file ka naam</label>
-              <input type="text" id="setLogoFile" placeholder="LOGODBS.WBP">
-              <div style="font-size:11px; color:#8a94a6; margin-top:-6px;">
-                Printer pendrive par isi naam ki file dhoondta hai. Badal rahe hain to poora naam .WBP ke saath likhiye.
-              </div>
-              <button class="btn" style="width:auto; margin:10px 0 0; padding:9px 18px; background:#e8117f;" onclick="saveSettings()">
-                <i class="fa-solid fa-floppy-disk"></i> Save
+              <button class="btn" style="width:auto; margin:0; padding:9px 18px; background:#e8117f;" onclick="navGo('db')">
+                <i class="fa-solid fa-sliders"></i> Database settings kholiye
               </button>
-              <div id="setStatus" style="margin-top:8px; font-size:12px;"></div>
             </div>
 
             <div style="background:#f8f9fa; border:1px solid #dcdde1; border-radius:8px; padding:13px;">
@@ -944,6 +936,56 @@
   </div>
 </div>
 
+<!-- ======= DATABASE CREATION CONTROLS ======= -->
+<div id="dbPortal" style="display:none;" class="container">
+  <h2 style="margin:0 0 4px;"><i class="fa-solid fa-database" style="color:#e8117f;"></i> Database Creation</h2>
+  <div style="font-size:12px; color:#636e72; margin-bottom:14px;">
+    Customer apne phone ya laptop se printer aur POS ka database khud bana leta hai.
+    Yahan se tay kijiye ki usme se kya kya dikhe.
+  </div>
+
+  <div class="card">
+    <label style="font-size:14px; cursor:pointer; display:block; padding:4px 0;">
+      <input type="checkbox" id="setLogoOn" style="width:auto; margin-right:8px; vertical-align:middle;">
+      <b>Customer portal par Database Creation dikhaiye</b>
+    </label>
+    <div style="font-size:11.5px; color:#8a94a6; margin:2px 0 0 24px;">
+      Ye band hoga to neeche ki sabhi cheezein customer ko nahi dikhengi.
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:14px;">
+    <h3 style="margin:0 0 3px;">Kaun kaun se section dikhein</h3>
+    <div style="font-size:11.5px; color:#636e72; margin-bottom:12px;">
+      Jo band kar denge wo customer ke screen par aayega hi nahi.
+    </div>
+    <div id="dbToggles"></div>
+  </div>
+
+  <div class="card" style="margin-top:14px;">
+    <h3 style="margin:0 0 3px;">Logo ki settings</h3>
+    <div style="font-size:11.5px; color:#636e72; margin-bottom:10px;">
+      Customer jo bhi image dale, usko isi naap me badal kar monochrome BMP aur pendrive file banayi jayegi.
+    </div>
+    <div class="grid">
+      <div><label>Logo width (px)</label><input type="number" id="setLogoW" value="448" min="8" max="2048"></div>
+      <div><label>Logo height (px)</label><input type="number" id="setLogoH" value="326" min="8" max="2048"></div>
+    </div>
+    <label>Customer ko dikhane wali line</label>
+    <input type="text" id="setLogoNote" placeholder="e.g. Apna logo yahan se printer ke format me badal lijiye">
+    <label>Pendrive file ka naam</label>
+    <input type="text" id="setLogoFile" placeholder="LOGODBS.WBP">
+    <div style="font-size:11px; color:#8a94a6; margin-top:-6px;">
+      Printer pendrive par isi naam ki file dhoondta hai. Badal rahe hain to poora naam .WBP ke saath likhiye.
+    </div>
+  </div>
+
+  <button class="btn" style="width:auto; margin:14px 0 0; padding:10px 22px; background:#e8117f;" onclick="saveSettings()">
+    <i class="fa-solid fa-floppy-disk"></i> Save
+  </button>
+  <div id="setStatus" style="margin-top:8px; font-size:12px;"></div>
+</div>
+
 <!-- ======= SECTION CHOOSER (Main Admin only) ======= -->
 <div id="sectionScreen" style="display:none; flex-direction:column; align-items:center; justify-content:center; min-height:90vh;">
   <div class="wepsol-logo">WEPSOL</div><div class="wepsol-sub">MAIN ADMIN CONSOLE</div>
@@ -990,7 +1032,7 @@
 <script>
   // ===================== GITHUB API CONFIGURATION =====================
   // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-  const API_URL = "https://script.google.com/macros/s/AKfycbyT2WAna1QN-70MLQgL6tNjuzeaZvC53JRSh5WC51BIhqv_7h8seb5Od5daFFp3Waup/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbxLU1QNeFg3SfgR2eRBCI0RYPUI6qkX0YGpURtApiK19S7CKkQp-VScA4LjWD8emrCp/exec";
 
 
   /* The rail replaces the old menu-first navigation, and keeps the current
@@ -1250,7 +1292,7 @@
       // Whatever route got us here, the shell must be on screen.
       const sh = document.getElementById('appShell');
       if(sh && sh.style.display === 'none') sh.style.display = 'flex';
-      ['landingScreen','dashPortal','pwPortal','ctPortal','wcrPortal','qualityPortal']
+      ['landingScreen','dashPortal','pwPortal','ctPortal','wcrPortal','qualityPortal','dbPortal']
         .forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; });
       if(portal === 'home') { document.getElementById('landingScreen').style.display = 'flex'; }
       else {
@@ -1260,6 +1302,7 @@
       if(portal === 'ct') qlOpen();
       if(portal === 'pw' || portal === 'wcr') pwSetToday();
       if(portal === 'quality' && typeof qRenderMasters === 'function') { try { qInit(); } catch(e) {} }
+      if(portal === 'db') { try { loadSettings(); } catch(e) {} }
       document.querySelectorAll('.sn-item').forEach(a =>
           a.classList.toggle('active', a.getAttribute('data-go') === portal));
       window.scrollTo(0, 0);
@@ -3477,6 +3520,32 @@
   }
 
   /* ---------- Knowledge Base ---------- */
+  /* ---------- Database Creation ----------
+     One row per thing the customer can see. The master switch at the top
+     hides the lot; these decide what is inside it. */
+  const DB_PARTS = [
+    { k: 'dbLogo',      t: 'Logo for All BP Models',   d: 'Image ko monochrome BMP aur pendrive file me badalta hai.' },
+    { k: 'dbPos',       t: 'POS Application Database', d: 'Retail aur F&B ke liye item, customer, supplier.' },
+    { k: 'dbPosRetail', t: 'Retail Application',       d: 'POS ke andar.', sub: true },
+    { k: 'dbPosFnb',    t: 'F&B Application',          d: 'POS ke andar.', sub: true },
+    { k: 'dbBp',        t: 'BP Database',              d: 'BP billing printers ka item database.' },
+    { k: 'dbBpPlus',    t: 'BP Plus Series',           d: 'Joy Plus, 85T Plus, 25T Plus, Ultra Pro.', sub: true },
+    { k: 'dbBpEmerge',  t: 'BP Emerge Series',         d: 'English, Hindi aur Tamil, teeno format.', sub: true },
+    { k: 'dbBp2k',      t: 'BP 2K Series',             d: 'BP 2100 aur BP 1100 Joy.', sub: true },
+    { k: 'dbGet',       t: 'Get database',             d: 'Doosre device par code daal kar file lene ka option.' },
+    { k: 'dbGuide',     t: 'Step-by-step animation',   d: 'Chalti hui guide, jo bina padhe bhi samajh aaye.' }
+  ];
+
+  function dbRenderToggles(cfg) {
+      const box = document.getElementById('dbToggles');
+      if(!box) return;
+      box.innerHTML = DB_PARTS.map(p => `
+        <label class="db-row${p.sub ? ' db-sub' : ''}">
+          <input type="checkbox" id="set_${p.k}" ${String(cfg[p.k] || 'yes') === 'yes' ? 'checked' : ''}>
+          <span><b>${escapeHtml(p.t)}</b><em>${escapeHtml(p.d)}</em></span>
+        </label>`).join('');
+  }
+
   function loadSettings() {
       apiCall('settings_get', {}).then(c => {
           const on = document.getElementById('setLogoOn'); if(on) on.checked = String(c.logoToolEnabled) === 'yes';
@@ -3484,20 +3553,29 @@
           const h = document.getElementById('setLogoH');   if(h) h.value = c.logoToolHeight || 326;
           const n = document.getElementById('setLogoNote');if(n) n.value = c.logoToolNote || '';
           const fl = document.getElementById('setLogoFile'); if(fl) fl.value = c.logoToolFileName || 'LOGODBS.WBP';
+          dbRenderToggles(c);
       }).catch(() => {});
   }
 
   function saveSettings() {
       const box = document.getElementById('setStatus');
       box.innerHTML = 'Saving…';
-      apiCall('settings_set', { pairs: {
+      const pairs = {
           logoToolEnabled: document.getElementById('setLogoOn').checked ? 'yes' : 'no',
           logoToolWidth:   document.getElementById('setLogoW').value,
           logoToolHeight:  document.getElementById('setLogoH').value,
           logoToolNote:    document.getElementById('setLogoNote').value.trim(),
           logoToolFileName: (document.getElementById('setLogoFile').value.trim() || 'LOGODBS.WBP')
-      }}).then(c => {
-          box.innerHTML = `<span style="color:#00875a; font-weight:600;">Saved — Database Creation ${String(c.logoToolEnabled)==='yes'?'ab customer ko dikhega':'chhupa diya gaya'}.</span>`;
+      };
+      DB_PARTS.forEach(p => {
+          const el = document.getElementById('set_' + p.k);
+          if(el) pairs[p.k] = el.checked ? 'yes' : 'no';
+      });
+      apiCall('settings_set', { pairs: pairs }).then(c => {
+          const onCount = DB_PARTS.filter(p => String(c[p.k] || 'yes') === 'yes').length;
+          box.innerHTML = String(c.logoToolEnabled) === 'yes'
+            ? `<span style="color:#00875a; font-weight:600;">Saved — Database Creation customer ko dikhega, ${onCount} section chalu.</span>`
+            : `<span style="color:#00875a; font-weight:600;">Saved — Database Creation abhi chhupa hua hai.</span>`;
       }).catch(e => { box.innerHTML = `<span style="color:#d63031;">${escapeHtml(e.message)}</span>`; });
   }
 
