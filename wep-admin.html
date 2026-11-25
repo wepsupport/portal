@@ -302,6 +302,7 @@
       <a class="sn-item" data-go="wcr"     onclick="navGo('wcr')"><i class="fa-solid fa-recycle"></i><span>WCR Defective</span></a>
       <a class="sn-item" data-go="quality" id="snQuality" style="display:none;" onclick="navGo('quality')"><i class="fa-solid fa-clipboard-check"></i><span>Quality</span></a>
       <a class="sn-item" data-go="db"      onclick="navGo('db')"><i class="fa-solid fa-database"></i><span>Database</span></a>
+      <a class="sn-item" data-go="sec"     onclick="navGo('sec')"><i class="fa-solid fa-grip-lines"></i><span>Portal Sections</span></a>
       <a class="sn-item" data-go="home"    onclick="navGo('home')"><i class="fa-solid fa-grip"></i><span>All Sections</span></a>
     </nav>
     <div class="sn-foot">
@@ -937,6 +938,23 @@
 </div>
 
 <!-- ======= DATABASE CREATION CONTROLS ======= -->
+<div id="secPortal" style="display:none;" class="container">
+  <h2 style="margin:0 0 4px;"><i class="fa-solid fa-grip-lines" style="color:#3b5bdb;"></i> Portal Sections</h2>
+  <div style="font-size:12px; color:#636e72; margin-bottom:14px;">
+    Customer ke home screen par kaun kaun se card dikhein. Jo band karenge wo customer ko
+    dikhega hi nahi. Installation, Demo, Warranty aur Support Assistant hamesha chalu rahte hain.
+  </div>
+  <div class="card">
+    <h3 style="margin:0 0 3px;">Optional cards</h3>
+    <div style="font-size:11.5px; color:#636e72; margin-bottom:12px;">
+      Database Creation ka switch "Database" section me hai.
+    </div>
+    <div id="secToggles"></div>
+    <button class="btn" style="margin-top:14px;" onclick="saveSections()">Save</button>
+    <div id="secSaveMsg" style="font-size:12px; color:#00875a; margin-top:8px;"></div>
+  </div>
+</div>
+
 <div id="dbPortal" style="display:none;" class="container">
   <h2 style="margin:0 0 4px;"><i class="fa-solid fa-database" style="color:#e8117f;"></i> Database Creation</h2>
   <div style="font-size:12px; color:#636e72; margin-bottom:14px;">
@@ -1032,7 +1050,7 @@
 <script>
   // ===================== GITHUB API CONFIGURATION =====================
   // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-  const API_URL = "https://script.google.com/macros/s/AKfycbx_gE-zJVlhiDkt1OVeH2ur_UGV1xYl3SRur0fRGVfNMJmwq9H4vkSv_7zDmo6BAunv/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbyc50Gi32n8mUgOED9fb29cxzf49CMFUzBgGplKhsz7TI3OxvXrlpVfqOJ-xfq-m9rI/exec";
 
 
   /* The rail replaces the old menu-first navigation, and keeps the current
@@ -1292,7 +1310,7 @@
       // Whatever route got us here, the shell must be on screen.
       const sh = document.getElementById('appShell');
       if(sh && sh.style.display === 'none') sh.style.display = 'flex';
-      ['landingScreen','dashPortal','pwPortal','ctPortal','wcrPortal','qualityPortal','dbPortal']
+      ['landingScreen','dashPortal','pwPortal','ctPortal','wcrPortal','qualityPortal','dbPortal','secPortal']
         .forEach(id => { const el = document.getElementById(id); if(el) el.style.display = 'none'; });
       if(portal === 'home') { document.getElementById('landingScreen').style.display = 'flex'; }
       else {
@@ -1303,6 +1321,7 @@
       if(portal === 'pw' || portal === 'wcr') pwSetToday();
       if(portal === 'quality' && typeof qRenderMasters === 'function') { try { qInit(); } catch(e) {} }
       if(portal === 'db') { try { loadSettings(); } catch(e) {} }
+      if(portal === 'sec') { try { loadSections(); } catch(e) {} }
       document.querySelectorAll('.sn-item').forEach(a =>
           a.classList.toggle('active', a.getAttribute('data-go') === portal));
       window.scrollTo(0, 0);
@@ -3155,7 +3174,7 @@
   /* The portal and Code.gs ship together. If the deployed script reports a
      different version (or no version at all), it was saved but never
      redeployed - which shows up as "Unknown action" on newer features. */
-  const EXPECTED_SCRIPT_VERSION = "2026-11-25-sv10";
+  const EXPECTED_SCRIPT_VERSION = "2026-11-25-sv11";
 
   function checkBackendVersion() {
       let box = document.getElementById('backendWarn');
@@ -3523,6 +3542,43 @@
   /* ---------- Database Creation ----------
      One row per thing the customer can see. The master switch at the top
      hides the lot; these decide what is inside it. */
+  /* The optional cards on the customer's home screen. The three request
+     forms and the Support Assistant are what the portal is for, so they are
+     not switchable; Database Creation has its own switch next door. */
+  const SEC_PARTS = [
+    { k: 'secAsk',    t: 'Product & Features', d: 'Products, features aur price ke sawal.' },
+    { k: 'secManual', t: 'User Manual',        d: 'Machine ki guide, padhne aur search karne ke liye.' }
+  ];
+
+  function secRender(cfg) {
+      const box = document.getElementById('secToggles');
+      if(!box) return;
+      box.innerHTML = SEC_PARTS.map(p => `
+        <label class="db-row">
+          <input type="checkbox" id="set_${p.k}" ${String(cfg[p.k] || 'yes') === 'yes' ? 'checked' : ''}>
+          <span><b>${escapeHtml(p.t)}</b><em>${escapeHtml(p.d)}</em></span>
+        </label>`).join('');
+  }
+
+  function loadSections() {
+      apiCall('settings_get', {}).then(c => secRender(c || {})).catch(() => secRender({}));
+  }
+
+  function saveSections() {
+      const payload = {};
+      SEC_PARTS.forEach(p => {
+          const el = document.getElementById('set_' + p.k);
+          payload[p.k] = (el && el.checked) ? 'yes' : 'no';
+      });
+      const msg = document.getElementById('secSaveMsg');
+      if(msg) { msg.style.color = '#8a94a6'; msg.innerText = 'Saving\u2026'; }
+      apiCall('settings_set', { pairs: payload }).then(c => {
+          const on = SEC_PARTS.filter(p => String(c[p.k] || 'yes') === 'yes').length;
+          if(msg) { msg.style.color = '#00875a';
+                    msg.innerText = 'Saved \u2014 ' + on + ' of ' + SEC_PARTS.length + ' cards customer ko dikhenge.'; }
+      }).catch(e => { if(msg) { msg.style.color = '#d63031'; msg.innerText = e.message; } });
+  }
+
   const DB_PARTS = [
     { k: 'dbLogo',      t: 'Logo for All BP Models',   d: 'Image ko monochrome BMP aur pendrive file me badalta hai.' },
     { k: 'dbPos',       t: 'POS Application Database', d: 'Retail aur F&B ke liye item, customer, supplier.' },
