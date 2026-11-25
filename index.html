@@ -86,7 +86,7 @@
     .track-btn-main:hover { background: #f0f4f9; transform: scale(1.02); }
     
     /* Clean iOS Style Forms */
-    .form-container { background: var(--card-bg); padding: 50px 45px; border-radius: 28px; box-shadow: var(--shadow-soft); width: 100%; max-width: 550px; border: 1px solid var(--border-light); }
+    .form-container { background: var(--card-bg); padding: 50px 45px; border-radius: 28px; box-shadow: var(--shadow-soft); width: 100%; max-width: 550px; border: 1px solid var(--border-light); box-sizing: border-box; }
     .form-header { display: flex; align-items: center; margin-bottom: 40px; }
     .form-header i { font-size: 20px; color: var(--text-secondary); margin-right: 18px; cursor: pointer; padding: 12px; border-radius: 50%; background: #f5f5f7; transition: 0.2s;}
     .form-header i:hover { background: #e8e8ed; color: var(--text-primary); }
@@ -373,6 +373,20 @@
     .it-tbl tr:hover td { background:#fafbfd; }
     .it-del { background:none; border:none; color:#d63031; cursor:pointer; font-size:13px; }
     .it-empty { text-align:center; padding:34px 16px; color:var(--text-secondary); font-size:13px; }
+    .xf-code { font-size:38px; font-weight:800; letter-spacing:7px; text-align:center;
+               background:#f3f8ff; border:1px solid #d6e4fb; border-radius:11px;
+               padding:14px 8px; color:#0b3f8c; margin:4px 0 8px; word-break:break-all; }
+    .xf-left { text-align:center; font-size:12.5px; color:var(--text-secondary); margin-bottom:12px; }
+    .xf-left.gone { color:#c0392b; }
+    .xf-steps { margin:0 0 12px; padding-left:20px; font-size:13px; color:var(--text-secondary); line-height:1.7; }
+    .xf-steps b { color:var(--text-primary); }
+    .xf-link { display:flex; gap:8px; align-items:center; }
+    .xf-link input { flex:1; min-width:0; padding:8px 10px; border:1px solid #d7dee8;
+                     border-radius:7px; font-size:12px; background:#f8fafc; }
+    .xf-get { display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .xf-get input { flex:1; min-width:170px; padding:13px 14px; border:1px solid #d7dee8;
+                    border-radius:10px; font-size:26px; font-weight:800; letter-spacing:6px;
+                    text-align:center; text-transform:uppercase; background:#fff; }
     .it-warn { background:#fff8e6; border:1px solid #f0dca8; border-radius:9px; padding:11px 13px;
                font-size:12.5px; color:#7a5a12; margin:0 0 14px; }
     .it-warn a { color:#0b63ce; font-weight:600; }
@@ -382,6 +396,37 @@
     .it-ghost { background:#fff; color:var(--accent-blue); border-color:var(--accent-blue); }
     .it-danger { background:#fff; color:#d63031; border-color:#f0b2b2; }
     @media (max-width: 860px) { .it-bar { grid-template-columns:1fr !important; } }
+
+    /* --- Phones -------------------------------------------------------
+       The database screens are mostly built on a phone, so everything here
+       has to fit a 360px screen without pinching. */
+    @media (max-width: 520px) {
+        .corporate-nav { padding: 10px 12px; gap: 8px; }
+        .corporate-logo img { height: 30px !important; }
+        .corporate-nav-actions { gap: 8px; min-width: 0; }
+        .lang-toggle { padding: 6px 8px; font-size: 12px; }
+        .view-wrapper { padding-left: 10px; padding-right: 10px; }
+        .form-container, .form-container.db-wide { padding: 20px 14px; border-radius: 18px; }
+        .form-header { margin-bottom: 20px; }
+        .form-header h2 { font-size: 20px; }
+        .form-header i { padding: 9px; margin-right: 11px; font-size: 17px; }
+        .db-grid { grid-template-columns: 1fr; gap: 11px; }
+        .db-tile { padding: 14px; }
+        .db-crumb { font-size: 11px; }
+        .it-bar { padding: 11px; gap: 9px; }
+        .it-opt { grid-template-columns: 1fr 1fr; gap: 9px; padding: 12px; }
+        .it-actions { gap: 8px; }
+        .it-actions .it-btn { flex: 1 1 calc(50% - 4px); justify-content: center; }
+        .it-tbl { font-size: 12px; }
+        .it-tbl th, .it-tbl td { padding: 7px 8px; }
+        .ask-box { padding: 18px 15px; }
+        .un-tbl th, .un-tbl td { padding: 5px 5px; }
+        .un-tbl input[type=text], .un-tbl select { padding: 5px 6px; font-size: 12px; }
+        .km-grid { grid-template-columns: repeat(auto-fill, minmax(46px, 1fr)); gap: 5px; }
+        .xf-code { font-size: 30px; letter-spacing: 5px; }
+        .xf-get input { font-size: 22px; letter-spacing: 4px; min-width: 0; }
+        .xf-get .it-btn { width: 100%; justify-content: center; }
+    }
 
     .ask-rate { margin-top:9px; display:flex; gap:7px; align-items:center; font-size:11.5px; color:#8a94a6; }
     .ask-rate button { border:1px solid #dfe4ec; background:#fff; border-radius:7px; padding:3px 10px;
@@ -651,7 +696,7 @@
 
     // ===================== GITHUB API CONFIGURATION =====================
     // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-    const API_URL = "https://script.google.com/macros/s/AKfycbwEqt3xDok7d6s93FqTBeslgD00SAKdd86BJhdUJ2JPfYEtBXDOE9usRzZ5n4GFkA41/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbyT2WAna1QN-70MLQgL6tNjuzeaZvC53JRSh5WC51BIhqv_7h8seb5Od5daFFp3Waup/exec";
 
     async function apiCall(action, params = {}) {
         try {
@@ -797,6 +842,18 @@
 
     window.onload = () => {
         trackPortalVisit('portal');
+        /* Somebody followed a handover link from their other device. */
+        const handover = (location.hash || '').match(/get=([0-9A-Za-z]{6})/);
+        if(handover) {
+            history.replaceState(null, '', location.pathname + location.search);
+            setTimeout(() => {
+                ['intro-screen', 'globalLoader'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if(el) el.style.display = 'none';
+                });
+                openXferGet(handover[1].toUpperCase());
+            }, 400);
+        }
         loadDriverLinks();
         loadCustomBlocks();
         apiCall('settings_get', {}).then(initLogoTool).catch(() => {});
@@ -968,6 +1025,8 @@
                      'Items, customers and suppliers for Retail or F&amp;B.', 'openDbPos()')}
             ${dbTile('fa-print', '#eaf7f0', '#00875a', 'BP Database',
                      'Item list for BP billing printers.', 'openDbBp()')}
+            ${dbTile('fa-mobile-screen', '#fdf1e3', '#b9690a', 'Get database',
+                     'Built it on another phone or laptop? Type the code here.', 'openXferGet()')}
           </div>`, openDbView);
     }
 
@@ -1562,6 +1621,9 @@
             ${L && L.col ? `<button class="it-btn it-ghost" onclick="kmOpen()">
               <i class="fa-solid fa-keyboard"></i> ${L.label} keyboard
             </button>` : ''}
+            <button class="it-btn it-ghost" id="itSendBtn" onclick="itSendToDevice()">
+              <i class="fa-solid fa-paper-plane"></i> Send to POS device
+            </button>
             <button class="it-btn it-ghost" onclick="document.getElementById('itFile').click()">
               <i class="fa-solid fa-file-import"></i> Upload existing CSV
             </button>
@@ -1921,14 +1983,165 @@
         setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 400);
     }
 
-    function itExport() {
+    function itCsvText() {
         const sp = itSpec(), list = itList();
-        if(!list.length) { toast('Add at least one item first', 'warn'); return; }
-        const csv = [sp.cols.map(c => c[0]).join(',')]
+        return [sp.cols.map(c => c[0]).join(',')]
             .concat(list.map((it, i) => itRowFor(it, i).map(itCsvCell).join(',')))
             .join('\r\n');
-        itDownload(sp.file, csv);
-        toast(list.length + ' items saved to ' + sp.file, 'ok');
+    }
+
+    function itExport() {
+        const sp = itSpec(), list = itList();
+        if(!list.length) { toast('Add at least one row first', 'warn'); return; }
+        itDownload(sp.file, itCsvText());
+        toast(list.length + ' row' + (list.length > 1 ? 's' : '') + ' saved to ' + sp.file, 'ok');
+    }
+
+    /* ---------- Handing the file to the billing machine ------------------
+       The database is usually built on a phone and needed on the POS device.
+       The file is parked on the Wepsol script for five minutes under a short
+       code; the other device types the code in and the file downloads there.
+       Nothing is stored after those five minutes. */
+    const XF_ALPHABET = /^[0-9A-Z]{6}$/;
+    let xfTimer = null;
+
+    function itB64(text) {
+        const bytes = new TextEncoder().encode('\ufeff' + text);
+        let bin = '';
+        for(let i = 0; i < bytes.length; i += 0x8000) {
+            bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+        }
+        return btoa(bin);
+    }
+
+    function xfLink(code) {
+        return location.origin + location.pathname + '#get=' + code;
+    }
+
+    async function itSendToDevice() {
+        const sp = itSpec(), list = itList();
+        if(!list.length) { toast('Add at least one row first', 'warn'); return; }
+        const btn = document.getElementById('itSendBtn');
+        if(btn) { btn.disabled = true; btn.style.opacity = '.6'; }
+        try {
+            const res = await apiCall('xfer_put', {
+                fileName: sp.file, mime: 'text/csv', data: itB64(itCsvText())
+            });
+            xfShow(res.code, res.seconds || 300, sp.file, list.length);
+        } catch(e) {
+            toast(e.message || 'The code could not be created. Check the connection and try again.', 'err');
+        } finally {
+            if(btn) { btn.disabled = false; btn.style.opacity = ''; }
+        }
+    }
+
+    function xfShow(code, seconds, fileName, rows) {
+        if(xfTimer) { clearInterval(xfTimer); xfTimer = null; }
+        const back = document.createElement('div');
+        back.className = 'ask-back';
+        back.id = 'xfBack';
+        back.innerHTML = `
+          <div class="ask-box" style="max-width:460px; width:94%;">
+            <h4>Open this on the POS device</h4>
+            <p class="un-note">${rows} row${rows > 1 ? 's' : ''}, ${escapeAsk(fileName)}</p>
+            <div class="xf-code">${escapeAsk(code)}</div>
+            <div class="xf-left" id="xfLeft"></div>
+            <ol class="xf-steps">
+              <li>On the POS device, open this same page.</li>
+              <li>Tap <b>Get database</b> on the Database Creation screen.</li>
+              <li>Type the six characters above.</li>
+            </ol>
+            <div class="xf-link">
+              <input type="text" id="xfUrl" readonly value="${escapeAsk(xfLink(code))}">
+              <button class="it-more" onclick="xfCopy()">Copy</button>
+            </div>
+            <p class="un-note" style="margin:10px 0 0;">
+              ${itApp === 'cust2100'
+                ? 'Customer details leave this phone only for these five minutes, and only to your own Wepsol script. They are dropped after that, and nobody can reach them without the code.'
+                : 'The file sits on your own Wepsol script for these five minutes and is dropped after that. Nobody can reach it without the code.'}
+            </p>
+            <div class="ask-row"><button class="ask-no" onclick="xfClose()">Close</button></div>
+          </div>`;
+        back.onclick = e => { if(e.target === back) xfClose(); };
+        document.body.appendChild(back);
+
+        let left = seconds;
+        const tick = () => {
+            const el = document.getElementById('xfLeft');
+            if(!el) { xfClose(); return; }
+            if(left <= 0) {
+                el.innerHTML = '<b>This code has expired.</b> Close this and make a new one.';
+                el.classList.add('gone');
+                clearInterval(xfTimer); xfTimer = null;
+                return;
+            }
+            const m = Math.floor(left / 60), sec = left % 60;
+            el.textContent = 'Works for another ' + m + ':' + String(sec).padStart(2, '0');
+            left--;
+        };
+        tick();
+        xfTimer = setInterval(tick, 1000);
+    }
+
+    function xfCopy() {
+        const el = document.getElementById('xfUrl');
+        if(!el) return;
+        el.select();
+        el.setSelectionRange(0, 99999);
+        (navigator.clipboard ? navigator.clipboard.writeText(el.value) : Promise.reject())
+            .then(() => toast('Link copied', 'ok'))
+            .catch(() => { try { document.execCommand('copy'); toast('Link copied', 'ok'); }
+                           catch(e) { toast('Copy the link by hand', 'warn'); } });
+    }
+
+    function xfClose() {
+        if(xfTimer) { clearInterval(xfTimer); xfTimer = null; }
+        const b = document.getElementById('xfBack');
+        if(b) b.remove();
+    }
+
+    /* The receiving side. */
+    function openXferGet(prefill) {
+        dbPage('Get database', [['Database Creation', 'openDbView()'], ['Get database', '']], `
+          <p style="color:var(--text-secondary); font-size:13.5px; margin:0 0 16px;">
+            Built the database on another phone or laptop? Type the six-character code
+            it showed you and the file downloads here.
+          </p>
+          <div class="xf-get">
+            <input type="text" id="xfCode" maxlength="6" autocomplete="off"
+                   autocapitalize="characters" spellcheck="false" placeholder="ABC123"
+                   oninput="this.value=this.value.toUpperCase().replace(/[^0-9A-Z]/g,'')"
+                   onkeydown="if(event.key==='Enter') xfFetch()">
+            <button class="it-btn it-primary" onclick="xfFetch()">
+              <i class="fa-solid fa-download"></i> Get the file
+            </button>
+          </div>
+          <p class="un-note" style="margin-top:14px;">
+            Codes last five minutes. If it has run out, make a new one on the first device.
+          </p>`, () => openXferGet());
+
+        const box = document.getElementById('xfCode');
+        if(box) {
+            if(prefill) { box.value = prefill; }
+            box.focus();
+        }
+    }
+
+    async function xfFetch() {
+        const box = document.getElementById('xfCode');
+        const code = (box ? box.value : '').toUpperCase().replace(/[^0-9A-Z]/g, '');
+        if(!XF_ALPHABET.test(code)) { toast('A code is six characters, like ABC123', 'warn'); return; }
+        toast('Fetching...');
+        try {
+            const res = await apiCall('xfer_get', { code: code });
+            const bin = atob(res.data);
+            const bytes = new Uint8Array(bin.length);
+            for(let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+            itDownload(res.name || 'database.csv', bytes, res.mime || 'text/csv');
+            toast('Saved ' + (res.name || 'the file'), 'ok');
+        } catch(e) {
+            toast(e.message || 'That code did not work.', 'err');
+        }
     }
 
     /* Splits one CSV line, honouring "quoted, fields". */
