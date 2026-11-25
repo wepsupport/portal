@@ -384,49 +384,59 @@
     .gd-modal { background:#fff; border-radius:16px; padding:16px; width:94%; max-width:430px; }
     .gd-head { display:flex; align-items:center; justify-content:space-between; gap:10px;
                font-size:13.5px; font-weight:700; color:var(--text-primary); margin-bottom:10px; }
-    .gd-head i { color:#0b63ce; margin-right:5px; }
     .gd-x { background:none; border:none; font-size:24px; line-height:1; color:#8a94a6; cursor:pointer; padding:0 2px; }
 
     .gd-stage { position:relative; background:#f6f9fd; border:1px solid #e3e9f2;
                 border-radius:12px; padding:12px; overflow:hidden; }
-    .gd-row { display:flex; gap:8px; margin-bottom:8px; }
-    .gd-f, .gd-add, .gd-save { position:relative; transition:box-shadow .2s, border-color .2s, transform .18s; }
-    .gd-f { flex:1; min-width:0; background:#fff; border:1.5px solid #dbe3ee; border-radius:9px;
+    .gd-fields { display:flex; flex-wrap:wrap; gap:7px; }
+    .gd-f, .gd-add, .gd-save { position:relative; transform-origin:center;
+                transition:transform .3s cubic-bezier(.3,1.2,.4,1), box-shadow .25s,
+                           border-color .25s, opacity .25s, filter .25s; }
+    .gd-f { flex:1 1 44%; min-width:0; background:#fff; border:1.5px solid #dbe3ee; border-radius:9px;
             padding:9px 10px; min-height:42px; box-sizing:border-box;
             display:flex; align-items:center; gap:7px; font-size:14px; font-weight:700;
             color:var(--text-primary); overflow:hidden; }
-    .gd-f span { white-space:nowrap; overflow:hidden; }
+    .gd-f > span { flex:1; min-width:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .gd-f b, .gd-add b, .gd-save b { flex:none; width:19px; height:19px; border-radius:50%;
             background:#e8f0fe; color:#0b63ce; font-size:11px; font-weight:800;
             display:flex; align-items:center; justify-content:center; }
-    .gd-add { width:84px; flex:none; background:#0b63ce; color:#fff; border-radius:9px;
-              display:flex; align-items:center; justify-content:center; gap:6px; min-height:42px; }
+    .gd-caret { flex:none; width:0; height:0; border-left:4px solid transparent;
+                border-right:4px solid transparent; border-top:5px solid #9aa8bc; }
+    .gd-add { margin-top:7px; background:#0b63ce; color:#fff; border-radius:9px;
+              display:flex; align-items:center; justify-content:center; gap:7px; min-height:42px; }
     .gd-add b, .gd-save b { background:rgba(255,255,255,.25); color:#fff; }
     .gd-save { margin-top:9px; background:#00875a; color:#fff; border-radius:9px; min-height:42px;
                display:flex; align-items:center; justify-content:center; gap:8px; font-size:15px; }
-    .gd-f.live, .gd-add.live, .gd-save.live { border-color:#0b63ce; box-shadow:0 0 0 3px rgba(11,99,206,.2); }
-    .gd-add.tap, .gd-save.tap { transform:scale(.93); }
+    .gd-add.tap, .gd-save.tap { transform:scale(.92) !important; }
 
-    .gd-menu { position:absolute; left:53%; right:12px; top:56px; background:#fff;
+    /* The camera move: everything but the box in play steps back. */
+    .gd-stage.dim .gd-f, .gd-stage.dim .gd-add, .gd-stage.dim .gd-save,
+    .gd-stage.dim .gd-list { opacity:.34; filter:saturate(.45); }
+    .gd-stage .zoom { opacity:1 !important; filter:none !important; z-index:3;
+                transform:scale(1.11); border-color:#0b63ce;
+                box-shadow:0 0 0 3px rgba(11,99,206,.22), 0 12px 28px rgba(16,32,64,.17); }
+    .gd-stage .gd-add.zoom, .gd-stage .gd-save.zoom { box-shadow:0 0 0 3px rgba(11,99,206,.26), 0 12px 28px rgba(16,32,64,.2); }
+
+    .gd-menu { position:absolute; background:#fff;
                border:1px solid #dbe3ee; border-radius:9px; box-shadow:0 10px 24px rgba(16,32,64,.14);
                overflow:hidden; opacity:0; transform:translateY(-6px) scale(.97);
-               transform-origin:top center; pointer-events:none; transition:.22s; z-index:4; }
+               transform-origin:top center; pointer-events:none; transition:.22s; z-index:7; }
     .gd-menu.open { opacity:1; transform:none; }
-    .gd-menu div { padding:7px 10px; font-size:13px; font-weight:700; color:var(--text-secondary); }
+    .gd-menu div { padding:7px 10px; font-size:13px; font-weight:700; color:var(--text-secondary);
+                   white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
     .gd-menu div.pick { background:#e8f0fe; color:#0b3f8c; }
 
-    .gd-list { min-height:34px; }
+    .gd-list { min-height:34px; margin-top:9px; transition:opacity .25s, filter .25s; }
     .gd-li { display:flex; align-items:center; gap:8px; background:#fff; border:1px solid #e6ecf4;
              border-radius:8px; padding:7px 10px; margin-bottom:6px; font-size:13px;
              opacity:0; transform:translateY(-9px); transition:.3s; }
     .gd-li.in { opacity:1; transform:none; }
-    .gd-li span { flex:1; font-weight:700; color:var(--text-primary); }
-    .gd-li em { font-style:normal; color:var(--text-secondary); font-size:11.5px; }
-    .gd-li b { color:#00875a; }
+    .gd-li span { flex:1; min-width:0; font-weight:700; color:var(--text-primary);
+                  white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 
     .gd-file { position:absolute; left:50%; bottom:14px; margin-left:-16px; width:32px; height:32px;
                border-radius:8px; background:#fff; border:1px solid #cfe6db; color:#00875a;
-               display:flex; align-items:center; justify-content:center; font-size:15px;
+               display:flex; align-items:center; justify-content:center;
                opacity:0; pointer-events:none; z-index:5; }
     .gd-file.out { animation:gdDrop 1.1s ease forwards; }
     @keyframes gdDrop {
@@ -439,16 +449,23 @@
     .gd svg { width:17px; height:17px; fill:currentColor; flex:none; display:block; }
     .gd-t svg { width:15px; height:15px; color:#0b63ce; display:inline-block; vertical-align:-2px; }
     .gd-f svg { color:#9aa8bc; }
-    .gd-add svg, .gd-save svg { width:19px; height:19px; }
-    .gd-rs { font-style:normal; font-weight:800; font-size:15px; color:#9aa8bc; flex:none; }
+    .gd-add svg, .gd-save svg, .gd-file svg { width:19px; height:19px; }
     .gd-hand svg { width:26px; height:26px; }
-    .gd-hand { position:absolute; left:40px; top:40px; font-size:21px; color:#123a6b; z-index:6;
+    .gd-hand { position:absolute; left:40px; top:40px; color:#123a6b; z-index:8;
                pointer-events:none; filter:drop-shadow(0 3px 5px rgba(16,32,64,.3));
                transition:left .45s cubic-bezier(.4,.9,.3,1), top .45s cubic-bezier(.4,.9,.3,1); }
 
+    /* The line that says, in words, what the hand is doing. */
+    .gd-cap { min-height:34px; margin:10px 0 0; padding:7px 10px; background:#eef4fd;
+              border-radius:8px; font-size:12.5px; line-height:1.45; font-weight:600;
+              color:#0b3f8c; text-align:center; }
+    .gd-bar { height:4px; margin-top:8px; background:#e6ecf4; border-radius:3px; overflow:hidden; }
+    .gd-bar i { display:block; width:0; height:100%; background:#0b63ce;
+                border-radius:3px; transition:width .35s ease; }
+
     .gd-dots { display:flex; gap:5px; margin:11px 0 0; }
-    .gd-dots span { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
-                    font-size:9.5px; color:#9aa5b5; text-align:center; line-height:1.2; }
+    .gd-dots span { flex:1; min-width:0; display:flex; flex-direction:column; align-items:center;
+                    gap:3px; font-size:9.5px; color:#9aa5b5; text-align:center; line-height:1.2; }
     .gd-dots b { width:21px; height:21px; border-radius:50%; background:#eef2f7; color:#9aa5b5;
                  font-size:11px; display:flex; align-items:center; justify-content:center;
                  transition:.2s; }
@@ -598,7 +615,7 @@
               <div class="card-arrow">Raise Request <i class="fa-solid fa-arrow-right"></i></div>
           </div>
           <div class="action-card" onclick="openFormView('warranty')">
-              <div class="action-card-icon icon-warranty"><i class="fa-solid fa-file-shield"></i></div>
+              <div class="action-card-icon icon-warranty"><i class="fa-solid fa-clipboard-check"></i></div>
               <h3 id="ui-card3-t">Warranty Complaint</h3>
               <p id="ui-card3-d">Register service complaint for your products.</p>
               <div class="card-arrow">Lodge Issue <i class="fa-solid fa-arrow-right"></i></div>
@@ -784,7 +801,7 @@
 
     // ===================== GITHUB API CONFIGURATION =====================
     // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-    const API_URL = "https://script.google.com/macros/s/AKfycbxLU1QNeFg3SfgR2eRBCI0RYPUI6qkX0YGpURtApiK19S7CKkQp-VScA4LjWD8emrCp/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbx_gE-zJVlhiDkt1OVeH2ur_UGV1xYl3SRur0fRGVfNMJmwq9H4vkSv_7zDmo6BAunv/exec";
 
     async function apiCall(action, params = {}) {
         try {
@@ -1122,7 +1139,7 @@
                      'Items, customers and suppliers for Retail or F&amp;B.', 'openDbPos()') : ''}
             ${dbOn('dbBp') ? dbTile('fa-print', '#eaf7f0', '#00875a', 'BP Database',
                      'Item list for BP billing printers.', 'openDbBp()') : ''}
-            ${dbOn('dbGet') ? dbTile('fa-mobile-screen', '#fdf1e3', '#b9690a', 'Get database',
+            ${dbOn('dbGet') ? dbTile('fa-cloud-arrow-down', '#fdf1e3', '#b9690a', 'Get database',
                      'Built it on another phone or laptop? Type the code here.', 'openXferGet()') : ''}
           </div>`, openDbView);
     }
@@ -1169,7 +1186,9 @@
         models: ['BP Emerge Basic', 'BP Emerge 25T Edge', 'BP Emerge 25T'] },
       { id: '2k',     name: 'BP 2K Series',     icon: 'fa-print',
         models: ['BP 2100', 'BP 2100 Joy', 'BP 1100 Joy'] }
-    ];
+,
+      { id: 'joypro', name: 'BP Joy Pro Series', icon: 'fa-print',
+        models: ['BP Joy Pro'] }    ];
     let bpModel = '';
     let bpSeriesId = 'plus';
 
@@ -1185,12 +1204,12 @@
           </div>`, openDbBp);
     }
 
-    const BP_SERIES_KEY = { plus: 'dbBpPlus', emerge: 'dbBpEmerge', '2k': 'dbBp2k' };
+    const BP_SERIES_KEY = { plus: 'dbBpPlus', emerge: 'dbBpEmerge', '2k': 'dbBp2k', joypro: 'dbBpJoyPro' };
 
     /* Models whose file format has been confirmed against a printer export. */
     const MODEL_READY = ['BP Joy Plus', 'BP 85T Plus', 'BP 25T Plus', 'BP Ultra Pro',
                          'BP Emerge Basic', 'BP Emerge 25T Edge', 'BP Emerge 25T',
-                         'BP 2100', 'BP 1100 Joy'];
+                         'BP 2100', 'BP 1100 Joy', 'BP Joy Pro'];
 
     function openBpSeries(id) {
         bpSeriesId = id;
@@ -1224,83 +1243,188 @@
 
     /* ---------- The moving guide ------------------------------------------
        A shopkeeper who cannot read still has to get a price list into a
-       billing machine. This plays the whole job back as a small silent film:
-       a hand types a name, picks a unit, types a price, presses Add, and the
-       file drops out. Numbers and pictures carry it; the one word per step is
-       there for whoever can read it. */
-    const GD_WORDS = {
-      en: { t: 'Watch how it is done', s: ['Name', 'Unit', 'Price', 'Add', 'Save'],
-            again: 'Play again', close: 'Close', open: 'Watch how' },
-      hi: { t: 'देखिए कैसे करना है', s: ['नाम', 'यूनिट', 'दाम', 'जोड़ें', 'सेव'],
-            again: 'फिर से चलाइए', close: 'बंद', open: 'देखिए कैसे' },
-      ta: { t: 'எப்படி என்று பாருங்கள்', s: ['பெயர்', 'அலகு', 'விலை', 'சேர்', 'சேமி'],
-            again: 'மீண்டும்', close: 'மூடு', open: 'பாருங்கள்' },
-      te: { t: 'ఎలా చేయాలో చూడండి', s: ['పేరు', 'యూనిట్', 'ధర', 'జోడించు', 'సేవ్'],
-            again: 'మళ్ళీ', close: 'మూసివేయి', open: 'చూడండి' }
-    };
-    const gdWords = () => GD_WORDS[currentLang] || GD_WORDS.en;
-
-    /* Drawn inline rather than pulled from an icon font: if the font fails to
-       load, a guide for somebody who cannot read must not go blank. */
+       billing machine. This plays the whole job back as a short silent film,
+       built from whichever boxes that screen actually has - so the BP 2100
+       guide shows Department and the Tamil one shows the Tamil name, while
+       plain Retail shows neither. Each step says its one line, and the box
+       being filled is lifted while the rest dims, like a camera moving in.
+       Pictures and numbers carry it; the words are for whoever can read. */
     const GD_ICON = {
       name: '<svg viewBox="0 0 24 24"><path d="M4 5h16v2.6H4zM4 10.7h11v2.6H4zM4 16.4h7V19H4z"/></svg>',
       unit: '<svg viewBox="0 0 24 24"><path d="M12 2 2.6 6.7v10.6L12 22l9.4-4.7V6.7L12 2zm0 2.6 6.6 3.3L12 11.2 5.4 7.9 12 4.6zM4.6 9.6l6.4 3.2v6.5l-6.4-3.2V9.6zm8.4 9.7v-6.5l6.4-3.2v6.5L13 19.3z"/></svg>',
+      code: '<svg viewBox="0 0 24 24"><path d="M8.6 3h2.5l-.9 5h3.3l.9-5h2.5l-.9 5H19v2.4h-3.4l-.6 3.2H18V16h-3.4l-.9 5h-2.5l.9-5H8.8l-.9 5H5.4l.9-5H3v-2.4h3.7l.6-3.2H4V8h3.7l.9-5zm.6 7.4-.6 3.2h3.3l.6-3.2H9.2z"/></svg>',
+      dept: '<svg viewBox="0 0 24 24"><path d="M3 5.2A1.2 1.2 0 0 1 4.2 4h4.3l2 2.3h9.3A1.2 1.2 0 0 1 21 7.5v11.3A1.2 1.2 0 0 1 19.8 20H4.2A1.2 1.2 0 0 1 3 18.8V5.2z"/></svg>',
+      local: '<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm6.9 9h-3.3a15 15 0 0 0-1.1-5.2A8 8 0 0 1 18.9 11zM12 4.2c.7 1 1.4 2.9 1.6 6.8h-3.2c.2-3.9.9-5.8 1.6-6.8zM5.1 11a8 8 0 0 1 4.4-5.2A15 15 0 0 0 8.4 11H5.1zm0 2h3.3c.1 2 .5 3.8 1.1 5.2A8 8 0 0 1 5.1 13zm5.3 0h3.2c-.2 3.9-.9 5.8-1.6 6.8-.7-1-1.4-2.9-1.6-6.8zm4.1 5.2c.6-1.4 1-3.2 1.1-5.2h3.3a8 8 0 0 1-4.4 5.2z"/></svg>',
+      phone: '<svg viewBox="0 0 24 24"><path d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm5 16.2a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4zM8 4.6v1.6h8V4.6H8z"/></svg>',
       plus: '<svg viewBox="0 0 24 24"><path d="M10.6 3.8h2.8v16.4h-2.8z"/><path d="M3.8 10.6h16.4v2.8H3.8z"/></svg>',
       save: '<svg viewBox="0 0 24 24"><path d="M10.6 3h2.8v8.2l3.1-3.1 2 2L12 16.6 5.5 10.1l2-2 3.1 3.1z"/><path d="M4 17.6h16V21H4z"/></svg>',
       hand: '<svg viewBox="0 0 24 24"><path d="M9 3.6c0-.9.7-1.6 1.6-1.6s1.6.7 1.6 1.6v6.1h.8V5.4c0-.9.7-1.6 1.6-1.6s1.6.7 1.6 1.6v4.3h.8V7.3c0-.9.7-1.6 1.6-1.6s1.6.7 1.6 1.6v7.4c0 3.9-2.6 6.9-6.4 6.9-2.3 0-4-.9-5.2-2.6L4.2 14c-.5-.7-.3-1.7.4-2.2.7-.5 1.7-.4 2.2.3L9 14.4V3.6z"/></svg>',
       play: '<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-2 5.5 7 4.5-7 4.5v-9z"/></svg>'
     };
 
-    let gdTimers = [];
-    let gdHost = null;
+    const GD_WORDS = {
+      en: { t: 'Watch how it is done', again: 'Play again', close: 'Close', open: 'Watch how',
+            s: { code: 'Code', name: 'Name', local: 'Local', dept: 'Dept', uom: 'Unit',
+                 rate: 'Price', phone: 'Phone', add: 'Add', save: 'Save' },
+            c: { code: 'Type the item code', name: 'Type the item name',
+                 local: 'Type the name in the printer’s own letters',
+                 dept: 'Choose which department it belongs to',
+                 uom: 'Choose the unit', rate: 'Type the price',
+                 phone: 'Type the phone number',
+                 add: 'Press Add — the line joins the list below',
+                 save: 'Press the green button — the file is ready' } },
 
-    function gdStop() {
-        gdTimers.forEach(clearTimeout);
-        gdTimers = [];
+      hi: { t: 'देखिए कैसे करना है', again: 'फिर से चलाइए', close: 'बंद', open: 'देखिए कैसे',
+            s: { code: 'कोड', name: 'नाम', local: 'हिंदी', dept: 'विभाग', uom: 'यूनिट',
+                 rate: 'दाम', phone: 'फोन', add: 'जोड़ें', save: 'सेव' },
+            c: { code: 'आइटम कोड लिखिए', name: 'आइटम का नाम लिखिए',
+                 local: 'नाम प्रिंटर वाले अक्षरों में लिखिए',
+                 dept: 'विभाग चुनिए', uom: 'यूनिट चुनिए', rate: 'दाम लिखिए',
+                 phone: 'फोन नंबर लिखिए',
+                 add: 'Add दबाइए — लाइन नीचे जुड़ जाएगी',
+                 save: 'हरा बटन दबाइए — फाइल तैयार' } },
+
+      ta: { t: 'எப்படி என்று பாருங்கள்', again: 'மீண்டும்', close: 'மூடு', open: 'பாருங்கள்',
+            s: { code: 'குறி', name: 'பெயர்', local: 'தமிழ்', dept: 'பிரிவு', uom: 'அலகு',
+                 rate: 'விலை', phone: 'தொலைபேசி', add: 'சேர்', save: 'சேமி' },
+            c: { code: 'பொருள் எண்ணை எழுதுங்கள்', name: 'பொருளின் பெயரை எழுதுங்கள்',
+                 local: 'பெயரை தமிழில் எழுதுங்கள்',
+                 dept: 'பிரிவைத் தேர்வு செய்யுங்கள்', uom: 'அலகைத் தேர்வு செய்யுங்கள்',
+                 rate: 'விலையை எழுதுங்கள்', phone: 'தொலைபேசி எண் எழுதுங்கள்',
+                 add: 'Add அழுத்துங்கள் — வரிசை சேரும்',
+                 save: 'பச்சை பொத்தானை அழுத்துங்கள் — கோப்பு தயார்' } },
+
+      te: { t: 'ఎలా చేయాలో చూడండి', again: 'మళ్ళీ', close: 'మూసివేయి', open: 'చూడండి',
+            s: { code: 'కోడ్', name: 'పేరు', local: 'భాష', dept: 'విభాగం', uom: 'యూనిట్',
+                 rate: 'ధర', phone: 'ఫోన్', add: 'జోడించు', save: 'సేవ్' },
+            c: { code: 'ఐటెమ్ కోడ్ రాయండి', name: 'ఐటెమ్ పేరు రాయండి',
+                 local: 'పేరును స్థానిక భాషలో రాయండి',
+                 dept: 'విభాగం ఎంచుకోండి', uom: 'యూనిట్ ఎంచుకోండి',
+                 rate: 'ధర రాయండి', phone: 'ఫోన్ నంబర్ రాయండి',
+                 add: 'Add నొక్కండి — వరస జాబితాలో చేరుతుంది',
+                 save: 'ఆకుపచ్చ బటన్ — ఫైల్ సిద్ధం' } }
+    };
+    const gdWords = () => GD_WORDS[currentLang] || GD_WORDS.en;
+
+    /* Stand-in values, two rows' worth. The local-script ones are ordinary
+       key presses that the printer font draws as script, so the film shows
+       real letters rather than Latin. */
+    const GD_MOCK = {
+      code: ['1', '2'], name: ['RICE', 'SUGAR'], rate: ['28', '45'],
+      dept: ['GROCERY', 'DAIRY'],
+      phone: ['9000000001', '9000000002'], addr: ['MAIN ROAD', 'MARKET LANE'],
+      local: { ta: ['muR', 'rh;fiB'], hi: ['Pkoy', 'Ghd'] }
+    };
+
+    /* A customer list is not a price list, so the demo names change with it.
+       Everything here is invented - no real customer ever reaches this file. */
+    const GD_NAMES = {
+      cust2100: ['CUSTOMER 1', 'CUSTOMER 2'],
+      dept2100: ['GROCERY', 'DAIRY']
+    };
+
+    let gdTimers = [];
+    let gdPlan = null;
+
+    function gdStop() { gdTimers.forEach(clearTimeout); gdTimers = []; }
+    function gdAt(ms, fn) { gdTimers.push(setTimeout(fn, ms)); }
+
+    /* The film is cut from whatever boxes this screen actually has. */
+    function gdBuildPlan() {
+        const sp = itSpec(), w = gdWords();
+        const steps = sp.req.slice(0, 5).map(f => {
+            const sel = f.type === 'sel';
+            let vals;
+            if(f.k === 'local')        vals = GD_MOCK.local[sp.lang] || GD_MOCK.local.ta;
+            else if(f.k === 'name')    vals = GD_NAMES[itApp] || GD_MOCK.name;
+            else if(sel)               vals = itOpts(f).slice(0, 2);
+            else                       vals = GD_MOCK[f.k] || [f.ph || 'ABC', f.ph || 'XYZ'];
+            /* A department dropdown is empty until the shop makes one, so the
+               film shows two invented departments rather than a bare "1". */
+            if(!vals || !vals.length) vals = f.depts ? GD_MOCK.dept : ['1', '2'];
+            if(vals.length < 2) vals = [vals[0], vals[0]];
+            return {
+                k: f.k, sel: sel, vals: vals, leg: f.leg || null,
+                icon: GD_ICON[f.k] || (f.k === 'uom' ? GD_ICON.unit : GD_ICON.name),
+                label: w.s[f.k] || f.label, cap: w.c[f.k] || f.label
+            };
+        });
+        steps.push({ k: 'add',  icon: GD_ICON.plus, label: w.s.add,  cap: w.c.add });
+        steps.push({ k: 'save', icon: GD_ICON.save, label: w.s.save, cap: w.c.save });
+        return steps;
     }
 
     function gdHtml(inPanel) {
         const w = gdWords();
+        gdPlan = gdBuildPlan();
+        const fields = gdPlan.filter(s => s.k !== 'add' && s.k !== 'save');
         return `
           <div class="gd-head">
             <span class="gd-t">${GD_ICON.play} ${escapeAsk(w.t)}</span>
             ${inPanel ? '' : `<button class="gd-x" onclick="gdCloseModal()" aria-label="${escapeAsk(w.close)}">&times;</button>`}
           </div>
           <div class="gd-stage" id="gdStage">
-            <div class="gd-row">
-              <div class="gd-f" id="gdF0"><b>1</b>${GD_ICON.name}<span id="gdV0"></span></div>
-              <div class="gd-f" id="gdF1"><b>2</b>${GD_ICON.unit}<span id="gdV1"></span></div>
+            <div class="gd-fields">
+              ${fields.map((s, i) => `
+                <div class="gd-f" id="gdF${i}">
+                  <b>${i + 1}</b>${s.icon}
+                  <span id="gdV${i}"${s.leg ? ` class="leg-${s.leg}"` : ''}>&nbsp;</span>
+                  ${s.sel ? '<i class="gd-caret"></i>' : ''}
+                </div>`).join('')}
             </div>
-            <div class="gd-row">
-              <div class="gd-f" id="gdF2"><b>3</b><i class="gd-rs">\u20b9</i><span id="gdV2">&nbsp;</span></div>
-              <div class="gd-add" id="gdAdd"><b>4</b>${GD_ICON.plus}</div>
-            </div>
-            <div class="gd-menu" id="gdMenu">
-              <div data-u="0">KGS</div><div data-u="1">PCS</div><div data-u="2">LTR</div>
-            </div>
+            <div class="gd-add" id="gdAdd"><b>${fields.length + 1}</b>${GD_ICON.plus}</div>
+            <div class="gd-menu" id="gdMenu"></div>
             <div class="gd-list" id="gdList"></div>
-            <div class="gd-save" id="gdSave"><b>5</b>${GD_ICON.save}</div>
+            <div class="gd-save" id="gdSave"><b>${fields.length + 2}</b>${GD_ICON.save}</div>
             <div class="gd-file" id="gdFile">${GD_ICON.save}</div>
             <div class="gd-hand" id="gdHand">${GD_ICON.hand}</div>
           </div>
+          <div class="gd-cap" id="gdCap">&nbsp;</div>
+          <div class="gd-bar"><i id="gdBar"></i></div>
           <div class="gd-dots" id="gdDots">
-            ${w.s.map((lab, i) => `<span><b>${i + 1}</b>${escapeAsk(lab)}</span>`).join('')}
+            ${gdPlan.map((s, i) => `<span><b>${i + 1}</b>${escapeAsk(s.label)}</span>`).join('')}
           </div>
           <button class="gd-again" onclick="gdPlay()">${escapeAsk(w.again)}</button>`;
     }
 
-    /* Moves the pointing hand over the middle of one box. */
+    /* Offsets are read from the laid-out box, so the lift never throws the
+       hand off its mark. */
+    function gdOffset(el, stop) {
+        let x = 0, y = 0, n = el;
+        while(n && n !== stop) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; }
+        return { x: x, y: y };
+    }
+
     function gdHandTo(id) {
         const stage = document.getElementById('gdStage');
         const hand  = document.getElementById('gdHand');
         const el    = document.getElementById(id);
         if(!stage || !hand || !el) return;
-        const s = stage.getBoundingClientRect(), b = el.getBoundingClientRect();
-        hand.style.left = (b.left - s.left + b.width * 0.62) + 'px';
-        hand.style.top  = (b.top  - s.top  + b.height * 0.62) + 'px';
+        const p = gdOffset(el, stage);
+        hand.style.left = (p.x + el.offsetWidth * 0.62) + 'px';
+        hand.style.top  = (p.y + el.offsetHeight * 0.66) + 'px';
     }
 
-    function gdAt(ms, fn) { gdTimers.push(setTimeout(fn, ms)); }
+    function gdFocus(id) {
+        const stage = document.getElementById('gdStage');
+        if(!stage) return;
+        stage.querySelectorAll('.zoom').forEach(e => e.classList.remove('zoom'));
+        stage.classList.toggle('dim', !!id);
+        const el = id && document.getElementById(id);
+        if(el) el.classList.add('zoom');
+    }
+
+    function gdSay(text) {
+        const el = document.getElementById('gdCap');
+        if(el) el.textContent = text || ' ';
+    }
+
+    function gdMark(i) {
+        const dots = document.getElementById('gdDots');
+        if(dots) [...dots.children].forEach((d, n) => d.classList.toggle('on', n === i));
+        const bar = document.getElementById('gdBar');
+        if(bar && gdPlan) bar.style.width = Math.round(((i + 1) / gdPlan.length) * 100) + '%';
+    }
 
     function gdType(id, text, start, per) {
         for(let i = 0; i <= text.length; i++) {
@@ -1311,90 +1435,86 @@
         }
     }
 
-    function gdMark(step) {
-        const dots = document.getElementById('gdDots');
-        if(!dots) return;
-        [...dots.children].forEach((d, i) => d.classList.toggle('on', i === step));
-    }
-
     function gdTap(id) {
         const el = document.getElementById(id);
         if(!el) return;
         el.classList.add('tap');
-        gdAt(260, () => el.classList.remove('tap'));
+        gdAt(240, () => el.classList.remove('tap'));
     }
 
     function gdPlay() {
         gdStop();
         const q = id => document.getElementById(id);
-        if(!q('gdStage')) return;
+        if(!q('gdStage') || !gdPlan) return;
+        const fields = gdPlan.filter(s => s.k !== 'add' && s.k !== 'save');
 
-        /* back to the start */
-        ['gdV0', 'gdV1', 'gdV2'].forEach(id => { const e = q(id); if(e) e.textContent = ' '; });
-        ['gdF0', 'gdF1', 'gdF2', 'gdAdd', 'gdSave'].forEach(id => q(id) && q(id).classList.remove('live'));
+        fields.forEach((s, i) => { const e = q('gdV' + i); if(e) e.textContent = ' '; });
+        gdFocus(null);
         q('gdMenu').classList.remove('open');
         q('gdList').innerHTML = '';
         q('gdFile').className = 'gd-file';
+        gdSay('');
         gdMark(-1);
         gdHandTo('gdF0');
 
-        const rows = [['RICE', 'KGS', '28'], ['SUGAR', 'KGS', '45']];
-        let t = 500;
+        let t = 600;
+        [0, 1].forEach(row => {
+            const quick = row > 0, per = quick ? 60 : 125;
 
-        rows.forEach((row, r) => {
-            const quick = r > 0;              /* the second row plays faster */
-            const per = quick ? 70 : 140;
+            fields.forEach((s, i) => {
+                const fid = 'gdF' + i, vid = 'gdV' + i, val = s.vals[row] || s.vals[0];
+                gdAt(t, () => { gdMark(i); gdHandTo(fid); gdFocus(fid); gdSay(s.cap); });
 
-            /* 1 - the name */
-            gdAt(t, () => { gdMark(0); gdHandTo('gdF0'); q('gdF0').classList.add('live'); });
-            gdType('gdV0', row[0], t + 350, per);
-            t += 350 + row[0].length * per + (quick ? 250 : 550);
-
-            /* 2 - the unit, picked off a little list */
-            gdAt(t, () => { gdMark(1); q('gdF0').classList.remove('live');
-                            gdHandTo('gdF1'); q('gdF1').classList.add('live'); });
-            gdAt(t + 350, () => q('gdMenu').classList.add('open'));
-            gdAt(t + 700, () => { const m = q('gdMenu').firstElementChild; if(m) m.classList.add('pick'); });
-            gdAt(t + 1000, () => {
-                q('gdMenu').classList.remove('open');
-                const m = q('gdMenu').firstElementChild; if(m) m.classList.remove('pick');
-                q('gdV1').textContent = row[1];
+                if(s.sel) {
+                    gdAt(t + 330, () => {
+                        const menu = q('gdMenu'), f = q(fid);
+                        menu.innerHTML = s.vals.map((o, n) =>
+                            `<div${n === row ? ' class="pick"' : ''}>${escapeAsk(o)}</div>`).join('');
+                        const p = gdOffset(f, q('gdStage'));
+                        menu.style.left  = p.x + 'px';
+                        menu.style.top   = (p.y + f.offsetHeight + 4) + 'px';
+                        menu.style.width = f.offsetWidth + 'px';
+                        menu.classList.add('open');
+                    });
+                    gdAt(t + 900, () => {
+                        q('gdMenu').classList.remove('open');
+                        const e = q(vid); if(e) e.textContent = val;
+                    });
+                    t += quick ? 1050 : 1300;
+                } else {
+                    gdType(vid, String(val), t + 300, per);
+                    t += 300 + String(val).length * per + (quick ? 220 : 480);
+                }
             });
-            t += quick ? 1150 : 1450;
 
-            /* 3 - the price */
-            gdAt(t, () => { gdMark(2); q('gdF1').classList.remove('live');
-                            gdHandTo('gdF2'); q('gdF2').classList.add('live'); });
-            gdType('gdV2', row[2], t + 320, per);
-            t += 320 + row[2].length * per + (quick ? 250 : 500);
-
-            /* 4 - Add, and the row drops into the list */
-            gdAt(t, () => { gdMark(3); q('gdF2').classList.remove('live');
-                            gdHandTo('gdAdd'); q('gdAdd').classList.add('live'); });
-            gdAt(t + 420, () => { gdTap('gdAdd'); });
-            gdAt(t + 620, () => {
-                q('gdAdd').classList.remove('live');
+            gdAt(t, () => { gdMark(fields.length); gdHandTo('gdAdd');
+                            gdFocus('gdAdd'); gdSay(gdPlan[fields.length].cap); });
+            gdAt(t + 400, () => gdTap('gdAdd'));
+            gdAt(t + 600, () => {
+                gdFocus(null);
                 const li = document.createElement('div');
                 li.className = 'gd-li';
-                li.innerHTML = `<span>${escapeAsk(row[0])}</span><em>${escapeAsk(row[1])}</em><b>${escapeAsk(row[2])}</b>`;
+                li.innerHTML = fields.slice(0, 3).map(s =>
+                    `<span${s.leg ? ` class="leg-${s.leg}"` : ''}>${escapeAsk(s.vals[row] || s.vals[0])}</span>`).join('');
                 q('gdList').appendChild(li);
                 requestAnimationFrame(() => li.classList.add('in'));
-                ['gdV0', 'gdV1', 'gdV2'].forEach(id => { const e = q(id); if(e) e.textContent = ' '; });
+                fields.forEach((s, i) => { const e = q('gdV' + i); if(e) e.textContent = ' '; });
             });
-            t += quick ? 950 : 1250;
+            t += quick ? 950 : 1200;
         });
 
-        /* 5 - the file comes out */
-        gdAt(t, () => { gdMark(4); gdHandTo('gdSave'); q('gdSave').classList.add('live'); });
-        gdAt(t + 450, () => gdTap('gdSave'));
-        gdAt(t + 650, () => q('gdFile').classList.add('out'));
-        gdAt(t + 1700, () => { q('gdSave').classList.remove('live'); });
-        t += 2600;
+        gdAt(t, () => { gdMark(gdPlan.length - 1); gdHandTo('gdSave');
+                        gdFocus('gdSave'); gdSay(gdPlan[gdPlan.length - 1].cap); });
+        gdAt(t + 430, () => gdTap('gdSave'));
+        gdAt(t + 620, () => q('gdFile').classList.add('out'));
+        gdAt(t + 1800, () => gdFocus(null));
+        /* A beat at the end with the finished list still on screen, so the
+           last thing seen is the result rather than a blank stage. */
+        t += 4200;
 
-        gdAt(t, gdPlay);                     /* and round again */
+        gdAt(t, gdPlay);
     }
 
-    /* The panel that sits beside the builder on a wide screen. */
     function gdMountPanel() {
         gdUnmountPanel();
         if(!dbOn('dbGuide')) return;
@@ -1405,7 +1525,6 @@
         el.innerHTML = gdHtml(true);
         document.body.appendChild(el);
         document.body.classList.add('gd-docked');
-        gdHost = el;
         gdPlay();
     }
 
@@ -1414,7 +1533,6 @@
         const el = document.getElementById('gdPanel');
         if(el) el.remove();
         document.body.classList.remove('gd-docked');
-        gdHost = null;
     }
 
     function gdOpenModal() {
@@ -1434,7 +1552,8 @@
         gdStop();
         const b = document.getElementById('gdBack');
         if(b) b.remove();
-        if(document.getElementById('gdPanel')) gdPlay();     /* the docked one carries on */
+        const panel = document.getElementById('gdPanel');
+        if(panel) { panel.innerHTML = gdHtml(true); gdPlay(); }
     }
 
     /* ---------- Item builder ---------------------------------------------
@@ -1532,12 +1651,12 @@
           num: ['stock', 'rate', 'rate2', 'rate3', 'disc', 'tax'],
           req: req,
           opt: [
+            { k: 'tax', label: 'Tax %', type: 'num' },
+            { k: 'disc', label: 'Discount %', type: 'num' },
             { k: 'hsn', label: 'HSN Code', max: 32 },
             { k: 'stock', label: 'Stock', type: 'num' },
             { k: 'rate2', label: 'Rate 2', type: 'num' },
-            { k: 'rate3', label: 'Rate 3', type: 'num' },
-            { k: 'disc', label: 'Discount %', type: 'num' },
-            { k: 'tax', label: 'Tax %', type: 'num' }
+            { k: 'rate3', label: 'Rate 3', type: 'num' }
           ],
           show: show,
           auto: (it, i) => ({ sl: String(i + 1) })
@@ -1553,6 +1672,13 @@
                            : 'Adds an ' + EM_LANG[l].label + ' name column in ' + EM_LANG[l].font + '.',
                 `openItemBuilder('em_${l}')`)).join('');
         }
+        if(id === 'joypro') {
+            return Object.keys(JP_LANG).map(l => tile(
+                'Item Database (' + JP_LANG[l].label + ')',
+                l === 'en' ? 'Item name, unit, rate, discount and tax.'
+                           : 'Adds a Tamil name column in ' + JP_LANG[l].font + '.',
+                `openItemBuilder('jp_${l}')`)).join('');
+        }
         if(id === '2k') {
             if(model === 'BP 2100') {
                 return tile('Item Database', 'Department, unit, rates, tax and stock.', "openItemBuilder('bp2100')")
@@ -1563,6 +1689,48 @@
             return tile('Item Database', 'Item name, unit, rates and tax.', "openItemBuilder('bp1100')");
         }
         return tile('Item Database', 'Item name, unit, rate and tax.', "openItemBuilder('bp')");
+    }
+
+    /* ---------- BP Joy Pro -------------------------------------------------
+       Same file container as Emerge, but a much shorter sheet: no item code,
+       no HSN, no stock. The printer still writes the code field, filled with
+       0x01 bytes, so we write it the same way. */
+    const JP_LANG = {
+      en: { label: 'English', file: 'JOY_PRO_DB.csv',       col: null,               font: '' },
+      ta: { label: 'Tamil',   file: 'Joy_Pro_DB_Tamil.csv', col: 'Item Name(Tamil)', font: 'BAMINI-Tamil01' }
+    };
+
+    function joyProSpec(lang) {
+        const L = JP_LANG[lang];
+        const cols = [['Sl.No', 'sl'], ['Item Name', 'name']];
+        if(L.col) cols.push([L.col, 'local']);
+        cols.push(['Item Unit', 'uom'], ['Rate', 'rate'], ['Discount', 'disc'], ['Tax', 'tax']);
+
+        const req = [{ k: 'name', label: 'Item Name', ph: 'ITEM 1', max: 21, w: 2 }];
+        if(L.col) req.push({ k: 'local', label: 'Item Name (Tamil)', ph: 'type here',
+                             max: 21, w: 2, leg: 'ta' });
+        req.push({ k: 'uom',  label: 'Item Unit', type: 'sel', units: true, w: 1 },
+                 { k: 'rate', label: 'Rate', ph: '0.00', type: 'num', w: 1 });
+
+        const show = [['name', 'Item']];
+        if(L.col) show.push(['local', 'Tamil']);
+        show.push(['uom', 'Unit'], ['rate', 'Rate'], ['tax', 'Tax']);
+
+        return {
+          name: 'Item Database (' + L.label + ')', file: L.file, zeros: true,
+          wbp: 'joypro', unitGroup: 'emerge', lang: lang === 'ta' ? 'ta' : null, nameMax: 21,
+          back: () => openBpModel('joypro', bpModel),
+          crumbs: () => bpCrumbs('Item Database (' + L.label + ')'),
+          cols: cols,
+          num: ['rate', 'disc', 'tax'],
+          req: req,
+          opt: [
+            { k: 'tax', label: 'Tax %', type: 'num' },
+            { k: 'disc', label: 'Discount %', type: 'num' }
+          ],
+          show: show,
+          auto: (it, i) => ({ sl: String(i + 1) })
+        };
     }
 
     /* ---------- BP 2K Series ----------------------------------------------
@@ -1721,17 +1889,17 @@
           { k: 'rate', label: 'Retail Price', ph: '0.00', type: 'num' }
         ],
         opt: [
-          { k: 'long', label: 'Item Long Name' },
-          { k: 'mrp', label: 'MRP', type: 'num' },
-          { k: 'ws', label: 'Wholesale Price', type: 'num' },
-          { k: 'purchase', label: 'Purchase Rate', type: 'num' },
+          { k: 'barcode', label: 'Barcode' },
           { k: 'cgst', label: 'CGST %', type: 'num' },
           { k: 'sgst', label: 'SGST %', type: 'num' },
           { k: 'igst', label: 'IGST %', type: 'num' },
           { k: 'hsn', label: 'HSN' },
+          { k: 'mrp', label: 'MRP', type: 'num' },
+          { k: 'long', label: 'Item Long Name' },
+          { k: 'ws', label: 'Wholesale Price', type: 'num' },
+          { k: 'purchase', label: 'Purchase Rate', type: 'num' },
           { k: 'qty', label: 'Quantity', type: 'num' },
           { k: 'min', label: 'Minimum Stock', type: 'num' },
-          { k: 'barcode', label: 'Barcode' },
           { k: 'uom2', label: 'Secondary UOM', type: 'sel', opts: UOMS },
           { k: 'conv', label: 'UOM Conversion', type: 'num' },
           { k: 'dept', label: 'Department Code' },
@@ -1770,6 +1938,11 @@
           { k: 'rate', label: 'Rate 1', ph: '0.00', type: 'num' }
         ],
         opt: [
+          { k: 'barcode', label: 'Bar Code' },
+          { k: 'cgst', label: 'CGST %', type: 'num' },
+          { k: 'sgst', label: 'SGST %', type: 'num' },
+          { k: 'igst', label: 'IGST %', type: 'num' },
+          { k: 'hsn', label: 'HSN' },
           { k: 'long', label: 'Item Long Name' },
           { k: 'supply', label: 'Supply Type', type: 'sel', opts: ['G', 'S'] },
           { k: 'rate2', label: 'Rate 2', type: 'num' },
@@ -1777,12 +1950,7 @@
           { k: 'kitchen', label: 'Kitchen Code' },
           { k: 'dept', label: 'Department Code' },
           { k: 'cat', label: 'Category Code' },
-          { k: 'cgst', label: 'CGST %', type: 'num' },
-          { k: 'sgst', label: 'SGST %', type: 'num' },
-          { k: 'igst', label: 'IGST %', type: 'num' },
           { k: 'disc', label: 'Discount %', type: 'num' },
-          { k: 'hsn', label: 'HSN' },
-          { k: 'barcode', label: 'Bar Code' },
           { k: 'qty', label: 'Quantity', type: 'num' },
           { k: 'min', label: 'Minimum Stock', type: 'num' },
           { k: 'purchase', label: 'Purchase Rate', type: 'num' },
@@ -1803,6 +1971,8 @@
       bp: {
         name: 'Item Database', file: 'DB.csv', zeros: true, wbp: 'plus',
         unitGroup: 'bp', nameMax: 16,
+        /* BP Joy Plus has no pendrive slot, so it gets the CSV only. */
+        noWbp: ['BP Joy Plus'],
         back: () => openDbBp(),
         crumbs: () => bpCrumbs('Item Database'),
         cols: [
@@ -1818,11 +1988,11 @@
           { k: 'rate', label: 'Rate 1', ph: '0.00', type: 'num', w: 1 }
         ],
         opt: [
-          { k: 'rate2', label: 'Rate 2', type: 'num' },
-          { k: 'rate3', label: 'Rate 3', type: 'num' },
           { k: 'tax1', label: 'Tax 1 %', type: 'num' },
           { k: 'tax2', label: 'Tax 2 %', type: 'num' },
-          { k: 'disc', label: 'Discount %', type: 'num' }
+          { k: 'disc', label: 'Discount %', type: 'num' },
+          { k: 'rate2', label: 'Rate 2', type: 'num' },
+          { k: 'rate3', label: 'Rate 3', type: 'num' }
         ],
         show: [['code', 'Code'], ['name', 'Item'], ['uom', 'Unit'],
                ['rate', 'Rate 1'], ['tax1', 'Tax 1']]
@@ -1839,15 +2009,21 @@
       bp2100: SPEC_2100,
       bp1100: SPEC_1100,
       cust2100: SPEC_CUST,
-      dept2100: SPEC_DEPT
+      dept2100: SPEC_DEPT,
+
+      jp_en: joyProSpec('en'),
+      jp_ta: joyProSpec('ta')
     };
 
     let itApp  = 'retail';
     let itEdIx = -1;                       // -1 = adding, otherwise editing a row
     const itData = { retail: [], fnb: [], bp: [], em_en: [], em_hi: [], em_ta: [],
-                     bp2100: [], bp1100: [], cust2100: [], dept2100: [] };
+                     bp2100: [], bp1100: [], cust2100: [], dept2100: [],
+                     jp_en: [], jp_ta: [] };
 
     const itSpec = () => DB_SPEC[itApp];
+    /* Some models in a series cannot take a pendrive file at all. */
+    const itHasWbp = sp => !!sp.wbp && (sp.noWbp || []).indexOf(bpModel) < 0;
     const itList = () => itData[itApp];
 
     /* One field, used for both the required bar and the optional grid. */
@@ -1857,21 +2033,44 @@
         return f.opts || [];
     }
 
+    /* Enter adds the row, and Tab walks name -> unit -> price -> the extra
+       fields -> Add, opening the extra panel on the way so nobody has to
+       reach for the mouse between rows. */
+    function itKey(ev, k) {
+        const sp = itSpec();
+        if(ev.key === 'Enter') { ev.preventDefault(); itAdd(); return; }
+        if(ev.key !== 'Tab' || ev.shiftKey || !sp.opt.length) return;
+
+        const lastReq = sp.req[sp.req.length - 1].k;
+        const lastOpt = sp.opt[sp.opt.length - 1].k;
+        if(k === lastReq) {
+            ev.preventDefault();
+            itShowMore(true);
+            const first = document.getElementById('it_' + sp.opt[0].k);
+            if(first) first.focus();
+        } else if(k === lastOpt) {
+            ev.preventDefault();
+            const btn = document.getElementById('itAddBtn');
+            if(btn) btn.focus();
+        }
+    }
+
     function itField(f, big) {
         const id = 'it_' + f.k;
+        const key = ` onkeydown="itKey(event, '${f.k}')"`;
         if(f.type === 'sel') {
             /* Starts blank on purpose: a select that opens on its first option
                silently writes a unit nobody chose. */
             const opts = `<option value="">${big ? 'Select' : ''}</option>` +
                 itOpts(f).map(o => `<option value="${escapeAsk(o)}">${escapeAsk(o)}</option>`).join('');
-            return `<div><label for="${id}">${f.label}</label><select id="${id}">${opts}</select></div>`;
+            return `<div><label for="${id}">${f.label}</label><select id="${id}"${key}>${opts}</select></div>`;
         }
         /* For the Hindi and Tamil columns we ask the browser for the printer's
            own font. On a machine that has it the box shows real script while
            typing; elsewhere it falls back and the bytes are still correct. */
         const cls = f.leg ? ` class="leg-${f.leg}"` : '';
         return `<div><label for="${id}">${f.label}</label>` +
-               `<input id="${id}" type="${f.type === 'num' ? 'number' : 'text'}"${cls}` +
+               `<input id="${id}" type="${f.type === 'num' ? 'number' : 'text'}"${cls}${key}` +
                `${f.type === 'num' ? ' step="any"' : ''}` +
                `${f.max ? ` maxlength="${f.max}"` : ''}` +
                ` placeholder="${f.ph || ''}" autocomplete="off"></div>`;
@@ -1912,9 +2111,10 @@
           </div>
 
           <button class="it-more" onclick="itToggleMore()">
-            <i class="fa-solid fa-sliders"></i> <span id="itMoreTxt">More fields</span>
+            <i class="fa-solid fa-sliders"></i>
+            <span id="itMoreTxt">${itMoreWanted() ? 'Hide extra fields' : 'More fields'}</span>
           </button>
-          <div class="it-opt" id="itOpt" style="display:none;">
+          <div class="it-opt" id="itOpt" style="display:${itMoreWanted() ? 'grid' : 'none'};">
             ${sp.opt.map(f => itField(f)).join('')}
           </div>
 
@@ -1924,7 +2124,7 @@
             <button class="it-btn it-primary" onclick="itExport()">
               <i class="fa-solid fa-file-csv"></i> Download CSV
             </button>
-            ${sp.wbp ? `<button class="it-btn it-primary" onclick="itExportWbp()">
+            ${itHasWbp(sp) ? `<button class="it-btn it-primary" onclick="itExportWbp()">
               <i class="fa-solid fa-usb"></i> Download Pendrive File
             </button>` : ''}
             ${dbOn('dbGuide') ? `<button class="it-btn it-ghost gd-open" onclick="gdOpenModal()">
@@ -1956,11 +2156,26 @@
         gdMountPanel();
     }
 
+    /* Whether the extra fields are showing. Kept per screen and remembered,
+       because somebody entering a hundred rows should set it once. */
+    function itMoreKey() { return 'wep_more_' + itApp; }
+
+    function itShowMore(on) {
+        const box = document.getElementById('itOpt');
+        if(!box) return;
+        box.style.display = on ? 'grid' : 'none';
+        const lbl = document.getElementById('itMoreTxt');
+        if(lbl) lbl.innerText = on ? 'Hide extra fields' : 'More fields';
+        try { localStorage.setItem(itMoreKey(), on ? '1' : '0'); } catch(e) {}
+    }
+
     function itToggleMore() {
         const box = document.getElementById('itOpt');
-        const on  = box.style.display === 'none';
-        box.style.display = on ? 'grid' : 'none';
-        document.getElementById('itMoreTxt').innerText = on ? 'Hide extra fields' : 'More fields';
+        itShowMore(box && box.style.display === 'none');
+    }
+
+    function itMoreWanted() {
+        try { return localStorage.getItem(itMoreKey()) === '1'; } catch(e) { return false; }
     }
 
     function itRead() {
@@ -2010,8 +2225,7 @@
         if(!it) return;
         itEdIx = i;
         itWrite(it);
-        document.getElementById('itOpt').style.display = 'grid';
-        document.getElementById('itMoreTxt').innerText = 'Hide extra fields';
+        itShowMore(true);
         const btn = document.getElementById('itAddBtn');
         btn.innerHTML = '<i class="fa-solid fa-check"></i> Update';
         btn.style.background = '#00875a';
@@ -2576,7 +2790,7 @@
         }
     }
 
-    function itEmWbp(list, units, mode) {
+    function itEmWbp(list, units, mode, variant) {
         const total = EM_BLK + 2 * EM_BLK + EM_BLK + list.length * EM_REC + EM_BLK;
         const buf = new Uint8Array(total);
         const dv  = new DataView(buf.buffer);
@@ -2612,7 +2826,10 @@
             dv.setUint16(o + 576, i + 1, true);
             dv.setUint16(o + 578, 1, true);          /* department - unused on Emerge */
             emText(buf, o + 580, it.name, 21, 0);
-            emText(buf, o + 601, it.code, 21, 0);
+            /* Joy Pro has no item code on its sheet; the printer fills the
+               field with 0x01 bytes, so we do the same. */
+            if(variant === 'joypro') { for(let j = 0; j < 21; j++) buf[o + 601 + j] = 0x01; }
+            else emText(buf, o + 601, it.code, 21, 0);
             const u = names.indexOf(it.uom);
             dv.setUint16(o + 622, (u < 0 ? 0 : u) + 1, true);
             emText(buf, o + 696, it.hsn, 32, 32);     /* space-padded, unlike the rest */
@@ -2720,11 +2937,12 @@
 
     function itExportWbp() {
         const sp = itSpec(), list = itList();
+        if(!itHasWbp(sp)) { toast(bpModel + ' has no pendrive slot - use Download CSV', 'warn'); return; }
         if(!list.length) { toast('Add at least one item first', 'warn'); return; }
         if(list.length > 255) { toast('A pendrive file holds up to 255 items', 'warn'); return; }
 
-        if(sp.wbp === 'emerge') {
-            itDownload('ITMDBS.WBP', itEmWbp(list, unitsFor('emerge'), 'add'));
+        if(sp.wbp === 'emerge' || sp.wbp === 'joypro') {
+            itDownload('ITMDBS.WBP', itEmWbp(list, unitsFor('emerge'), 'add', sp.wbp));
             toast('Saved ITMDBS.WBP - copy it to the pendrive root', 'ok');
             return;
         }
