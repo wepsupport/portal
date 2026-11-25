@@ -538,7 +538,7 @@
                 <div><label>Icon</label>
                   <select id="blkIcon">
                     <option value="fa-star">⭐ Feedback / rating</option>
-                    <option value="fa-clipboard-question">📝 Quiz / survey</option>
+                    <option value="fa-clipboard-list">📝 Quiz / survey</option>
                     <option value="fa-gift">🎁 Offer / campaign</option>
                     <option value="fa-circle-info">ℹ️ Information</option>
                     <option value="fa-calendar-check">📅 Booking / event</option>
@@ -1032,7 +1032,7 @@
 <script>
   // ===================== GITHUB API CONFIGURATION =====================
   // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-  const API_URL = "https://script.google.com/macros/s/AKfycbxLU1QNeFg3SfgR2eRBCI0RYPUI6qkX0YGpURtApiK19S7CKkQp-VScA4LjWD8emrCp/exec";
+  const API_URL = "https://script.google.com/macros/s/AKfycbx_gE-zJVlhiDkt1OVeH2ur_UGV1xYl3SRur0fRGVfNMJmwq9H4vkSv_7zDmo6BAunv/exec";
 
 
   /* The rail replaces the old menu-first navigation, and keeps the current
@@ -1980,7 +1980,7 @@
           });
 
           let gClr = {'Installation':'#0984e3','Demo':'#27ae60','Complaint Log':'#e67e22','Chatbot':'#ff0073'};
-          let gIco = {'Installation':'fa-screwdriver-wrench','Demo':'fa-desktop','Complaint Log':'fa-file-shield','Chatbot':'fa-robot'};
+          let gIco = {'Installation':'fa-screwdriver-wrench','Demo':'fa-desktop','Complaint Log':'fa-clipboard-check','Chatbot':'fa-robot'};
 
           ctSelected = {};
           let html = `<div id="ctBulkBar" style="display:none; position:sticky; top:0; z-index:50; background:#2d3436; color:#fff; border-radius:8px; padding:10px 14px; margin-bottom:12px; align-items:center; justify-content:space-between; gap:12px;">
@@ -2539,7 +2539,7 @@
                      {id:'issues',label:'Issues Found',type:'text',full:1},
                      {id:'remarks',label:'Remarks',type:'text',full:1} ],
             update:'decision' },
-    RRT:  { label:'Reliability (RRT)', icon:'fa-vial-circle-check', color:'#f1c40f',
+    RRT:  { label:'Reliability (RRT)', icon:'fa-vial', color:'#f1c40f',
             title:'Reliability / Regression Test Tracking',
             fields:[ {id:'date',label:'Start Date',type:'date',req:1},
                      {id:'model',label:'Model',type:'model',req:1},
@@ -3155,7 +3155,7 @@
   /* The portal and Code.gs ship together. If the deployed script reports a
      different version (or no version at all), it was saved but never
      redeployed - which shows up as "Unknown action" on newer features. */
-  const EXPECTED_SCRIPT_VERSION = "2026-11-20-sv7";
+  const EXPECTED_SCRIPT_VERSION = "2026-11-25-sv10";
 
   function checkBackendVersion() {
       let box = document.getElementById('backendWarn');
@@ -3532,6 +3532,7 @@
     { k: 'dbBpPlus',    t: 'BP Plus Series',           d: 'Joy Plus, 85T Plus, 25T Plus, Ultra Pro.', sub: true },
     { k: 'dbBpEmerge',  t: 'BP Emerge Series',         d: 'English, Hindi aur Tamil, teeno format.', sub: true },
     { k: 'dbBp2k',      t: 'BP 2K Series',             d: 'BP 2100 aur BP 1100 Joy.', sub: true },
+    { k: 'dbBpJoyPro',  t: 'BP Joy Pro Series',        d: 'English aur Tamil, dono format.', sub: true },
     { k: 'dbGet',       t: 'Get database',             d: 'Doosre device par code daal kar file lene ka option.' },
     { k: 'dbGuide',     t: 'Step-by-step animation',   d: 'Chalti hui guide, jo bina padhe bhi samajh aaye.' }
   ];
