@@ -275,6 +275,9 @@
     /* A 550px column is right for a short form, but the item builder is a
        table - it needs the room. */
     .form-container.db-wide { max-width: 1060px; }
+    /* The docked guide is floated, so the page has to give up the space or
+       the buttons end up underneath it. */
+    @media (min-width: 1280px) { body.gd-docked .view-wrapper { padding-right: 372px; } }
 
     /* A browser alert box says "wepsol-support.vercel.app says" above the
        message and looks like a warning. These say what happened, in the
@@ -373,6 +376,91 @@
     .it-tbl tr:hover td { background:#fafbfd; }
     .it-del { background:none; border:none; color:#d63031; cursor:pointer; font-size:13px; }
     .it-empty { text-align:center; padding:34px 16px; color:var(--text-secondary); font-size:13px; }
+    /* ---------- The moving guide ---------- */
+    .gd { font-family:var(--font-stack); }
+    .gd-panel { position:fixed; right:18px; top:92px; width:330px; z-index:900;
+                background:#fff; border:1px solid #e3e8ef; border-radius:16px; padding:14px;
+                box-shadow:0 18px 44px rgba(16,32,64,.10); }
+    .gd-modal { background:#fff; border-radius:16px; padding:16px; width:94%; max-width:430px; }
+    .gd-head { display:flex; align-items:center; justify-content:space-between; gap:10px;
+               font-size:13.5px; font-weight:700; color:var(--text-primary); margin-bottom:10px; }
+    .gd-head i { color:#0b63ce; margin-right:5px; }
+    .gd-x { background:none; border:none; font-size:24px; line-height:1; color:#8a94a6; cursor:pointer; padding:0 2px; }
+
+    .gd-stage { position:relative; background:#f6f9fd; border:1px solid #e3e9f2;
+                border-radius:12px; padding:12px; overflow:hidden; }
+    .gd-row { display:flex; gap:8px; margin-bottom:8px; }
+    .gd-f, .gd-add, .gd-save { position:relative; transition:box-shadow .2s, border-color .2s, transform .18s; }
+    .gd-f { flex:1; min-width:0; background:#fff; border:1.5px solid #dbe3ee; border-radius:9px;
+            padding:9px 10px; min-height:42px; box-sizing:border-box;
+            display:flex; align-items:center; gap:7px; font-size:14px; font-weight:700;
+            color:var(--text-primary); overflow:hidden; }
+    .gd-f span { white-space:nowrap; overflow:hidden; }
+    .gd-f b, .gd-add b, .gd-save b { flex:none; width:19px; height:19px; border-radius:50%;
+            background:#e8f0fe; color:#0b63ce; font-size:11px; font-weight:800;
+            display:flex; align-items:center; justify-content:center; }
+    .gd-add { width:84px; flex:none; background:#0b63ce; color:#fff; border-radius:9px;
+              display:flex; align-items:center; justify-content:center; gap:6px; min-height:42px; }
+    .gd-add b, .gd-save b { background:rgba(255,255,255,.25); color:#fff; }
+    .gd-save { margin-top:9px; background:#00875a; color:#fff; border-radius:9px; min-height:42px;
+               display:flex; align-items:center; justify-content:center; gap:8px; font-size:15px; }
+    .gd-f.live, .gd-add.live, .gd-save.live { border-color:#0b63ce; box-shadow:0 0 0 3px rgba(11,99,206,.2); }
+    .gd-add.tap, .gd-save.tap { transform:scale(.93); }
+
+    .gd-menu { position:absolute; left:53%; right:12px; top:56px; background:#fff;
+               border:1px solid #dbe3ee; border-radius:9px; box-shadow:0 10px 24px rgba(16,32,64,.14);
+               overflow:hidden; opacity:0; transform:translateY(-6px) scale(.97);
+               transform-origin:top center; pointer-events:none; transition:.22s; z-index:4; }
+    .gd-menu.open { opacity:1; transform:none; }
+    .gd-menu div { padding:7px 10px; font-size:13px; font-weight:700; color:var(--text-secondary); }
+    .gd-menu div.pick { background:#e8f0fe; color:#0b3f8c; }
+
+    .gd-list { min-height:34px; }
+    .gd-li { display:flex; align-items:center; gap:8px; background:#fff; border:1px solid #e6ecf4;
+             border-radius:8px; padding:7px 10px; margin-bottom:6px; font-size:13px;
+             opacity:0; transform:translateY(-9px); transition:.3s; }
+    .gd-li.in { opacity:1; transform:none; }
+    .gd-li span { flex:1; font-weight:700; color:var(--text-primary); }
+    .gd-li em { font-style:normal; color:var(--text-secondary); font-size:11.5px; }
+    .gd-li b { color:#00875a; }
+
+    .gd-file { position:absolute; left:50%; bottom:14px; margin-left:-16px; width:32px; height:32px;
+               border-radius:8px; background:#fff; border:1px solid #cfe6db; color:#00875a;
+               display:flex; align-items:center; justify-content:center; font-size:15px;
+               opacity:0; pointer-events:none; z-index:5; }
+    .gd-file.out { animation:gdDrop 1.1s ease forwards; }
+    @keyframes gdDrop {
+        0%   { opacity:0; transform:translateY(0) scale(.6); }
+        30%  { opacity:1; transform:translateY(-26px) scale(1); }
+        70%  { opacity:1; transform:translateY(-26px) scale(1); }
+        100% { opacity:0; transform:translateY(14px) scale(.8); }
+    }
+
+    .gd svg { width:17px; height:17px; fill:currentColor; flex:none; display:block; }
+    .gd-t svg { width:15px; height:15px; color:#0b63ce; display:inline-block; vertical-align:-2px; }
+    .gd-f svg { color:#9aa8bc; }
+    .gd-add svg, .gd-save svg { width:19px; height:19px; }
+    .gd-rs { font-style:normal; font-weight:800; font-size:15px; color:#9aa8bc; flex:none; }
+    .gd-hand svg { width:26px; height:26px; }
+    .gd-hand { position:absolute; left:40px; top:40px; font-size:21px; color:#123a6b; z-index:6;
+               pointer-events:none; filter:drop-shadow(0 3px 5px rgba(16,32,64,.3));
+               transition:left .45s cubic-bezier(.4,.9,.3,1), top .45s cubic-bezier(.4,.9,.3,1); }
+
+    .gd-dots { display:flex; gap:5px; margin:11px 0 0; }
+    .gd-dots span { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
+                    font-size:9.5px; color:#9aa5b5; text-align:center; line-height:1.2; }
+    .gd-dots b { width:21px; height:21px; border-radius:50%; background:#eef2f7; color:#9aa5b5;
+                 font-size:11px; display:flex; align-items:center; justify-content:center;
+                 transition:.2s; }
+    .gd-dots span.on { color:#0b3f8c; font-weight:700; }
+    .gd-dots span.on b { background:#0b63ce; color:#fff; transform:scale(1.14); }
+
+    .gd-again { width:100%; margin-top:11px; background:#f3f6fa; border:1px solid #e3e8ef;
+                border-radius:9px; padding:8px; font-size:12px; font-weight:700;
+                color:var(--text-secondary); cursor:pointer; font-family:var(--font-stack); }
+    .gd-again:hover { background:#e9eff7; }
+    @media (max-width: 1279px) { .gd-panel { display:none; } }
+
     .xf-code { font-size:38px; font-weight:800; letter-spacing:7px; text-align:center;
                background:#f3f8ff; border:1px solid #d6e4fb; border-radius:11px;
                padding:14px 8px; color:#0b3f8c; margin:4px 0 8px; word-break:break-all; }
@@ -696,7 +784,7 @@
 
     // ===================== GITHUB API CONFIGURATION =====================
     // PASTE YOUR NEW GOOGLE APPS SCRIPT WEB APP URL HERE:
-    const API_URL = "https://script.google.com/macros/s/AKfycbyT2WAna1QN-70MLQgL6tNjuzeaZvC53JRSh5WC51BIhqv_7h8seb5Od5daFFp3Waup/exec";
+    const API_URL = "https://script.google.com/macros/s/AKfycbxLU1QNeFg3SfgR2eRBCI0RYPUI6qkX0YGpURtApiK19S7CKkQp-VScA4LjWD8emrCp/exec";
 
     async function apiCall(action, params = {}) {
         try {
@@ -933,6 +1021,7 @@
     }
 
     function goHome() {
+        gdUnmountPanel();
         document.getElementById('formPage').style.display = 'none';
         document.getElementById('chatPage').style.display = 'none';
         let lp = document.getElementById('landingPage');
@@ -963,11 +1052,18 @@
     let logoCfg = { w: 448, h: 326, note: '', file: 'LOGODBS.WBP' };
     let logoImg = null;
 
+    /* Which parts of Database Creation this customer is shown. The admin
+       switches them from the Database section; anything unset counts as on,
+       so an older backend still shows everything. */
+    let dbVis = {};
+    const dbOn = k => String(dbVis[k] == null ? 'yes' : dbVis[k]) === 'yes';
+
     function initLogoTool(cfg) {
         logoCfg.w = parseInt(cfg.logoToolWidth, 10) || 448;
         logoCfg.h = parseInt(cfg.logoToolHeight, 10) || 326;
         logoCfg.note = cfg.logoToolNote || '';
         logoCfg.file = (cfg.logoToolFileName || 'LOGODBS.WBP').trim();
+        dbVis = cfg || {};
         const card = document.getElementById('logoCard');
         if(card) card.style.display = (String(cfg.logoToolEnabled) === 'yes') ? '' : 'none';
     }
@@ -992,6 +1088,7 @@
     }
 
     function dbPage(title, crumbs, body, self) {
+        gdUnmountPanel();
         if(self) navStack.push(self);
         document.getElementById('landingPage').style.display = 'none';
         document.getElementById('formPage').style.display = 'block';
@@ -1019,14 +1116,14 @@
             Create the files your machine needs, ready to copy onto a pendrive.
           </p>
           <div class="db-grid">
-            ${dbTile('fa-image', '#fdeef3', '#e8117f', 'Logo for All BP Models',
-                     'Turn your logo into the exact file the printer expects.', 'openLogoView()')}
-            ${dbTile('fa-desktop', '#e8f0fe', '#0b63ce', 'POS Application Database',
-                     'Items, customers and suppliers for Retail or F&amp;B.', 'openDbPos()')}
-            ${dbTile('fa-print', '#eaf7f0', '#00875a', 'BP Database',
-                     'Item list for BP billing printers.', 'openDbBp()')}
-            ${dbTile('fa-mobile-screen', '#fdf1e3', '#b9690a', 'Get database',
-                     'Built it on another phone or laptop? Type the code here.', 'openXferGet()')}
+            ${dbOn('dbLogo') ? dbTile('fa-image', '#fdeef3', '#e8117f', 'Logo for All BP Models',
+                     'Turn your logo into the exact file the printer expects.', 'openLogoView()') : ''}
+            ${dbOn('dbPos') ? dbTile('fa-desktop', '#e8f0fe', '#0b63ce', 'POS Application Database',
+                     'Items, customers and suppliers for Retail or F&amp;B.', 'openDbPos()') : ''}
+            ${dbOn('dbBp') ? dbTile('fa-print', '#eaf7f0', '#00875a', 'BP Database',
+                     'Item list for BP billing printers.', 'openDbBp()') : ''}
+            ${dbOn('dbGet') ? dbTile('fa-mobile-screen', '#fdf1e3', '#b9690a', 'Get database',
+                     'Built it on another phone or laptop? Type the code here.', 'openXferGet()') : ''}
           </div>`, openDbView);
     }
 
@@ -1037,10 +1134,10 @@
             Which application are you building this for?
           </p>
           <div class="db-grid">
-            ${dbTile('fa-basket-shopping', '#e8f0fe', '#0b63ce', 'Retail Application',
-                     'Shops and stores — items with MRP, stock and barcodes.', "openDbApp('retail')")}
-            ${dbTile('fa-utensils', '#fff4e5', '#e17055', 'F&amp;B Application',
-                     'Restaurants and cafes — menu items, rates and kitchen codes.', "openDbApp('fnb')")}
+            ${dbOn('dbPosRetail') ? dbTile('fa-basket-shopping', '#e8f0fe', '#0b63ce', 'Retail Application',
+                     'Shops and stores — items with MRP, stock and barcodes.', "openDbApp('retail')") : ''}
+            ${dbOn('dbPosFnb') ? dbTile('fa-utensils', '#fff4e5', '#e17055', 'F&amp;B Application',
+                     'Restaurants and cafes — menu items, rates and kitchen codes.', "openDbApp('fnb')") : ''}
           </div>`, openDbPos);
     }
 
@@ -1082,10 +1179,13 @@
             Choose your printer series.
           </p>
           <div class="db-grid">
-            ${BP_SERIES.map(sr => dbTile(sr.icon, '#eaf7f0', '#00875a', sr.name,
+            ${BP_SERIES.filter(sr => dbOn(BP_SERIES_KEY[sr.id])).map(sr =>
+                dbTile(sr.icon, '#eaf7f0', '#00875a', sr.name,
                 sr.models.join(' · '), `openBpSeries('${sr.id}')`)).join('')}
           </div>`, openDbBp);
     }
+
+    const BP_SERIES_KEY = { plus: 'dbBpPlus', emerge: 'dbBpEmerge', '2k': 'dbBp2k' };
 
     /* Models whose file format has been confirmed against a printer export. */
     const MODEL_READY = ['BP Joy Plus', 'BP 85T Plus', 'BP 25T Plus', 'BP Ultra Pro',
@@ -1121,6 +1221,221 @@
           <div class="db-grid">${bpModelTiles(id, model)}</div>`, () => openBpModel(id, model));
     }
 
+
+    /* ---------- The moving guide ------------------------------------------
+       A shopkeeper who cannot read still has to get a price list into a
+       billing machine. This plays the whole job back as a small silent film:
+       a hand types a name, picks a unit, types a price, presses Add, and the
+       file drops out. Numbers and pictures carry it; the one word per step is
+       there for whoever can read it. */
+    const GD_WORDS = {
+      en: { t: 'Watch how it is done', s: ['Name', 'Unit', 'Price', 'Add', 'Save'],
+            again: 'Play again', close: 'Close', open: 'Watch how' },
+      hi: { t: 'देखिए कैसे करना है', s: ['नाम', 'यूनिट', 'दाम', 'जोड़ें', 'सेव'],
+            again: 'फिर से चलाइए', close: 'बंद', open: 'देखिए कैसे' },
+      ta: { t: 'எப்படி என்று பாருங்கள்', s: ['பெயர்', 'அலகு', 'விலை', 'சேர்', 'சேமி'],
+            again: 'மீண்டும்', close: 'மூடு', open: 'பாருங்கள்' },
+      te: { t: 'ఎలా చేయాలో చూడండి', s: ['పేరు', 'యూనిట్', 'ధర', 'జోడించు', 'సేవ్'],
+            again: 'మళ్ళీ', close: 'మూసివేయి', open: 'చూడండి' }
+    };
+    const gdWords = () => GD_WORDS[currentLang] || GD_WORDS.en;
+
+    /* Drawn inline rather than pulled from an icon font: if the font fails to
+       load, a guide for somebody who cannot read must not go blank. */
+    const GD_ICON = {
+      name: '<svg viewBox="0 0 24 24"><path d="M4 5h16v2.6H4zM4 10.7h11v2.6H4zM4 16.4h7V19H4z"/></svg>',
+      unit: '<svg viewBox="0 0 24 24"><path d="M12 2 2.6 6.7v10.6L12 22l9.4-4.7V6.7L12 2zm0 2.6 6.6 3.3L12 11.2 5.4 7.9 12 4.6zM4.6 9.6l6.4 3.2v6.5l-6.4-3.2V9.6zm8.4 9.7v-6.5l6.4-3.2v6.5L13 19.3z"/></svg>',
+      plus: '<svg viewBox="0 0 24 24"><path d="M10.6 3.8h2.8v16.4h-2.8z"/><path d="M3.8 10.6h16.4v2.8H3.8z"/></svg>',
+      save: '<svg viewBox="0 0 24 24"><path d="M10.6 3h2.8v8.2l3.1-3.1 2 2L12 16.6 5.5 10.1l2-2 3.1 3.1z"/><path d="M4 17.6h16V21H4z"/></svg>',
+      hand: '<svg viewBox="0 0 24 24"><path d="M9 3.6c0-.9.7-1.6 1.6-1.6s1.6.7 1.6 1.6v6.1h.8V5.4c0-.9.7-1.6 1.6-1.6s1.6.7 1.6 1.6v4.3h.8V7.3c0-.9.7-1.6 1.6-1.6s1.6.7 1.6 1.6v7.4c0 3.9-2.6 6.9-6.4 6.9-2.3 0-4-.9-5.2-2.6L4.2 14c-.5-.7-.3-1.7.4-2.2.7-.5 1.7-.4 2.2.3L9 14.4V3.6z"/></svg>',
+      play: '<svg viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-2 5.5 7 4.5-7 4.5v-9z"/></svg>'
+    };
+
+    let gdTimers = [];
+    let gdHost = null;
+
+    function gdStop() {
+        gdTimers.forEach(clearTimeout);
+        gdTimers = [];
+    }
+
+    function gdHtml(inPanel) {
+        const w = gdWords();
+        return `
+          <div class="gd-head">
+            <span class="gd-t">${GD_ICON.play} ${escapeAsk(w.t)}</span>
+            ${inPanel ? '' : `<button class="gd-x" onclick="gdCloseModal()" aria-label="${escapeAsk(w.close)}">&times;</button>`}
+          </div>
+          <div class="gd-stage" id="gdStage">
+            <div class="gd-row">
+              <div class="gd-f" id="gdF0"><b>1</b>${GD_ICON.name}<span id="gdV0"></span></div>
+              <div class="gd-f" id="gdF1"><b>2</b>${GD_ICON.unit}<span id="gdV1"></span></div>
+            </div>
+            <div class="gd-row">
+              <div class="gd-f" id="gdF2"><b>3</b><i class="gd-rs">\u20b9</i><span id="gdV2">&nbsp;</span></div>
+              <div class="gd-add" id="gdAdd"><b>4</b>${GD_ICON.plus}</div>
+            </div>
+            <div class="gd-menu" id="gdMenu">
+              <div data-u="0">KGS</div><div data-u="1">PCS</div><div data-u="2">LTR</div>
+            </div>
+            <div class="gd-list" id="gdList"></div>
+            <div class="gd-save" id="gdSave"><b>5</b>${GD_ICON.save}</div>
+            <div class="gd-file" id="gdFile">${GD_ICON.save}</div>
+            <div class="gd-hand" id="gdHand">${GD_ICON.hand}</div>
+          </div>
+          <div class="gd-dots" id="gdDots">
+            ${w.s.map((lab, i) => `<span><b>${i + 1}</b>${escapeAsk(lab)}</span>`).join('')}
+          </div>
+          <button class="gd-again" onclick="gdPlay()">${escapeAsk(w.again)}</button>`;
+    }
+
+    /* Moves the pointing hand over the middle of one box. */
+    function gdHandTo(id) {
+        const stage = document.getElementById('gdStage');
+        const hand  = document.getElementById('gdHand');
+        const el    = document.getElementById(id);
+        if(!stage || !hand || !el) return;
+        const s = stage.getBoundingClientRect(), b = el.getBoundingClientRect();
+        hand.style.left = (b.left - s.left + b.width * 0.62) + 'px';
+        hand.style.top  = (b.top  - s.top  + b.height * 0.62) + 'px';
+    }
+
+    function gdAt(ms, fn) { gdTimers.push(setTimeout(fn, ms)); }
+
+    function gdType(id, text, start, per) {
+        for(let i = 0; i <= text.length; i++) {
+            gdAt(start + i * per, () => {
+                const el = document.getElementById(id);
+                if(el) el.textContent = text.slice(0, i) || ' ';
+            });
+        }
+    }
+
+    function gdMark(step) {
+        const dots = document.getElementById('gdDots');
+        if(!dots) return;
+        [...dots.children].forEach((d, i) => d.classList.toggle('on', i === step));
+    }
+
+    function gdTap(id) {
+        const el = document.getElementById(id);
+        if(!el) return;
+        el.classList.add('tap');
+        gdAt(260, () => el.classList.remove('tap'));
+    }
+
+    function gdPlay() {
+        gdStop();
+        const q = id => document.getElementById(id);
+        if(!q('gdStage')) return;
+
+        /* back to the start */
+        ['gdV0', 'gdV1', 'gdV2'].forEach(id => { const e = q(id); if(e) e.textContent = ' '; });
+        ['gdF0', 'gdF1', 'gdF2', 'gdAdd', 'gdSave'].forEach(id => q(id) && q(id).classList.remove('live'));
+        q('gdMenu').classList.remove('open');
+        q('gdList').innerHTML = '';
+        q('gdFile').className = 'gd-file';
+        gdMark(-1);
+        gdHandTo('gdF0');
+
+        const rows = [['RICE', 'KGS', '28'], ['SUGAR', 'KGS', '45']];
+        let t = 500;
+
+        rows.forEach((row, r) => {
+            const quick = r > 0;              /* the second row plays faster */
+            const per = quick ? 70 : 140;
+
+            /* 1 - the name */
+            gdAt(t, () => { gdMark(0); gdHandTo('gdF0'); q('gdF0').classList.add('live'); });
+            gdType('gdV0', row[0], t + 350, per);
+            t += 350 + row[0].length * per + (quick ? 250 : 550);
+
+            /* 2 - the unit, picked off a little list */
+            gdAt(t, () => { gdMark(1); q('gdF0').classList.remove('live');
+                            gdHandTo('gdF1'); q('gdF1').classList.add('live'); });
+            gdAt(t + 350, () => q('gdMenu').classList.add('open'));
+            gdAt(t + 700, () => { const m = q('gdMenu').firstElementChild; if(m) m.classList.add('pick'); });
+            gdAt(t + 1000, () => {
+                q('gdMenu').classList.remove('open');
+                const m = q('gdMenu').firstElementChild; if(m) m.classList.remove('pick');
+                q('gdV1').textContent = row[1];
+            });
+            t += quick ? 1150 : 1450;
+
+            /* 3 - the price */
+            gdAt(t, () => { gdMark(2); q('gdF1').classList.remove('live');
+                            gdHandTo('gdF2'); q('gdF2').classList.add('live'); });
+            gdType('gdV2', row[2], t + 320, per);
+            t += 320 + row[2].length * per + (quick ? 250 : 500);
+
+            /* 4 - Add, and the row drops into the list */
+            gdAt(t, () => { gdMark(3); q('gdF2').classList.remove('live');
+                            gdHandTo('gdAdd'); q('gdAdd').classList.add('live'); });
+            gdAt(t + 420, () => { gdTap('gdAdd'); });
+            gdAt(t + 620, () => {
+                q('gdAdd').classList.remove('live');
+                const li = document.createElement('div');
+                li.className = 'gd-li';
+                li.innerHTML = `<span>${escapeAsk(row[0])}</span><em>${escapeAsk(row[1])}</em><b>${escapeAsk(row[2])}</b>`;
+                q('gdList').appendChild(li);
+                requestAnimationFrame(() => li.classList.add('in'));
+                ['gdV0', 'gdV1', 'gdV2'].forEach(id => { const e = q(id); if(e) e.textContent = ' '; });
+            });
+            t += quick ? 950 : 1250;
+        });
+
+        /* 5 - the file comes out */
+        gdAt(t, () => { gdMark(4); gdHandTo('gdSave'); q('gdSave').classList.add('live'); });
+        gdAt(t + 450, () => gdTap('gdSave'));
+        gdAt(t + 650, () => q('gdFile').classList.add('out'));
+        gdAt(t + 1700, () => { q('gdSave').classList.remove('live'); });
+        t += 2600;
+
+        gdAt(t, gdPlay);                     /* and round again */
+    }
+
+    /* The panel that sits beside the builder on a wide screen. */
+    function gdMountPanel() {
+        gdUnmountPanel();
+        if(!dbOn('dbGuide')) return;
+        if(window.innerWidth < 1280) return;
+        const el = document.createElement('aside');
+        el.className = 'gd gd-panel';
+        el.id = 'gdPanel';
+        el.innerHTML = gdHtml(true);
+        document.body.appendChild(el);
+        document.body.classList.add('gd-docked');
+        gdHost = el;
+        gdPlay();
+    }
+
+    function gdUnmountPanel() {
+        gdStop();
+        const el = document.getElementById('gdPanel');
+        if(el) el.remove();
+        document.body.classList.remove('gd-docked');
+        gdHost = null;
+    }
+
+    function gdOpenModal() {
+        const back = document.createElement('div');
+        back.className = 'ask-back';
+        back.id = 'gdBack';
+        const box = document.createElement('div');
+        box.className = 'gd gd-modal';
+        box.innerHTML = gdHtml(false);
+        back.appendChild(box);
+        back.onclick = e => { if(e.target === back) gdCloseModal(); };
+        document.body.appendChild(back);
+        gdPlay();
+    }
+
+    function gdCloseModal() {
+        gdStop();
+        const b = document.getElementById('gdBack');
+        if(b) b.remove();
+        if(document.getElementById('gdPanel')) gdPlay();     /* the docked one carries on */
+    }
 
     /* ---------- Item builder ---------------------------------------------
        One screen builds the list; the spec below decides which columns the
@@ -1612,6 +1927,9 @@
             ${sp.wbp ? `<button class="it-btn it-primary" onclick="itExportWbp()">
               <i class="fa-solid fa-usb"></i> Download Pendrive File
             </button>` : ''}
+            ${dbOn('dbGuide') ? `<button class="it-btn it-ghost gd-open" onclick="gdOpenModal()">
+              <i class="fa-solid fa-circle-play"></i> ${escapeAsk(gdWords().open)}
+            </button>` : ''}
             ${sp.unitGroup ? `<button class="it-btn it-ghost" onclick="unOpen()">
               <i class="fa-solid fa-ruler"></i> Units
             </button>` : ''}
@@ -1635,6 +1953,7 @@
           </div>`, () => openItemBuilder(app));
 
         itRender();
+        gdMountPanel();
     }
 
     function itToggleMore() {
